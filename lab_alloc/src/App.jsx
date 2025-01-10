@@ -1,4 +1,5 @@
 import Menu from "./components/menu.jsx";
+import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 function App() {
   return (
     <>
@@ -10,8 +11,13 @@ function App() {
             <div>Schedule</div>
             <div>Manage Labs</div>
             <div>Members</div>
-            <div>
-              <Menu />
+            <div className="user-mag-div">
+              <div>
+                <NotificationsNoneIcon />
+              </div>
+              <div>
+                <Menu />
+              </div>
             </div>
           </div>
         </div>
