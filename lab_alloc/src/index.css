@@ -17,7 +17,7 @@ nav {
 }
 .nav-right-div {
   display: flex;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   gap: 1.2rem;
   margin-right: 1rem;
   align-items: center;
@@ -45,4 +45,37 @@ nav {
 
 .notification-div:hover {
   cursor: pointer;
+}
+.canvas {
+  display: flex;
+  justify-content: left;
+  font-family: "Roboto";
+  margin-left: 2rem;
+}
+.lab-nav {
+  display: flex;
+  gap: 1rem;
+}
+.lab-nav button {
+  border: none;
+  background: none;
+  color: rgb(150, 150, 150);
+  font-family: "Roboto";
+  font-weight: 600;
+  font-size: 0.8rem;
+  height: 1.5rem;
+}
+.lab-nav button:hover {
+  cursor: pointer;
+}
+.canvas-comp {
+  margin: 1rem 0rem;
+  display: flex;
+  flex-direction: column;
+}
+.lab-select {
+  width: 7rem;
+  border: 1px solid black;
+  height: 1.5rem;
+  outline: none;
 }
