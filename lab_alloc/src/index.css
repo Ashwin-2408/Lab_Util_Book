@@ -22,7 +22,27 @@ nav {
   margin-right: 1rem;
   align-items: center;
 }
+
+.nav-right-div a {
+  text-decoration: none;
+  color: black;
+}
 .user-mag-div {
   display: flex;
   align-items: center;
+}
+.notification-div {
+  background-color: rgb(218, 218, 218);
+  width: 28px;
+  height: 28px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  border-radius: 7px;
+  margin: 0 0.2rem;
+  border: none;
+}
+
+.notification-div:hover {
+  cursor: pointer;
 }

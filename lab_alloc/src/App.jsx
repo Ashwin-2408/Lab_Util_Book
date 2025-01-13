@@ -1,20 +1,36 @@
 import Menu from "./components/menu.jsx";
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
+import { CiCircleQuestion } from "react-icons/ci";
+import { IoNotificationsOutline } from "react-icons/io5";
+import { SiGooglegemini } from "react-icons/si";
+import Calendar from "./components/calender.jsx";
 function App() {
   return (
     <>
       <nav>
         <div className="nav-inner-div">
-          <div style={{ fontWeight: "450" }}>Lab Management</div>
+          <div
+            style={{
+              display: "flex",
+              gap: "0.5rem",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <SiGooglegemini />
+            <div style={{ fontWeight: "450" }}>Lab Management</div>
+          </div>
           <div className="nav-right-div">
-            <div>Dashboard</div>
-            <div>Schedule</div>
-            <div>Manage Labs</div>
-            <div>Members</div>
+            <a href="">Dashboard</a>
+            <a href="">Schedule</a>
+            <a href="">Manage Labs</a>
+            <a href="">Members</a>
             <div className="user-mag-div">
-              <div>
-                <NotificationsNoneIcon />
-              </div>
+              <button className="notification-div">
+                <CiCircleQuestion style={{ fontSize: "1.25rem" }} />
+              </button>
+              <button className="notification-div">
+                <IoNotificationsOutline style={{ fontSize: "1rem" }} />
+              </button>
               <div>
                 <Menu />
               </div>
@@ -22,8 +38,10 @@ function App() {
           </div>
         </div>
       </nav>
+      <div className="canvas">
+        
+      </div>
     </>
   );
 }
-
 export default App;
