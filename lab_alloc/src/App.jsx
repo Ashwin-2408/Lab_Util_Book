@@ -1,46 +1,12 @@
-import Menu from "./components/menu.jsx";
-import { CiCircleQuestion } from "react-icons/ci";
-import { IoNotificationsOutline } from "react-icons/io5";
-import { SiGooglegemini } from "react-icons/si";
 import Calendar from "./components/calender.jsx";
 import CustomSelect from "./components/custom_select.jsx";
+import NavBar from "./components/navbar.jsx";
 function App() {
   return (
     <>
-      <nav>
-        <div className="nav-inner-div">
-          <div
-            style={{
-              display: "flex",
-              gap: "0.5rem",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <SiGooglegemini />
-            <div style={{ fontWeight: "450" }}>Lab Management</div>
-          </div>
-          <div className="nav-right-div">
-            <a href="">Dashboard</a>
-            <a href="">Schedule</a>
-            <a href="">Manage Labs</a>
-            <a href="">Members</a>
-            <div className="user-mag-div">
-              <button className="notification-div">
-                <CiCircleQuestion style={{ fontSize: "1.25rem" }} />
-              </button>
-              <button className="notification-div">
-                <IoNotificationsOutline style={{ fontSize: "1rem" }} />
-              </button>
-              <div>
-                <Menu />
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <NavBar />
       <div className="canvas">
-        <div className="canvas-inner-div">
+        <div className="canvas-left-div">
           <div>
             <h2 style={{ fontFamily: "Roboto", padding: "0px 6px" }}>
               Lab Utilization
@@ -70,6 +36,11 @@ function App() {
                 <div></div>
               </div>
             </div>
+          </div>
+        </div>
+        <div className="canvas-right-div">
+          <div>
+            <h2>Details</h2>
           </div>
         </div>
       </div>
