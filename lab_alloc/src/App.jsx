@@ -4,17 +4,27 @@ import NavBar from "./components/navbar.jsx";
 import { FaPlus } from "react-icons/fa6";
 import Button from "@mui/material/Button";
 import CustTimeLine from "./components/timeline.jsx";
+import NewSession from "./components/new_session.jsx";
+import { Routes, Route, Link, useNavigate } from "react-router-dom";
 function App() {
+  const navigate = useNavigate();
+  function handleNewSession() {
+    navigate("/book");
+  }
   return (
     <>
       <NavBar />
       <Button
         variant="outlined"
         style={{ gap: "0.5rem", marginLeft: "2.3rem", marginTop: "1rem" }}
+        onClick={handleNewSession}
       >
         <FaPlus />
         New
       </Button>
+      <Routes>
+        <Route path="/book" element={<NewSession />} />
+      </Routes>
       <div className="canvas">
         <div className="canvas-left-div">
           <div>

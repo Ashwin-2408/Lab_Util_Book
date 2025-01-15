@@ -13,9 +13,7 @@ export default function NewSession() {
     event.preventDefault();
     setStep((prevState) => prevState - 1);
   }
-  function handleSubmit(event){
-
-  }
+  function handleSubmit(event) {}
   return (
     <form className="session-forms">
       {step == 1 && (

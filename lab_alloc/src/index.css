@@ -99,6 +99,8 @@ nav {
 .session-forms {
   /* background-color: rgb(34, 37, 47); */
   background-image: url("./assets/lab_img2.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
   color: white;
   letter-spacing: 1px;
   display: flex;
@@ -115,7 +117,6 @@ input[type="file"] {
   flex-direction: column;
   justify-content: center;
   width: fit-content;
-  backdrop-filter: blur(4px);
   height: fit-content;
 }
 .session-left-body {
