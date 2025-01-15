@@ -15,7 +15,7 @@ export default function NavBar() {
           }}
         >
           <SiGooglegemini />
-          <div style={{ fontWeight: "450" }}>Lab Management</div>
+          <div style={{ fontWeight: "450" }}>LabSync</div>
         </div>
         <div className="nav-right-div">
           <a href="">Dashboard</a>

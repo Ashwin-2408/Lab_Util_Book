@@ -1,10 +1,20 @@
 import Calendar from "./components/calender.jsx";
 import CustomSelect from "./components/custom_select.jsx";
 import NavBar from "./components/navbar.jsx";
+import { FaPlus } from "react-icons/fa6";
+import Button from "@mui/material/Button";
+import CustTimeLine from "./components/timeline.jsx";
 function App() {
   return (
     <>
       <NavBar />
+      <Button
+        variant="outlined"
+        style={{ gap: "0.5rem", marginLeft: "2.3rem", marginTop: "1rem" }}
+      >
+        <FaPlus />
+        New
+      </Button>
       <div className="canvas">
         <div className="canvas-left-div">
           <div>
@@ -42,6 +52,7 @@ function App() {
           <div>
             <h2>Details</h2>
           </div>
+          <CustTimeLine />
         </div>
       </div>
     </>

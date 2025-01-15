@@ -5,6 +5,10 @@ class User(models.Model):
     email = models.EmailField()
     password = models.CharField(max_length = 128)
 
+class Laboratory(models.Model):
+    lab_id = models.AutoField(primary_key=True, default=1)
+    lab_name = models.CharField(max_length=30, unique=True)
+
 class Schedules(models.Model):
     id = models.AutoField(primary_key=True, default = 1)
     username = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -12,3 +16,8 @@ class Schedules(models.Model):
     schedule_date = models.DateField()
     schedule_from = models.TimeField()
     schedule_to = models.TimeField()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['username', 'lab_id', 'schedule_date','schedule_from','schedule_to'], name='unique_schedule_per_user_lab')
+        ]

@@ -1,4 +1,7 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Oswald:wght@200..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap");
+
 body {
   box-sizing: border-box;
   margin: 0;
@@ -6,7 +9,7 @@ body {
 }
 nav {
   font-family: "Roboto";
-  border-bottom: 1px solid rgb(231, 231, 231);
+  border-bottom: 1.2px solid rgb(198, 198, 198);
 }
 .nav-inner-div {
   margin-left: 1rem;
@@ -78,5 +81,106 @@ nav {
   width: 7rem;
   border: 1px solid black;
   height: 1.5rem;
+  padding-inline: 0.3rem;
   outline: none;
+}
+.create-session {
+  display: flex;
+  gap: 0.5rem;
+  height: 1.5rem;
+  width: fit-content;
+  margin-top: 1rem;
+  margin-left: 2rem;
+  padding: 0.2rem 0.75rem;
+  align-items: center;
+  font-family: "Roboto";
+  background-color: rgb(155, 155, 155);
+}
+.session-forms {
+  /* background-color: rgb(34, 37, 47); */
+  background-image: url("./assets/lab_img2.jpg");
+  color: white;
+  letter-spacing: 1px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+input[type="file"] {
+  display: none;
+}
+.session-first-div {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: fit-content;
+  backdrop-filter: blur(4px);
+  height: fit-content;
+}
+.session-left-body {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+.file-upload {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  font-family: "Source Sans";
+  font-size: 0.9rem;
+  column-gap: 0.5rem;
+  padding: 0.2rem 2rem;
+  border: 1px solid white;
+  height: 1.5rem;
+  width: 10rem;
+  justify-content: center;
+}
+.session-input-div {
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  gap: 0.3rem;
+  margin: 1.5rem 0rem;
+}
+.session-input-div input {
+  background-color: transparent;
+  border: 1px solid white;
+  padding: 1rem;
+  width: 12rem;
+  color: white;
+  height: 1rem;
+}
+.session-input-div input:focus {
+  outline: none;
+}
+.session-input-div input::placeholder {
+  font-size: 0.8rem;
+}
+.input-label {
+  font-family: "Roboto";
+  font-size: 0.75rem;
+  font-weight: 300;
+}
+.session-input-button {
+  background-color: transparent;
+  border: 1px solid white;
+  padding: 1rem;
+  width: 12rem;
+  color: white;
+  height: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.5rem 0rem;
+}
+.session-input-button:hover {
+  cursor: pointer;
+}
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) sepia(1) saturate(3) hue-rotate(180deg); /* Change this as per your color */
+}
+.session-outer-div {
+  display: flex;
 }

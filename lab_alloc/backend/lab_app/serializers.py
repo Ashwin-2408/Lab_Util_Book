@@ -5,6 +5,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
         model = Schedules
         fields = [
             'username',
+            'lab_id'
             'schedule_date',
             'schedule_from',
             'schedule_to'
