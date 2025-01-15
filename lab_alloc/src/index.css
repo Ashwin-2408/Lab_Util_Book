@@ -184,3 +184,21 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .session-outer-div {
   display: flex;
 }
+.session-second-div {
+  font-family: "Roboto";
+}
+.file-upload {
+  margin: 1rem 0rem;
+  border: 1px solid white;
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  width: auto;
+}
+.session-submit-button {
+  background-color: rgb(0, 0, 0);
+}

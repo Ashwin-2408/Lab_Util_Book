@@ -1,6 +1,8 @@
 import { TbCircleNumber1 } from "react-icons/tb";
 import { useState } from "react";
 import { TbCircleNumber2 } from "react-icons/tb";
+import { IoCloudUploadOutline } from "react-icons/io5";
+
 export default function NewSession() {
   const [step, setStep] = useState(1);
   function handleContinue(event) {
@@ -10,6 +12,9 @@ export default function NewSession() {
   function handlePrevious(event) {
     event.preventDefault();
     setStep((prevState) => prevState - 1);
+  }
+  function handleSubmit(event){
+
   }
   return (
     <form className="session-forms">
@@ -112,7 +117,45 @@ export default function NewSession() {
               <TbCircleNumber2 style={{ fontSize: "1.5rem" }} />
               <div style={{ fontFamily: "Roboto" }}>Step</div>
             </div>
-            <div></div>
+            <br />
+            <div>
+              <div
+                style={{
+                  fontSize: "1.5rem",
+                  fontFamily: "Oswald",
+                  letterSpacing: "2px",
+                }}
+              >
+                Upload your Attachements
+              </div>
+              <div>
+                <div>
+                  <label htmlFor="fileUpload" className="file-upload">
+                    <IoCloudUploadOutline style={{ fontSize: "2rem" }} />
+                    <div style={{ fontFamily: "Oswald", letterSpacing: "2px" }}>
+                      .PDF & .DOC
+                    </div>
+                  </label>
+                </div>
+                <input type="file" id="fileUpload" name="files" multiple />
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: "1rem" }}>
+              <button
+                className="session-input-button"
+                type="button"
+                onClick={handlePrevious}
+              >
+                Previous
+              </button>
+              <button
+                className="session-input-button session-submit-button"
+                type="button"
+                onClick={handleSubmit}
+              >
+                Submit
+              </button>
+            </div>
           </div>
         </div>
       )}
