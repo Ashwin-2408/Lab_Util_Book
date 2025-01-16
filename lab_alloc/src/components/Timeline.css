@@ -1,0 +1,39 @@
+.timeline-container {
+  position: relative;
+  margin: 20px;
+}
+
+.hours-row {
+  display: flex;
+  margin: 1rem 0rem;
+}
+
+.hour-cell {
+  text-align: center;
+  padding: 5px;
+  border: 1px solid #ddd;
+  background-color: #f9f9f9;
+  font-size: 0.8rem;
+  width: 1.4rem;
+}
+
+.events-row {
+  position: relative;
+  height: auto;
+  background: #f1f1f1;
+}
+
+.event-cell {
+  position: absolute;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  font-size: 0.7rem;
+  color: black;
+  border-left: 1.5px solid black;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  box-sizing: border-box;
+}

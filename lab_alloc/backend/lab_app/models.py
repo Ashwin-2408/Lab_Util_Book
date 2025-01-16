@@ -6,11 +6,11 @@ class User(models.Model):
     password = models.CharField(max_length = 128)
 
 class Laboratory(models.Model):
-    lab_id = models.AutoField(primary_key=True, default=1)
+    lab_id = models.AutoField(primary_key=True)
     lab_name = models.CharField(max_length=30, unique=True)
 
 class Schedules(models.Model):
-    id = models.AutoField(primary_key=True, default = 1)
+    id = models.AutoField(primary_key=True)
     username = models.ForeignKey(User, on_delete=models.CASCADE)
     lab_id = models.ForeignKey(Laboratory, on_delete=models.CASCADE)
     schedule_date = models.DateField()

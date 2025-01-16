@@ -1,137 +1,53 @@
-import * as React from "react";
-import Timeline from "@mui/lab/Timeline";
-import TimelineItem from "@mui/lab/TimelineItem";
-import TimelineSeparator from "@mui/lab/TimelineSeparator";
-import TimelineConnector from "@mui/lab/TimelineConnector";
-import TimelineContent from "@mui/lab/TimelineContent";
-import TimelineOppositeContent from "@mui/lab/TimelineOppositeContent";
-import TimelineDot from "@mui/lab/TimelineDot";
-import FastfoodIcon from "@mui/icons-material/Fastfood";
-import LaptopMacIcon from "@mui/icons-material/LaptopMac";
-import HotelIcon from "@mui/icons-material/Hotel";
-import RepeatIcon from "@mui/icons-material/Repeat";
-import Typography from "@mui/material/Typography";
+import React from "react";
+import "./Timeline.css";
 
-export default function CustomizedTimeline() {
+export default function OverlappingTimeline(props) {
+  const events = props.data;
+  function return_hours(time) {
+    const [hour, minutes, seconds] = time.split(":").map(Number);
+    return parseInt(hour) + minutes / 60;
+  }
+  const updatedEvents = events.map((event) => {
+    return {
+      ...event,
+      schedule_from: return_hours(event.schedule_from),
+      schedule_to: return_hours(event.schedule_to),
+    };
+  });
+
+  console.log("Updated Events :", updatedEvents);
+  updatedEvents.forEach((event) => {
+    console.log(
+      `Duration ${((event.schedule_to - event.schedule_from) / 24) * 100}`
+    );
+  });
   return (
-    <Timeline
-      sx={{
-        flexDirection: "row",
-        overflowX: "auto", // Allows horizontal scrolling
-      }}
-    >
-      <TimelineItem
-        sx={{
-          minWidth: "150px", // Reduce the minimum width of the TimelineItem
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <TimelineOppositeContent
-          sx={{
-            m: "auto 0",
-            textAlign: "center",
-          }}
-          align="center"
-          variant="body2"
-          color="text.secondary"
-        >
-          9:30 am
-        </TimelineOppositeContent>
-        <TimelineContent
-          sx={{
-            py: "8px",
-            px: 1,
-            textAlign: "center",
-            maxWidth: "100px",
-          }}
-        >
-          <Typography variant="h6" component="span" noWrap>
-            Eat
-          </Typography>
-          <Typography variant="body2">Because you need strength</Typography>
-        </TimelineContent>
-      </TimelineItem>
-      <TimelineItem
-        sx={{
-          minWidth: "150px", // Reduce the minimum width of the TimelineItem
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <TimelineOppositeContent
-          sx={{
-            m: "auto 0",
-            textAlign: "center",
-          }}
-          align="center"
-          variant="body2"
-          color="text.secondary"
-        >
-          10:00 am
-        </TimelineOppositeContent>
-        <TimelineContent
-          sx={{
-            py: "8px",
-            px: 1,
-            textAlign: "center",
-            maxWidth: "100px",
-          }}
-        >
-          <Typography variant="h6" component="span" noWrap>
-            Code
-          </Typography>
-          <Typography variant="body2">Because it's awesome</Typography>
-        </TimelineContent>
-        <TimelineContent
-          sx={{
-            py: "8px",
-            px: 1,
-            textAlign: "center",
-            maxWidth: "100px",
-          }}
-        >
-          <Typography variant="h6" component="span" noWrap>
-            Code
-          </Typography>
-          <Typography variant="body2">Because it's awesome</Typography>
-        </TimelineContent>
-      </TimelineItem>
-      <TimelineItem
-        sx={{
-          minWidth: "150px", // Reduce the minimum width of the TimelineItem
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <TimelineOppositeContent
-          sx={{
-            m: "auto 0",
-            textAlign: "center",
-          }}
-          align="center"
-          variant="body2"
-          color="text.secondary"
-        >
-          11:30 am
-        </TimelineOppositeContent>
-        <TimelineContent
-          sx={{
-            py: "8px",
-            px: 1,
-            textAlign: "center",
-            maxWidth: "100px",
-          }}
-        >
-          <Typography variant="h6" component="span" noWrap>
-            Sleep
-          </Typography>
-          <Typography variant="body2">Because you need to reset</Typography>
-        </TimelineContent>
-      </TimelineItem>
-    </Timeline>
+    <div className="timeline-container">
+      <div className="hours-row">
+        {Array.from({ length: 24 }, (_, i) => (
+          <div className="hour-cell" key={i}>
+            {i}
+          </div>
+        ))}
+      </div>
+      <div className="events-row">
+        {updatedEvents.map((event) => (
+          <div
+            key={event.username}
+            className="event-cell"
+            style={{
+              left: `${(event.schedule_from / 24) * 100}%`,
+              width: `${
+                ((event.schedule_to - event.schedule_from) / 24) * 100
+              }%`,
+              // top: `${event.rowStep * 40}px`,
+              backgroundColor: "lightblue",
+            }}
+          >
+            {event.title}
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }

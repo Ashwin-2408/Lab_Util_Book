@@ -2,6 +2,7 @@ export default function CustomSelect() {
   return (
     <div>
       <select name="labs" class="lab-select" aria-placeholder="Lab">
+        <option value="all">--All--</option>
         <option value="dog">Dog</option>
         <option value="cat">Cat</option>
         <option value="hamster">Hamster</option>

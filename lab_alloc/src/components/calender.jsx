@@ -5,9 +5,12 @@ import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import { Typography } from "@mui/material";
 
 export default function BasicDateCalendar() {
+  const handleDateChange = (newDate) => {
+    console.log("Selected date:", newDate.format("YYYY-MM-DD"));
+  };
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DateCalendar />
+      <DateCalendar onChange={handleDateChange} />
     </LocalizationProvider>
   );
 }
