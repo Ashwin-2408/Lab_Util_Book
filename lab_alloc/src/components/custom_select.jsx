@@ -1,14 +1,17 @@
-export default function CustomSelect() {
+export default function CustomSelect(props) {
+  const labs = props.labs.map((lab, index) => {
+    const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+    return (
+      <option key={index} value={lab.lab_name}>
+        {capitalize(lab.lab_name)}
+      </option>
+    );
+  });
+
   return (
     <div>
-      <select name="labs" class="lab-select" aria-placeholder="Lab">
-        <option value="all">--All--</option>
-        <option value="dog">Dog</option>
-        <option value="cat">Cat</option>
-        <option value="hamster">Hamster</option>
-        <option value="parrot">Parrot</option>
-        <option value="spider">Spider</option>
-        <option value="goldfish">Goldfish</option>
+      <select name="labs" className="lab-select" aria-placeholder="Lab">
+        {labs}
       </select>
     </div>
   );

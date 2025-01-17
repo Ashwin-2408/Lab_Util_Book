@@ -78,7 +78,7 @@ nav {
   flex-direction: column;
 }
 .lab-select {
-  width: 7rem;
+  width: 9rem;
   border: 1px solid black;
   height: 1.5rem;
   padding-inline: 0.3rem;
