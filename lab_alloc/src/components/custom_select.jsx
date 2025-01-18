@@ -8,9 +8,20 @@ export default function CustomSelect(props) {
     );
   });
 
+  function handleLabSelectChange(event) {
+    let curLabName = event.target.value;
+    console.log("Selected Lab : ", curLabName);
+    props.setCurLab(() => curLabName);
+  }
+
   return (
     <div>
-      <select name="labs" className="lab-select" aria-placeholder="Lab">
+      <select
+        name="labs"
+        className="lab-select"
+        aria-placeholder="Lab"
+        onChange={handleLabSelectChange}
+      >
         {labs}
       </select>
     </div>

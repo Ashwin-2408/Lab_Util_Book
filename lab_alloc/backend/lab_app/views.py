@@ -5,26 +5,34 @@ from lab_app.models import Schedules, User, Laboratory
 from rest_framework import generics
 from lab_app.serializers import ScheduleSerializer, LaboratorySerializer, UserSerializer
 
-class ScheduleListCreateAPIView(generics.ListCreateAPIView):
+class ScheduleCreateAPIView(generics.CreateAPIView):
+    queryset = Schedules.objects.all()
+    serializer_class = ScheduleSerializer
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+schedule_create_view = ScheduleCreateAPIView.as_view()
+
+class ScheduleListAPIView(generics.ListAPIView):
     queryset = Schedules.objects.all()
     serializer_class = ScheduleSerializer
 
     def get_queryset(self):
         lab_name = self.request.query_params.get(['lab_name'], None)
         month = self.request.query_params.get(['month'],None)
-        
-        queryset = self.queryset
-        if lab_name:
-            queryset = queryset.filter(lab_name=lab_name)
-        if month:
+
+        print(lab_name, month)
+        try:
+            queryset = self.queryset.filter(lab_name = lab_name)
             queryset = queryset.filter(schedule_from__month = month)
+            return queryset
+        except Exception as e:
+            print("Error while fetching from Schedule : ",e)
         
-        return queryset
+        return None
 
-    def perform_create(self, serializer):
-        serializer.save()
-
-schedule_list_create_view = ScheduleListCreateAPIView.as_view()
+schedule_list_view = ScheduleListAPIView.as_view()
 
 class LaboratoryListCreateAPIView(generics.ListCreateAPIView):
     queryset = Laboratory.objects.all()
