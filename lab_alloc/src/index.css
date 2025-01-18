@@ -203,24 +203,3 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .session-submit-button {
   background-color: rgb(0, 0, 0);
 }
-.event-card-outer{
-  width:8rem;
-  height:3rem;
-  font-family:'Roboto';
-  background-color:lightgreen;
-  border-left:1.5px solid darkgreen;
-  display:flex;
-  align-items: center;
-}
-.event-card{
-  margin-left:0.5rem;
-  display: flex;
-  align-items: center;
-  gap:0.5rem;
-}
-
-.event-card-body{
-  display:flex;
-  flex-direction: column;
-  align-items: left;
-}

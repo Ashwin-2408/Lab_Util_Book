@@ -1,5 +1,6 @@
 import React from "react";
 import "./Timeline.css";
+import Card from "./card.jsx";
 
 export default function OverlappingTimeline(props) {
   const events = props.data;
@@ -31,21 +32,20 @@ export default function OverlappingTimeline(props) {
         ))}
       </div>
       <div className="events-row">
-        {updatedEvents.map((event) => (
-          <div
-            key={event.username}
-            className="event-cell"
+        {updatedEvents.map((event, index) => (
+          <Card
             style={{
               left: `${(event.schedule_from / 24) * 100}%`,
               width: `${
                 ((event.schedule_to - event.schedule_from) / 24) * 100
               }%`,
               // top: `${event.rowStep * 40}px`,
-              backgroundColor: "lightblue",
+              backgroundColor: "lightgreen",
             }}
-          >
-            {event.title}
-          </div>
+            username={events[index].username}
+            schedule_from={events[index].schedule_from}
+            schedule_to={events[index].schedule_to}
+          />
         ))}
       </div>
     </div>
