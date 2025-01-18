@@ -11,8 +11,8 @@ import axios from "axios";
 function App() {
   const events = [];
   const [schedule, setSchedule] = useState(events);
-  const currentMonth = new Date().getMonth() + 1;
-  const [curMonth, setCurMonth] = useState(currentMonth); // System Current Date
+  const currentDate = new Date();
+  const [curDate, setCurDate] = useState(currentDate); // System Current Date
   const [customSelect, setCustomSelect] = useState([{ lab_name: "--All--" }]);
   const [curLab, setCurLab] = useState("--All--");
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ function App() {
   useEffect(() => {
     if (customSelect != "--All--") {
       axios
-        .get(`http://127.0.0.1:8000/api/schedule/${curLab}/${curMonth}`)
+        .get(`http://127.0.0.1:8000/api/schedule/${curLab}/${curDate}`)
         .then((response) => {
           setSchedule(response.data);
         })
@@ -31,7 +31,7 @@ function App() {
           console.error("Error while fetching from Schedule", error);
         });
     }
-  }, [curMonth, curLab]);
+  }, [curDate, curLab]);
 
   useEffect(() => {
     axios
@@ -85,7 +85,7 @@ function App() {
               </div>
             </div>
             <div style={{ margin: "0rem 1rem" }}>
-              <Calendar setCurMonth={setCurMonth} />
+              <Calendar setCurDate={setCurDate} />
             </div>
             <div style={{ padding: "0px 6px", fontWeight: "600" }}>
               <div>Recent Bookings</div>

@@ -4,6 +4,7 @@ from rest_framework.decorators import api_view
 from lab_app.models import Schedules, User, Laboratory
 from rest_framework import generics
 from lab_app.serializers import ScheduleSerializer, LaboratorySerializer, UserSerializer
+from datetime import datetime
 
 class ScheduleCreateAPIView(generics.CreateAPIView):
     queryset = Schedules.objects.all()
@@ -18,21 +19,31 @@ class ScheduleListAPIView(generics.ListAPIView):
     queryset = Schedules.objects.all()
     serializer_class = ScheduleSerializer
 
-    def get_queryset(self):
-        lab_name = self.request.query_params.get(['lab_name'], None)
-        month = self.request.query_params.get(['month'],None)
+schedule_list_view = ScheduleListAPIView.as_view() 
 
-        print(lab_name, month)
+class ScheduleListDetailAPIView(generics.ListAPIView):
+    queryset = Schedules.objects.all()
+    serializer_class = ScheduleSerializer
+
+    def get_queryset(self):
+        lab_name = self.kwargs.get('lab_name')
+        date_str = self.kwargs.get('date')
+
         try:
-            queryset = self.queryset.filter(lab_name = lab_name)
-            queryset = queryset.filter(schedule_from__month = month)
+            lab_id = Laboratory.objects.get(lab_name=lab_name).lab_id
+            date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        except Exception as e:
+            print("Error : ",e)
+            return Schedules.objects.none()
+        try:
+            queryset = self.queryset.filter(lab_id = lab_id)
+            queryset = queryset.filter(schedule_date = date)
             return queryset
         except Exception as e:
             print("Error while fetching from Schedule : ",e)
-        
-        return None
+            return Schedules.objects.none()
 
-schedule_list_view = ScheduleListAPIView.as_view()
+schedule_list_detail_view = ScheduleListDetailAPIView.as_view()
 
 class LaboratoryListCreateAPIView(generics.ListCreateAPIView):
     queryset = Laboratory.objects.all()
