@@ -8,6 +8,7 @@ class User(models.Model):
 class Laboratory(models.Model):
     lab_id = models.AutoField(primary_key=True)
     lab_name = models.CharField(max_length=30, unique=True)
+    lab_capacity = models.IntegerField(default=5)
 
 class Schedules(models.Model):
     id = models.AutoField(primary_key=True)
