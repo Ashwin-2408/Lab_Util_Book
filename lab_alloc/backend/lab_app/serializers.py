@@ -16,6 +16,10 @@ class LaboratorySerializer(serializers.ModelSerializer):
         model = Laboratory
         fields = [
             'lab_name',
+            'lab_capacity',
+            'lab_vacancy',
+            'icon_name',
+            'fallback_icon_url'
         ]
 
 class UserSerializer(serializers.ModelSerializer):

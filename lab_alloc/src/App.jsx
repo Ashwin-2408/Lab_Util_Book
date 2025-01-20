@@ -87,12 +87,12 @@ function App() {
             <div style={{ margin: "0rem 1rem" }}>
               <Calendar setCurDate={setCurDate} />
             </div>
-            <div style={{ padding: "0px 6px", fontWeight: "600" }}>
+            {/* <div style={{ padding: "0px 6px", fontWeight: "600" }}>
               <div>Recent Bookings</div>
               <div className="recent-book-div">
                 <div></div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
         <div className="canvas-right-div">

@@ -35,6 +35,7 @@ class ScheduleListDetailAPIView(generics.ListAPIView):
         except Exception as e:
             print("Error : ",e)
             return Schedules.objects.none()
+        
         try:
             queryset = self.queryset.filter(lab_id = lab_id)
             queryset = queryset.filter(schedule_date = date)
@@ -62,3 +63,12 @@ class UserListCreateAPIView(generics.ListCreateAPIView):
         return super().perform_create(serializer)
 
 user_list_create_view = UserListCreateAPIView.as_view()
+
+class LaboratoryUpdateAPIView(generics.UpdateAPIView):
+    queryset = Laboratory.objects.all()
+    serializer_class = LaboratorySerializer
+    lookup_field = 'lab_id'
+
+    def perform_update(self, serializer):
+        instance = serializer.save()
+        
