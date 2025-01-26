@@ -72,6 +72,7 @@ nav {
   display: flex;
   gap: 1rem;
 }
+
 .lab-nav button {
   border: none;
   background: none;
@@ -81,14 +82,17 @@ nav {
   font-size: 0.8rem;
   height: 1.5rem;
 }
+
 .lab-nav button:hover {
   cursor: pointer;
 }
+
 .canvas-comp {
   margin: 1rem 0rem;
   display: flex;
   flex-direction: column;
 }
+
 .lab-select {
   width: 9rem;
   border: 1px solid black;
@@ -96,6 +100,7 @@ nav {
   padding-inline: 0.3rem;
   outline: none;
 }
+
 .create-session {
   display: flex;
   gap: 0.5rem;
@@ -108,6 +113,7 @@ nav {
   font-family: "Roboto";
   background-color: rgb(155, 155, 155);
 }
+
 .session-forms {
   /* background-color: rgb(34, 37, 47); */
   background-image: url("./assets/lab_img2.jpg");
@@ -120,9 +126,11 @@ nav {
   align-items: center;
   height: 100vh;
 }
+
 input[type="file"] {
   display: none;
 }
+
 .session-first-div {
   padding: 2rem;
   display: flex;
@@ -131,11 +139,13 @@ input[type="file"] {
   width: fit-content;
   height: fit-content;
 }
+
 .session-left-body {
   display: flex;
   flex-direction: row;
   gap: 1rem;
 }
+
 .file-upload {
   display: flex;
   align-items: center;
@@ -149,6 +159,7 @@ input[type="file"] {
   width: 10rem;
   justify-content: center;
 }
+
 .session-input-div {
   display: flex;
   flex-direction: column;
@@ -156,6 +167,7 @@ input[type="file"] {
   gap: 0.3rem;
   margin: 1.5rem 0rem;
 }
+
 .session-input-div input {
   background-color: transparent;
   border: 1px solid white;
@@ -164,17 +176,21 @@ input[type="file"] {
   color: white;
   height: 1rem;
 }
+
 .session-input-div input:focus {
   outline: none;
 }
+
 .session-input-div input::placeholder {
   font-size: 0.8rem;
 }
+
 .input-label {
   font-family: "Roboto";
   font-size: 0.75rem;
   font-weight: 300;
 }
+
 .session-input-button {
   background-color: transparent;
   border: 1px solid white;
@@ -187,19 +203,24 @@ input[type="file"] {
   justify-content: center;
   margin: 0.5rem 0rem;
 }
+
 .session-input-button:hover {
   cursor: pointer;
 }
+
 input[type="date"]::-webkit-calendar-picker-indicator,
 input[type="time"]::-webkit-calendar-picker-indicator {
   filter: invert(1) sepia(1) saturate(3) hue-rotate(180deg); /* Change this as per your color */
 }
+
 .session-outer-div {
   display: flex;
 }
+
 .session-second-div {
   font-family: "Roboto";
 }
+
 .file-upload {
   margin: 1rem 0rem;
   border: 1px solid white;
@@ -212,6 +233,84 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   padding: 2rem 1rem;
   width: auto;
 }
+
 .session-submit-button {
   background-color: rgb(0, 0, 0);
+}
+
+.stats-table {
+  margin: 1rem;
+}
+
+.lab-div {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid #eceff4;
+  padding: 0.75rem;
+  width: 15rem;
+  height: 2rem;
+}
+
+.lab-logo {
+  display: flex;
+  font-size: 1.5rem;
+  background-color: #f1e7da;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: 0.5rem;
+  border-radius: 1.5rem;
+  color: black;
+}
+
+.lab-info-up {
+  display: flex;
+  align-items: center;
+  font-family: "Roboto";
+  justify-content: space-between;
+  width: 10rem;
+}
+.col-1 {
+  display: flex;
+  flex-direction: column;
+}
+.stats-table {
+  display: flex;
+}
+
+.week-div {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid #eceff4;
+  padding: 0.75rem;
+  width: 7rem;
+  height: 2rem;
+  justify-content: end;
+}
+
+.week-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: "Roboto";
+  gap: 0.2rem;
+  width: 5rem;
+}
+
+.week-div-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid #eceff4;
+  padding: 0.75rem;
+  width: 7rem;
+  height: 2rem;
+  justify-content: center;
+}
+.weekDate {
+  font-family: "Roboto";
+  font-size: 0.75rem;
+  color: #818493;
 }
