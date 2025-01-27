@@ -1,23 +1,28 @@
 .timeline-container {
-  position: relative;
-  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  width: 100%; /* Prevents the timeline from overflowing */
+  overflow-x: auto; /* Horizontal scroll if needed */
+  height: 100%;
 }
 
 .hours-row {
   display: flex;
-  margin: 1rem 0rem;
+  flex-wrap: nowrap; /* Prevents cells from wrapping */
 }
 
 .hour-cell {
+  flex-shrink: 0; /* Prevents shrinking */
   text-align: center;
   padding: 5px;
   border: 1px solid #ddd;
   background-color: #f9f9f9;
   font-size: 0.8rem;
-  width: 5rem;
+  width: 7rem;
 }
 
 .events-row {
+  margin-top: 0.5rem;
   position: relative;
   height: auto;
   background: #f1f1f1;

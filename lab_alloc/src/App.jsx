@@ -37,7 +37,6 @@ function App() {
     axios
       .get("http://127.0.0.1:8000/api/laboratory")
       .then((response) => {
-        console.log("Laboratory", response.data);
         setCustomSelect((prevState) => [
           { lab_name: "--All--" },
           ...response.data,

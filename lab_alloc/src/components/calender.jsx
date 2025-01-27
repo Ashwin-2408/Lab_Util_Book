@@ -8,7 +8,6 @@ import dayjs from "dayjs";
 export default function BasicDateCalendar(props) {
   const handleDateChange = (newDate) => {
     const formatDate = newDate.format("YYYY-MM-DD");
-    console.log("Formatted Date : ", formatDate);
     props.setCurDate(() => formatDate);
   };
 

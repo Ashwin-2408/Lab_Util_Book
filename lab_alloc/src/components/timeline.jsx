@@ -1,8 +1,18 @@
 import React from "react";
 import "./Timeline.css";
 import Card from "./card.jsx";
+import { useRef, useEffect, useState } from "react";
 
 export default function OverlappingTimeline(props) {
+  const divRef = useRef(null);
+  const [hourCellWidth, setHourCellWidth] = useState(null);
+
+  useEffect(() => {
+    if (divRef.current) {
+      const width = divRef.current.getBoundingClientRect();
+      setHourCellWidth((prevState) => width.width.toFixed(2));
+    }
+  }, []);
   const events = props.data;
   function return_hours(time) {
     const [hour, minutes, seconds] = time.split(":").map(Number);
@@ -46,26 +56,25 @@ export default function OverlappingTimeline(props) {
   }
 
   const nLevels = developLevels();
-  console.log("Updated Events :", updatedEvents);
 
   return (
     <div className="timeline-container">
       <div className="hours-row">
         {Array.from({ length: 24 }, (_, i) => (
-          <div className="hour-cell" key={i}>
+          <div className="hour-cell" key={i} ref={divRef}>
             {i}
           </div>
         ))}
       </div>
       {nLevels.map((updatedEvents, levelIndex) => (
-        <div className="events-row" style={{ top: `${levelIndex * 50}px` }}>
+        <div className="events-row" style={{ top: `${levelIndex * 45}px` }}>
           {updatedEvents.map((event, eventIndex) => (
             <Card
               style={{
-                left: `${(event.schedule_from / 24) * 100}%`,
+                left: `${event.schedule_from * hourCellWidth}px`,
                 width: `${
-                  ((event.schedule_to - event.schedule_from) / 24) * 100
-                }%`,
+                  (event.schedule_to - event.schedule_from) * hourCellWidth
+                }px`,
                 backgroundColor: "lightgreen",
               }}
               username={event.username}

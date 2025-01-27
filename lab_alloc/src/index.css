@@ -68,6 +68,14 @@ nav {
   overflow: hidden;
 }
 
+.canvas-right-div {
+  width: 100%;
+  overflow-x: auto; /* Add horizontal scrolling */
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
+
 .lab-nav {
   display: flex;
   gap: 1rem;
