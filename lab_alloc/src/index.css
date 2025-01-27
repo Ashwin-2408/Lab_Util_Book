@@ -314,3 +314,67 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   font-size: 0.75rem;
   color: #818493;
 }
+
+.cur-lab-util {
+  margin-left: 1rem;
+}
+.cur-lab-outer {
+  display: flex;
+  gap: 1rem;
+}
+.cur-lab-logo {
+  display: flex;
+  font-size: 1.25rem;
+  background-color: #c0d968;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: 0.25rem;
+  color: black;
+  margin: 0.5rem;
+}
+.cur-lab-up {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.cur-lab-name {
+  font-family: "Roboto";
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.cur-lab-count {
+  font-family: "Roboto";
+  font-size: 0.7rem;
+  color: #818493;
+}
+.cur-lab-count-info {
+  display: flex;
+  gap: 0.5rem;
+}
+.cur-lab-hike {
+  font-family: "Roboto";
+  font-size: 0.7rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+.blocks-div {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.block {
+  border: 1rem;
+  width: 1rem;
+  height: 1rem;
+  background-color: #dde1ed;
+}
+
+.blocks-div .highlight {
+  background-color: #c0d769;
+}
