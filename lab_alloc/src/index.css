@@ -123,11 +123,7 @@ nav {
 }
 
 .session-forms {
-  /* background-color: rgb(34, 37, 47); */
-  background-image: url("./assets/lab_img2.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
-  color: white;
+  color: black;
   letter-spacing: 1px;
   display: flex;
   justify-content: center;
@@ -146,6 +142,7 @@ input[type="file"] {
   justify-content: center;
   width: fit-content;
   height: fit-content;
+  background-color: #f0e6d9;
 }
 
 .session-left-body {
@@ -162,7 +159,7 @@ input[type="file"] {
   font-size: 0.9rem;
   column-gap: 0.5rem;
   padding: 0.2rem 2rem;
-  border: 1px solid white;
+  border: 1px solid black;
   height: 1.5rem;
   width: 10rem;
   justify-content: center;
@@ -178,10 +175,10 @@ input[type="file"] {
 
 .session-input-div input {
   background-color: transparent;
-  border: 1px solid white;
+  border: 1px solid black;
   padding: 1rem;
   width: 12rem;
-  color: white;
+  color: black;
   height: 1rem;
 }
 
@@ -196,15 +193,15 @@ input[type="file"] {
 .input-label {
   font-family: "Roboto";
   font-size: 0.75rem;
-  font-weight: 300;
+  font-weight: 500;
 }
 
 .session-input-button {
   background-color: transparent;
-  border: 1px solid white;
+  border: 1px solid black;
   padding: 1rem;
   width: 12rem;
-  color: white;
+  color: black;
   height: 1rem;
   display: flex;
   align-items: center;
@@ -216,13 +213,14 @@ input[type="file"] {
   cursor: pointer;
 }
 
-input[type="date"]::-webkit-calendar-picker-indicator,
+/* input[type="date"]::-webkit-calendar-picker-indicator,
 input[type="time"]::-webkit-calendar-picker-indicator {
-  filter: invert(1) sepia(1) saturate(3) hue-rotate(180deg); /* Change this as per your color */
-}
+  filter: invert(1) sepia(1) saturate(3) hue-rotate(0deg);
+} */
 
 .session-outer-div {
   display: flex;
+  padding: 1rem;
 }
 
 .session-second-div {
@@ -243,7 +241,8 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 }
 
 .session-submit-button {
-  background-color: rgb(0, 0, 0);
+  background-color: #efb9b6;
+  color: black;
 }
 
 .stats-table {

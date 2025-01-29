@@ -4,6 +4,11 @@
   width: 100%; /* Prevents the timeline from overflowing */
   overflow-x: auto; /* Horizontal scroll if needed */
   height: 100%;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+}
+.timeline-container::-webkit-scrollbar {
+  display: none;
 }
 
 .hours-row {
