@@ -8,6 +8,10 @@ body {
   padding: 0;
 }
 
+::-webkit-scrollbar {
+  display: none;
+}
+
 nav {
   font-family: "Roboto";
   border-bottom: 1.2px solid rgb(198, 198, 198);
@@ -29,9 +33,15 @@ nav {
   align-items: center;
 }
 
-.nav-right-div a {
+.nav-right-div button {
   text-decoration: none;
   color: black;
+  border: none;
+  background-color: transparent;
+}
+
+.nav-right-div button:hover {
+  cursor: pointer;
 }
 
 .user-mag-div {
@@ -56,6 +66,7 @@ nav {
 }
 
 .canvas {
+  position: relative;
   display: flex;
   justify-content: left;
   font-family: "Roboto";
@@ -245,10 +256,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   color: black;
 }
 
-.stats-table {
-  margin: 1rem;
-}
-
 .lab-div {
   display: flex;
   align-items: center;
@@ -283,6 +290,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   flex-direction: column;
 }
 .stats-table {
+  margin: 1rem 0rem;
   display: flex;
 }
 

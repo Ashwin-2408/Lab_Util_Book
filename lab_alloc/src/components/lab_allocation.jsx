@@ -7,8 +7,9 @@ export default function LabAlloc() {
       <div
         style={{
           fontFamily: "Roboto",
-          textTransform: "uppercase",
-          fontSize: "0.75rem",
+          fontSize: "1rem",
+          fontWeight:'500',
+          margin: "1rem 0rem",
         }}
       >
         Current Lab Utilization
