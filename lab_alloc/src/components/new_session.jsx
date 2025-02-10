@@ -2,8 +2,15 @@ import { TbCircleNumber1 } from "react-icons/tb";
 import { useState } from "react";
 import { TbCircleNumber2 } from "react-icons/tb";
 import { IoCloudUploadOutline } from "react-icons/io5";
+import axios from "axios";
 
 export default function NewSession() {
+  const [formData, setFormData] = useState({
+    lab_name: "",
+    schedule_date: null,
+    schedule_from: null,
+    schedule_to: null,
+  });
   const [step, setStep] = useState(1);
   function handleContinue(event) {
     event.preventDefault();
@@ -13,7 +20,41 @@ export default function NewSession() {
     event.preventDefault();
     setStep((prevState) => prevState - 1);
   }
-  function handleSubmit(event) {}
+
+  function handleOnChange(event) {
+    const { name, value } = event.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    if (
+      !formData.lab_name ||
+      !formData.schedule_date ||
+      !formData.schedule_from ||
+      !formData.schedule_to
+    ) {
+      alert("Please fill all the fields");
+    }
+
+    const username = "George";
+    const data = new FormData();
+    data.append("username", username);
+    data.append("lab_name", formData.lab_name);
+    data.append("schedule_date", formData.schedule_date);
+    data.append("schedule_from", formData.schedule_from);
+    data.append("schedule_to", formData.schedule_to);
+
+    const response = await axios.post(
+      "http://127.0.0.1:8000/api/schedule/create",
+      data
+    );
+    console.log(response.data);
+  }
   return (
     <form className="session-forms">
       {step == 1 && (
@@ -49,37 +90,43 @@ export default function NewSession() {
                   type="text"
                   placeholder="Enter the Laboratory Name"
                   name="lab_name"
+                  onChange={handleOnChange}
                 />
               </div>
               <div className="session-input-div">
-                <label htmlFor="lab_name" className="input-label">
+                <label htmlFor="schedule_date" className="input-label">
                   Date
                 </label>
-                <input type="date" />
+                <input
+                  type="date"
+                  name="schedule_date"
+                  onChange={handleOnChange}
+                />
               </div>
             </div>
             <div>
               <div className="session-input-div">
-                <label htmlFor="lab_name" className="input-label">
+                <label htmlFor="schedule_from" className="input-label">
                   From
                 </label>
-                <input type="time" />
+                <input
+                  type="time"
+                  name="schedule_from"
+                  onChange={handleOnChange}
+                />
               </div>
               <div className="session-input-div">
-                <label htmlFor="lab_name" className="input-label">
+                <label htmlFor="schedule_to" className="input-label">
                   To
                 </label>
-                <input type="time" />
+                <input
+                  type="time"
+                  name="schedule_to"
+                  onChange={handleOnChange}
+                />
               </div>
             </div>
           </div>
-          {/* <div>
-          <label class="file-upload">
-            Attach a File
-            <GrAttachment />
-            <input type="file" name="file" />
-          </label>
-        </div> */}
           <div>
             <button
               className="session-input-button"

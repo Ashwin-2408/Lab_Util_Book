@@ -5,13 +5,20 @@ from lab_app.models import Schedules, User, Laboratory
 from rest_framework import generics
 from lab_app.serializers import ScheduleSerializer, LaboratorySerializer, UserSerializer
 from datetime import datetime
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
-class ScheduleCreateAPIView(generics.CreateAPIView):
-    queryset = Schedules.objects.all()
-    serializer_class = ScheduleSerializer
 
-    def perform_create(self, serializer):
-        serializer.save()
+class ScheduleCreateAPIView(APIView):
+    def post(self, request):
+        data = request.data.copy()
+        data['lab_id'] = Laboratory.objects.get(lab_name = data['lab_name']).lab_id
+        data.pop('lab_name')
+
+        serializer = ScheduleSerializer(data=data)
+        if(serializer.is_valid()):
+            serializer.save()
+            return Response({"message":"Successfully created a session"})
 
 schedule_create_view = ScheduleCreateAPIView.as_view()
 
@@ -71,4 +78,3 @@ class LaboratoryUpdateAPIView(generics.UpdateAPIView):
 
     def perform_update(self, serializer):
         instance = serializer.save()
-        
