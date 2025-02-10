@@ -7,7 +7,46 @@ from lab_app.serializers import ScheduleSerializer, LaboratorySerializer, UserSe
 from datetime import datetime
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from datetime import date, datetime
 
+class ScheduleProcessor:
+    def __init__(self):
+        self.day = dict()
+        self.cur_date = date.today()
+
+    def process_labs(self):
+        labs = Laboratory.objects.filter(schedule_date=self.cur_date).order_by("schedule_from")
+
+        for lab in labs:
+            if lab.lab_id not in self.day:
+                self.day[lab.lab_id] = [[(lab.schedule_from, lab.schedule_to)]]
+            else:
+                flag = True
+                for session in self.day[lab.lab_id]:
+                    if lab.schedule_from < session[-1][1]:
+                        session.append((lab.schedule_from, lab.schedule_to))
+                        flag = False
+                        break
+                
+                if flag:
+                    self.day[lab.lab_id].append([(lab.schedule_from, lab.schedule_to)])
+
+    def add_session(self, new_session):
+        cur_time = datetime.now().time()
+        lab_id = new_session.lab_id
+        updated_levels = []
+        for level in self.day[lab_id]:
+            new_level = [session for session in level if session.schedule_to >= cur_time] 
+
+            if new_level:
+                updated_levels.append(new_level)
+
+                if new_session.schedule_to < new_level[-1][0]:
+                    new_level.append((new_session.schedule_from, new_session.schedule_to))
+        
+        self.day[lab_id] = updated_levels
+
+schedule_processor = ScheduleProcessor()
 
 class ScheduleCreateAPIView(APIView):
     def post(self, request):

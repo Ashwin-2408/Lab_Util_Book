@@ -50,6 +50,7 @@ export default function OverlappingTimeline(props) {
       }
       if (flag) {
         levels.push([updatedEvents[i]]);
+        level_height[j] = 1;
       }
     }
     return levels;

@@ -10,7 +10,6 @@ class Laboratory(models.Model):
     lab_id = models.AutoField(primary_key=True)
     lab_name = models.CharField(max_length=30, unique=True)
     lab_capacity = models.IntegerField(default=5)
-    lab_vacancy = models.IntegerField(default=5)
     icon_name = models.CharField(max_length=20, null=True)
     fallback_icon_url = models.URLField(null=True, blank=True)
 
