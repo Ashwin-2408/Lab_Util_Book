@@ -12,41 +12,70 @@ from datetime import date, datetime
 class ScheduleProcessor:
     def __init__(self):
         self.day = dict()
-        self.cur_date = date.today()
+        self.cur_date = datetime.now().date()
+        self.ordered = dict()
 
     def process_labs(self):
-        labs = Laboratory.objects.filter(schedule_date=self.cur_date).order_by("schedule_from")
+        cur_time = datetime.now().time()
+        labs = Schedules.objects.filter(schedule_date=self.cur_date, schedule_from__gt=cur_time).order_by("schedule_from")
 
         for lab in labs:
-            if lab.lab_id not in self.day:
-                self.day[lab.lab_id] = [[(lab.schedule_from, lab.schedule_to)]]
+            if lab.lab_id_id not in self.day:
+                self.day[lab.lab_id_id] = [[(lab.schedule_from, lab.schedule_to)]]
+                self.ordered[lab.lab_id_id] = [(lab.schedule_from, lab.schedule_to)]
             else:
                 flag = True
-                for session in self.day[lab.lab_id]:
-                    if lab.schedule_from < session[-1][1]:
+                for session in self.day[lab.lab_id_id]:
+                    if lab.schedule_from >= session[-1][1]:
                         session.append((lab.schedule_from, lab.schedule_to))
+                        self.ordered[lab.lab_id_id].append((lab.schedule_from, lab.schedule_to))
                         flag = False
                         break
-                
+
                 if flag:
-                    self.day[lab.lab_id].append([(lab.schedule_from, lab.schedule_to)])
+                    self.day[lab.lab_id_id].append([(lab.schedule_from, lab.schedule_to)])
+                    self.ordered[lab.lab_id_id].append((lab.schedule_from, lab.schedule_to))
 
-    def add_session(self, new_session):
+
+    def add_session(self, new_session, lab_id):
+        print("Inside add_session")
         cur_time = datetime.now().time()
-        lab_id = new_session.lab_id
         updated_levels = []
-        for level in self.day[lab_id]:
-            new_level = [session for session in level if session.schedule_to >= cur_time] 
+        capacity = Laboratory.objects.get(lab_id=lab_id).lab_capacity
+        print("Capacity:", capacity)
 
-            if new_level:
-                updated_levels.append(new_level)
+        if lab_id not in self.ordered:
+            self.ordered[lab_id] = []
 
-                if new_session.schedule_to < new_level[-1][0]:
-                    new_level.append((new_session.schedule_from, new_session.schedule_to))
-        
+        self.ordered[lab_id] = [session for session in self.ordered[lab_id] if session[0] >= cur_time]
+
+        self.ordered[lab_id].append(new_session)
+        self.ordered[lab_id].sort(key = lambda x : x[0])
+
+        for session in self.ordered[lab_id]:
+            if not updated_levels:
+                updated_levels.append([session])
+            else:
+                flag = False
+                for index, level in enumerate(updated_levels):
+                    if session[0] >= level[-1][1]:
+                        if len(updated_levels) >= capacity:
+                            self.ordered[lab_id] = []
+                            self.process_labs()
+                            return False
+
+                        updated_levels[index].append(session)
+                        flag = True
+                        break
+
+                if not flag:
+                    updated_levels.append([session])
         self.day[lab_id] = updated_levels
+        return True
+
 
 schedule_processor = ScheduleProcessor()
+schedule_processor.process_labs()
 
 class ScheduleCreateAPIView(APIView):
     def post(self, request):
@@ -56,8 +85,14 @@ class ScheduleCreateAPIView(APIView):
 
         serializer = ScheduleSerializer(data=data)
         if(serializer.is_valid()):
-            serializer.save()
-            return Response({"message":"Successfully created a session"})
+            schedule_from = serializer.validated_data['schedule_from']
+            schedule_to = serializer.validated_data['schedule_to']
+            lab_id = serializer.validated_data['lab_id'].lab_id
+            if schedule_processor.add_session((schedule_from, schedule_to), lab_id):
+                serializer.save()
+                return Response({"Message": "Successfully created a session"})
+            else:
+                return Response({"Message" : "Cannot create a session"})
 
 schedule_create_view = ScheduleCreateAPIView.as_view()
 
@@ -81,7 +116,6 @@ class ScheduleListDetailAPIView(generics.ListAPIView):
         except Exception as e:
             print("Error : ",e)
             return Schedules.objects.none()
-        
         try:
             queryset = self.queryset.filter(lab_id = lab_id)
             queryset = queryset.filter(schedule_date = date)
