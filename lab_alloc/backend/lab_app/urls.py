@@ -6,5 +6,6 @@ urlpatterns = [
     path('laboratory',views.laboratory_list_create_view),
     path('user',views.user_list_create_view),
     path('schedule',views.schedule_list_view),
+    path('daily',views.daily_list_view),
     # path('laboratory/<int:pk>/update/',views.lab_update_view)
 ]

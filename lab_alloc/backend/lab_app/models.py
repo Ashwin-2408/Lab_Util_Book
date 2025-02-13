@@ -13,15 +13,6 @@ class Laboratory(models.Model):
     icon_name = models.CharField(max_length=20, null=True)
     fallback_icon_url = models.URLField(null=True, blank=True)
 
-    def clean(self):
-        if self.lab_vacancy > self.lab_capacity:
-            raise ValidationError("Lab vacancy cannot exceed lab capacity.")
-        return super().clean()
-    
-    def save(self, *args, **kwargs):
-        self.clean()
-        super().save(*args, **kwargs)
-
 class Schedules(models.Model):
     id = models.AutoField(primary_key=True)
     username = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -33,4 +24,16 @@ class Schedules(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['username', 'lab_id', 'schedule_date','schedule_from','schedule_to'], name='unique_schedule_per_user_lab')
+        ]
+
+class Daily(models.Model):
+    id = models.AutoField(primary_key=True)
+    date = models.DateField()
+    lab_id = models.ForeignKey(Laboratory, on_delete=models.CASCADE)
+    hours = models.FloatField()
+    num_bookings = models.IntegerField()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['date', 'lab_id'], name='daily_unique')
         ]

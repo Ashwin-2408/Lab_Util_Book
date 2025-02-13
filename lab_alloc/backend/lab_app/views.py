@@ -1,13 +1,46 @@
 from django.shortcuts import render
 # from django.http import JsonResponse
 from rest_framework.decorators import api_view
-from lab_app.models import Schedules, User, Laboratory
+from lab_app.models import Schedules, User, Laboratory, Daily
 from rest_framework import generics
-from lab_app.serializers import ScheduleSerializer, LaboratorySerializer, UserSerializer
+from lab_app.serializers import ScheduleSerializer, LaboratorySerializer, UserSerializer, DailySerializer
 from datetime import datetime
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from datetime import date, datetime
+
+def calculate_day():
+    cur_date = datetime.now().date()
+    sessions = Schedules.objects.filter(schedule_date=cur_date).order_by('schedule_from')
+    lab_mapping = dict()
+    for index, session in enumerate(sessions):
+        if session.lab_id not in lab_mapping:
+            lab_mapping[session.lab_id] = [session]
+        else:
+            lab_mapping[session.lab_id].append(session)
+
+    for key in lab_mapping:
+        start = lab_mapping[key][0]
+        count = 0
+        end = lab_mapping[key][0]
+        for session in lab_mapping[key]:
+            if session.schedule_from < end.schedule_to:
+                end = session
+            else:
+                count += (end.schedule_to.hour - start.schedule_from.hour) + (end.schedule_to.minute - start.schedule_from.minute) / 60
+
+                if index + 1 < len(lab_mapping[key]):
+                    start = lab_mapping[key][index + 1]
+                    end = lab_mapping[key][index + 1]
+            
+        count += (end.schedule_to.hour - start.schedule_from.hour) + (end.schedule_to.minute - start.schedule_from.minute) / 60
+
+        Daily.objects.create(
+                date = cur_date,
+                lab_id = key,
+                hours = count,
+                num_bookings = len(lab_mapping[key])
+            )
 
 class ScheduleProcessor:
     def __init__(self):
@@ -17,7 +50,8 @@ class ScheduleProcessor:
 
     def process_labs(self):
         cur_time = datetime.now().time()
-        labs = Schedules.objects.filter(schedule_date=self.cur_date, schedule_from__gt=cur_time).order_by("schedule_from")
+        # labs = Schedules.objects.filter(schedule_date=self.cur_date, schedule_from__gt=cur_time).order_by("schedule_from")
+        labs = Schedules.objects.filter(schedule_date=self.cur_date).order_by("schedule_from")
 
         for lab in labs:
             if lab.lab_id_id not in self.day:
@@ -38,11 +72,9 @@ class ScheduleProcessor:
 
 
     def add_session(self, new_session, lab_id):
-        print("Inside add_session")
         cur_time = datetime.now().time()
         updated_levels = []
         capacity = Laboratory.objects.get(lab_id=lab_id).lab_capacity
-        print("Capacity:", capacity)
 
         if lab_id not in self.ordered:
             self.ordered[lab_id] = []
@@ -73,9 +105,9 @@ class ScheduleProcessor:
         self.day[lab_id] = updated_levels
         return True
 
-
 schedule_processor = ScheduleProcessor()
 schedule_processor.process_labs()
+
 
 class ScheduleCreateAPIView(APIView):
     def post(self, request):
@@ -151,3 +183,9 @@ class LaboratoryUpdateAPIView(generics.UpdateAPIView):
 
     def perform_update(self, serializer):
         instance = serializer.save()
+
+class DailyListAPIView(generics.ListAPIView):
+    queryset = Daily.objects.all()
+    serializer_class = DailySerializer
+
+daily_list_view = DailyListAPIView.as_view()
