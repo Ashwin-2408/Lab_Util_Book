@@ -292,8 +292,12 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .stats-table {
   margin: 1rem 0rem;
   display: flex;
+  flex-wrap: wrap;
 }
 
+.stats-outer {
+  position: relative;
+}
 .week-div {
   display: flex;
   align-items: center;
@@ -392,4 +396,47 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .blocks-div .highlight {
   background-color: #c0d769;
+}
+
+.interval-outer {
+  display: flex;
+  gap: 1rem;
+}
+
+.interval {
+  width: fit-content;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  border: none;
+  gap: 0.5rem;
+}
+
+.interval:hover {
+  cursor: pointer;
+}
+
+.interval-icon {
+  background-color: black;
+  padding: 4px;
+  color: white;
+  border: none;
+  width: 1.75rem;
+  height: 1.75rem;
+  font-size: 1.1rem;
+  border-radius: 1.75rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.5s ease;
+  border: 1px solid black;
+}
+.interval-icon:hover {
+  color: black;
+  background-color: white;
+}
+.interval-state {
+  background-color: white;
 }

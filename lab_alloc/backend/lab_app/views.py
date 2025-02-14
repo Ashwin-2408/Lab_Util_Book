@@ -7,11 +7,11 @@ from lab_app.serializers import ScheduleSerializer, LaboratorySerializer, UserSe
 from datetime import datetime
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 def calculate_day():
     cur_date = datetime.now().date()
-    sessions = Schedules.objects.filter(schedule_date=cur_date).order_by('schedule_from')
+    sessions = Schedules.objects.filter(schedule_date=cur_date).order_by('lab_id','schedule_from')
     lab_mapping = dict()
     for index, session in enumerate(sessions):
         if session.lab_id not in lab_mapping:
@@ -148,6 +148,7 @@ class ScheduleListDetailAPIView(generics.ListAPIView):
         except Exception as e:
             print("Error : ",e)
             return Schedules.objects.none()
+        
         try:
             queryset = self.queryset.filter(lab_id = lab_id)
             queryset = queryset.filter(schedule_date = date)
@@ -189,3 +190,18 @@ class DailyListAPIView(generics.ListAPIView):
     serializer_class = DailySerializer
 
 daily_list_view = DailyListAPIView.as_view()
+
+class DailyListDetailAPIView(generics.ListAPIView):
+    queryset = Daily.objects.all()
+    serializer_class = DailySerializer
+
+    def get_queryset(self):
+        try:
+            date = self.kwargs.get('date')
+            date = datetime.strptime(date, "%Y-%m-%d").date()
+            records = self.queryset.filter(date__gte = date, date__lte = date + timedelta(days=5)).order_by('lab_id', 'date')
+            return records
+        except Exception as e:
+            Response({"Message" : "Error File Fetching Date"}, status=404)
+
+daily_list_detail_view = DailyListDetailAPIView.as_view()

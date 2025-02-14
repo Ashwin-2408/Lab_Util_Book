@@ -53,6 +53,7 @@ export default function NewSession() {
       "http://127.0.0.1:8000/api/schedule/create",
       data
     );
+
     console.log(response.data);
   }
   return (
@@ -90,6 +91,7 @@ export default function NewSession() {
                   type="text"
                   placeholder="Enter the Laboratory Name"
                   name="lab_name"
+                  value={formData.lab_name}
                   onChange={handleOnChange}
                 />
               </div>
@@ -100,6 +102,7 @@ export default function NewSession() {
                 <input
                   type="date"
                   name="schedule_date"
+                  value={formData.schedule_date}
                   onChange={handleOnChange}
                 />
               </div>
@@ -113,6 +116,7 @@ export default function NewSession() {
                   type="time"
                   name="schedule_from"
                   onChange={handleOnChange}
+                  value={formData.schedule_from}
                 />
               </div>
               <div className="session-input-div">
@@ -123,6 +127,7 @@ export default function NewSession() {
                   type="time"
                   name="schedule_to"
                   onChange={handleOnChange}
+                  value={formData.schedule_to}
                 />
               </div>
             </div>

@@ -120,8 +120,7 @@ function App() {
           <h2 style={{ fontFamily: "Roboto", padding: "0rem", margin: "0rem" }}>
             Lab Statistics
           </h2>
-          <LabAlloc />
-          <Stats />
+          <Stats labs={customSelect} />
         </div>
       )}
     </>
