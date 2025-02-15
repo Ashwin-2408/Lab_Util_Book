@@ -1,13 +1,15 @@
 from django.shortcuts import render
 # from django.http import JsonResponse
 from rest_framework.decorators import api_view
-from lab_app.models import Schedules, User, Laboratory, Daily
+from lab_app.models import Schedules, User, Laboratory, Daily, Week, Month
 from rest_framework import generics
 from lab_app.serializers import ScheduleSerializer, LaboratorySerializer, UserSerializer, DailySerializer
 from datetime import datetime
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from datetime import date, datetime, timedelta
+
+RESET_DATE = '2025-02-13'
 
 def calculate_day():
     cur_date = datetime.now().date()

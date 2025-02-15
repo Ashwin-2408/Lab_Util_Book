@@ -37,3 +37,27 @@ class Daily(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['date', 'lab_id'], name='daily_unique')
         ]
+
+class Week(models.Model):
+    id = models.AutoField(primary_key=True)
+    week_int = models.TextField(max_length=25)
+    lab_id = models.ForeignKey(Laboratory, on_delete=models.CASCADE)
+    total_hours = models.FloatField()
+    num_bookings = models.IntegerField()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields = ['week_int', 'lab_id'], name='weekly_unique')
+        ]
+
+class Month(models.Model):
+    id = models.AutoField(primary_key = True)
+    month = models.TextField(max_length=25)
+    lab_id = models.ForeignKey(Laboratory, models.CASCADE)
+    total_hours = models.FloatField()
+    num_bookings = models.IntegerField()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields = ['month','lab_id'], name='monthly_unique')
+        ]

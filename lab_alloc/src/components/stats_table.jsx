@@ -12,6 +12,7 @@ export default function Stats(props) {
   const [interval, setInterval] = useState(1);
   const [statInfo, setStatInfo] = useState([]);
   const [processedData, setProcessedData] = useState([]);
+  const [reset, setReset] = useState('2025-02-13')
   const [dayState, setDayState] = useState(5);
   const [weekState, setWeekState] = useState(5);
   const [monthState, setMonthState] = useState(5);
@@ -40,7 +41,9 @@ export default function Stats(props) {
         (1000 * 60 * 60 * 24);
       array[dayDiff][element.lab_id - 1] = element.hours;
     });
-    setProcessedData((prevState) => array);
+    if (statInfo.length > 0) {
+      setProcessedData((prevState) => array);
+    }
   }, [statInfo]);
 
   return (
