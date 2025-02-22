@@ -1,30 +1,26 @@
 import { DataTypes } from "sequelize";
 import sequelize from "./db_connection.js";
 
-const Lab = sequelize.define(
-  "Lab",
+const User = sequelize.define(
+  "User",
   {
-    lab_id: {
+    user_id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
-    lab_name: {
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    email: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
     },
-    location: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    total_systems: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
-    },
-    available_systems: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
+    role: {
+      type: DataTypes.ENUM("Admin", "Faculty", "Student"),
+      defaultValue: "Student",
     },
   },
   {
@@ -32,4 +28,4 @@ const Lab = sequelize.define(
   }
 );
 
-export default Lab;
+export default User;

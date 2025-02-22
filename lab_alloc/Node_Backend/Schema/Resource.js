@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import sequelize from "../config/database.js";
+import sequelize from "./db_connection.js";
 import Lab from "./Lab.js";
 
 const Resource = sequelize.define(
