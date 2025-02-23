@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Schedules, Laboratory, User, Daily
+from .models import Schedules, Laboratory, User, Daily, Month, Week
 class ScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Schedules
@@ -37,5 +37,26 @@ class DailySerializer(serializers.ModelSerializer):
             'date',
             'lab_id',
             'hours',
+            'num_bookings'
+        ]
+
+class WeekSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Week
+        fields = [
+            'week_label',
+            'week_num'
+            'lab_id',
+            'total_hours',
+            'num_bookings'
+        ]
+
+class MonthSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Month
+        fields = [
+            'month',
+            'lab_id',
+            'total_hours',
             'num_bookings'
         ]

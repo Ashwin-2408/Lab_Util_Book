@@ -1,7 +1,4 @@
-import { GiBubblingFlask } from "react-icons/gi";
 import { DiAtom } from "react-icons/di";
-import { MdOutlineArrowCircleUp } from "react-icons/md";
-import { CiCircleChevLeft } from "react-icons/ci";
 import { useState, useEffect } from "react";
 import { IoTodayOutline } from "react-icons/io5";
 import { BsCalendar4Week } from "react-icons/bs";

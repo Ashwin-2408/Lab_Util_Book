@@ -3,14 +3,13 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from lab_app.models import Schedules, User, Laboratory, Daily, Week, Month
 from rest_framework import generics
-from lab_app.serializers import ScheduleSerializer, LaboratorySerializer, UserSerializer, DailySerializer
+from lab_app.serializers import ScheduleSerializer, LaboratorySerializer, UserSerializer, DailySerializer, WeekSerializer, MonthSerializer
 from datetime import datetime
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from datetime import date, datetime, timedelta
 
 RESET_DATE = '2025-02-13'
-
 def calculate_day():
     cur_date = datetime.now().date()
     sessions = Schedules.objects.filter(schedule_date=cur_date).order_by('lab_id','schedule_from')
@@ -42,6 +41,24 @@ def calculate_day():
                 lab_id = key,
                 hours = count,
                 num_bookings = len(lab_mapping[key])
+            )
+
+        if (cur_date - RESET_DATE).days % 7 == 0:
+            calculate_week()
+
+def calculate_week():
+    cur_date = datetime.now().date()
+    start = cur_date - timedelta(days = 7)
+    queryset = Daily.objects.filter(date__lte = cur_date, date__gte = start).values('lab_id').annotate(total_hours=sum('hours'), num_bookings=sum('num_bookings'))
+    if queryset:
+        week_num = (cur_date - RESET_DATE).days // 7
+        for ele in queryset:
+            Week.objects.create(
+                week_label = f'{start} - {cur_date}',
+                week_num = week_num,
+                lab_id = ele['lab_id'],
+                total_hours = ele['total_hours'],
+                num_bookings = ele['total_hours']
             )
 
 class ScheduleProcessor:
@@ -204,6 +221,19 @@ class DailyListDetailAPIView(generics.ListAPIView):
             records = self.queryset.filter(date__gte = date, date__lte = date + timedelta(days=5)).order_by('lab_id', 'date')
             return records
         except Exception as e:
-            Response({"Message" : "Error File Fetching Date"}, status=404)
+            Response({"Message" : "Error While Fetching Date"}, status=404)
 
 daily_list_detail_view = DailyListDetailAPIView.as_view()
+
+class WeekListDetailAPIView(generics.ListAPIView):
+    queryset = Week.objects.all()
+    serializer_class = WeekSerializer
+
+    def get_queryset(self):
+        try:
+            week = self.kwargs.get('week')
+            records = self.queryset.filter(week_num__gte = week, week_num__lte = week + 5).order_by('lab_id', 'week_num')
+        except Exception as e:
+            Response({"Message" : "Error While Fetching Week"}, status = 404)
+
+week_list_detail_view = WeekListDetailAPIView.as_view()
