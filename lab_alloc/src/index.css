@@ -484,3 +484,14 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   gap: 1rem;
   align-items: center;
 }
+
+.approve-sess-outer {
+  display: flex;
+  font-family: "Roboto";
+  font-size: 0.8rem;
+  gap: 1rem;
+  font-weight: 500;
+  color: rgb(84, 77, 77);
+}
+
+
