@@ -4,6 +4,7 @@ import axios from "axios";
 export default function Approve() {
   const [curSection, setCurSection] = useState(0);
   const [secData, setSecData] = useState(null);
+  
   function handleCurSection(value) {
     setCurSection(value);
   }
@@ -27,7 +28,7 @@ export default function Approve() {
         <div onClick={() => handleCurSection(2)}>Cancelled</div>
       </div>
       <div className="approve-canvas">
-
+        
       </div>
     </div>
   );

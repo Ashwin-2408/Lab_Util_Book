@@ -1,9 +1,9 @@
 from django.shortcuts import render
 # from django.http import JsonResponse
 from rest_framework.decorators import api_view
-from lab_app.models import Schedules, User, Laboratory, Daily, Week, Month
+from lab_app.models import Schedules, User, Laboratory, Daily, Week, Month, Admin, ScheduleRequest
 from rest_framework import generics
-from lab_app.serializers import ScheduleSerializer, LaboratorySerializer, UserSerializer, DailySerializer, WeekSerializer, MonthSerializer
+from lab_app.serializers import ScheduleSerializer, LaboratorySerializer, UserSerializer, DailySerializer, WeekSerializer, MonthSerializer, AdminSerializer, ScheduleRequestSerializer
 from datetime import datetime
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -225,15 +225,50 @@ class DailyListDetailAPIView(generics.ListAPIView):
 
 daily_list_detail_view = DailyListDetailAPIView.as_view()
 
+# class WeekListDetailAPIView(generics.ListAPIView):
+#     queryset = Week.objects.all()
+#     serializer_class = WeekSerializer
+
+#     def get_queryset(self):
+#         try:
+#             week = self.kwargs.get('week')
+#             records = self.queryset.filter(week_num__gte = week, week_num__lte = week + 5).order_by('lab_id', 'week_num')
+#             print("Records",records)
+#         except Exception as e:
+#             Response({"Message" : "Error While Fetching Week"}, status = 404)
+
 class WeekListDetailAPIView(generics.ListAPIView):
-    queryset = Week.objects.all()
     serializer_class = WeekSerializer
 
     def get_queryset(self):
         try:
             week = self.kwargs.get('week')
-            records = self.queryset.filter(week_num__gte = week, week_num__lte = week + 5).order_by('lab_id', 'week_num')
+            if week is not None:
+                week = int(week)
+
+            records = Week.objects.filter(
+                week_num__gte=week,
+                week_num__lte=week + 4
+            ).order_by('lab_id', 'week_num')
+            return records 
+
         except Exception as e:
-            Response({"Message" : "Error While Fetching Week"}, status = 404)
+            print("Error while fetching week:", str(e))
+            return Week.objects.none()
 
 week_list_detail_view = WeekListDetailAPIView.as_view()
+
+class WeekListAPIView(generics.ListAPIView):
+    queryset = Week.objects.all()
+    serializer_class = WeekSerializer
+
+week_list_view = WeekListAPIView.as_view()
+
+class ScheduleRequestListCreateAPIView(generics.ListCreateAPIView):
+    queryset = ScheduleRequest.objects.all()
+    serializer_class = ScheduleRequestSerializer
+
+    def perform_create(self, serializer):
+        return super().perform_create(serializer)
+
+schedule_request_create_list_view = ScheduleRequestListCreateAPIView.as_view()

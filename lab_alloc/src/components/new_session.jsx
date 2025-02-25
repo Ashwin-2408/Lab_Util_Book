@@ -134,16 +134,16 @@ export default function NewSession() {
           </div>
           <div>
             <button
-              className="session-input-button"
+              className="session-input-button session-submit-button"
               type="button"
-              onClick={handleContinue}
+              onClick={handleSubmit}
             >
-              Continue
+              Submit
             </button>
           </div>
         </div>
       )}
-      {step == 2 && (
+      {/* {step == 2 && (
         <div className="session-second-div">
           <div className="session-first-div">
             <div
@@ -208,7 +208,7 @@ export default function NewSession() {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </form>
   );
 }

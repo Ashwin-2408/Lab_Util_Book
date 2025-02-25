@@ -1,6 +1,4 @@
 import { DiAtom } from "react-icons/di";
-import { MdDone } from "react-icons/md";
-import { MdCheckBoxOutlineBlank } from "react-icons/md";
 
 export default function ApproveDiv() {
   return (
