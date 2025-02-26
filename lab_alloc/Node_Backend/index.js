@@ -8,6 +8,7 @@ import Allocation from "./Schema/Allocation.js";
 import User from "./Schema/User.js";
 import Resource from "./Schema/Resource.js";
 import Lab from "./Schema/Lab.js";
+import ResourceRequest from "./Schema/ResourceRequest.js";
 
 const app = express();
 app.use(cors());
