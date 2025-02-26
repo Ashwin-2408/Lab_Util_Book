@@ -21,7 +21,7 @@ export const getAvailableResources = async (req, res) => {
       include: [
         {
           model: Lab,
-          as: "Lab",
+          as: "lab",
           where: { lab_name: { [Op.like]: `%${labName}%` } },
           attributes: [],
         },

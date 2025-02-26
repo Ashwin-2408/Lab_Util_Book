@@ -35,7 +35,7 @@ export const approveRequest = async (req, res) => {
     await request.save();
 
     await Resource.update(
-      { status: "Unavailable" },
+      { status: "Allocated" },
       { where: { resource_id: request.resource_id } }
     );
 

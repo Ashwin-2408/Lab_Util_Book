@@ -16,7 +16,7 @@ const ResourceRequest = sequelize.define("ResourceRequest", {
     allowNull: false,
   },
   status: {
-    type: DataTypes.ENUM("Pending", "Approved", "Rejected"),
+    type: DataTypes.ENUM("Pending", "Approved", "Rejected", "Released"),
     defaultValue: "Pending",
   },
 });
