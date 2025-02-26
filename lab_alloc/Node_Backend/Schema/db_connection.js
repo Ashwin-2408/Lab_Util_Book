@@ -27,4 +27,4 @@ export const check_connection = async () => {
 
 check_connection();
 
-export { sequelize };
+export default sequelize;

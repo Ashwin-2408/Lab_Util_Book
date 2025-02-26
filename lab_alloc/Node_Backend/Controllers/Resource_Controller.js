@@ -1,8 +1,7 @@
 import { Op } from "sequelize";
-import Resource from "../models/Resource.js";
-import Lab from "../models/Lab.js";
+import Resource from "../Schema/Resource.js";
+import Lab from "../Schema/Lab.js";
 
-// Get count of available resources with optional filters
 export const getAvailableResources = async (req, res) => {
   try {
     const { labName, resourceType } = req.query;
