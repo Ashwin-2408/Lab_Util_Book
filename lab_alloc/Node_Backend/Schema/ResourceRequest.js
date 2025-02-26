@@ -1,6 +1,5 @@
 import { DataTypes } from "sequelize";
 import sequelize from "./db_connection.js";
-import Resource from "./Resource.js";
 
 const ResourceRequest = sequelize.define("ResourceRequest", {
   request_id: {
@@ -15,10 +14,6 @@ const ResourceRequest = sequelize.define("ResourceRequest", {
   resource_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    references: {
-      model: Resource,
-      key: "resource_id",
-    },
   },
   status: {
     type: DataTypes.ENUM("Pending", "Approved", "Rejected"),
