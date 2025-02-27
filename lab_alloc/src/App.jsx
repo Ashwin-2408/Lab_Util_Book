@@ -7,7 +7,6 @@ import CancelLab from "./components/CancelLab.jsx";
 import CustTimeLine from "./components/timeline.jsx";
 import NewSession from "./components/new_session.jsx";
 import { Routes, Route, useNavigate } from "react-router-dom";
-import { Routes, Route, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Stats from "./components/stats_table.jsx";
 import axios from "axios";
