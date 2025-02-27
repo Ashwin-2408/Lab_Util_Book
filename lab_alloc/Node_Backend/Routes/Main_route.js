@@ -1,8 +1,21 @@
 import { Router } from "express";
-import express from "express";
 import Resource_Router from "./Resource_Routes.js";
+import Lab from "../Schema/Lab.js"; // Ensure correct path
 
-const router = express.Router();
+const router = Router();
+
+// Mount the resource routes
 router.use("/resource", Resource_Router);
 
-export { Router };
+// GET all Labs using Sequelize
+router.get("/labs", async (req, res) => {
+  try {
+    const labs = await Lab.findAll(); // Fetch all labs
+    res.json(labs);
+  } catch (error) {
+    console.error("Error fetching labs:", error);
+    res.status(500).json({ error: "Database error" });
+  }
+});
+
+export default router;

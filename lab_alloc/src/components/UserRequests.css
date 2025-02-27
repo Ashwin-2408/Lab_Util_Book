@@ -1,0 +1,22 @@
+.request-item {
+  display: flex;
+  flex-direction: column;
+  background: #f4f4f4;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+.release-btn {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  margin-top: 5px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.release-btn:hover {
+  background-color: darkred;
+}
