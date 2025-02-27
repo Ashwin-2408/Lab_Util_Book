@@ -3,13 +3,15 @@ import CustomSelect from "./components/custom_select.jsx";
 import NavBar from "./components/navbar.jsx";
 import { FaPlus } from "react-icons/fa6";
 import Button from "@mui/material/Button";
+import CancelLab from "./components/CancelLab.jsx";
 import CustTimeLine from "./components/timeline.jsx";
 import NewSession from "./components/new_session.jsx";
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Stats from "./components/stats_table.jsx";
 import LabAlloc from "./components/lab_allocation.jsx";
 import axios from "axios";
+
 function App() {
   const events = [];
   const [pageState, setPageState] = useState("Schedule");
@@ -19,12 +21,13 @@ function App() {
   const [customSelect, setCustomSelect] = useState([{ lab_name: "--All--" }]);
   const [curLab, setCurLab] = useState("--All--");
   const navigate = useNavigate();
+
   function handleNewSession() {
     navigate("/book");
   }
 
   useEffect(() => {
-    if (customSelect != "--All--") {
+    if (curLab !== "--All--") {
       axios
         .get(`http://127.0.0.1:8000/api/schedule/${curLab}/${curDate}`)
         .then((response) => {
@@ -40,10 +43,7 @@ function App() {
     axios
       .get("http://127.0.0.1:8000/api/laboratory")
       .then((response) => {
-        setCustomSelect((prevState) => [
-          { lab_name: "--All--" },
-          ...response.data,
-        ]);
+        setCustomSelect([{ lab_name: "--All--" }, ...response.data]);
       })
       .catch((error) => {
         console.log("Error while fetching from Laboratory", error);
@@ -53,9 +53,12 @@ function App() {
   return (
     <>
       <NavBar setPageState={setPageState} />
+
       <Routes>
         <Route path="/book" element={<NewSession />} />
+        <Route path="/cancel-lab" element={<CancelLab />} />
       </Routes>
+
       {pageState === "Schedule" && (
         <div>
           <Button
@@ -80,9 +83,7 @@ function App() {
                 <button>Heatmap</button>
               </nav>
               <div className="canvas-comp">
-                <div
-                  style={{ display: "flex", gap: "1rem", alignItems: "center" }}
-                >
+                <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
                   <div style={{ padding: "0px 6px", fontWeight: "600" }}>
                     Calendar
                   </div>
@@ -126,4 +127,5 @@ function App() {
     </>
   );
 }
+
 export default App;
