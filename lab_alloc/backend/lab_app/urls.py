@@ -8,5 +8,10 @@ urlpatterns = [
     path('schedule',views.schedule_list_view),
     path('daily',views.daily_list_view),
     path('daily/<str:date>/',views.daily_list_detail_view),
-    path('week/<int:week>/',views.week_list_detail_view)
+    path('week/<int:week>/',views.week_list_detail_view),
+    path('week',views.week_list_view),
+    path('schedule_req', views.schedule_request_create_list_view),  
+    path('schedule_req/create',views.schedule_request_create_list_view),
+    path('checkin/<str:user_name>',views.handleQR, name="scan_qr"),
+    path('schedule_req/<int:id>/',views.schedule_request_update_view)
 ]

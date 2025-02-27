@@ -1,16 +1,17 @@
 import { TbCircleNumber1 } from "react-icons/tb";
 import { useState } from "react";
-import { TbCircleNumber2 } from "react-icons/tb";
-import { IoCloudUploadOutline } from "react-icons/io5";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function NewSession() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     lab_name: "",
     schedule_date: null,
     schedule_from: null,
     schedule_to: null,
   });
+
   const [step, setStep] = useState(1);
   function handleContinue(event) {
     event.preventDefault();
@@ -53,8 +54,8 @@ export default function NewSession() {
       "http://127.0.0.1:8000/api/schedule/create",
       data
     );
-
     console.log(response.data);
+    navigate("/");
   }
   return (
     <form className="session-forms">
@@ -134,16 +135,16 @@ export default function NewSession() {
           </div>
           <div>
             <button
-              className="session-input-button"
+              className="session-input-button session-submit-button"
               type="button"
-              onClick={handleContinue}
+              onClick={handleSubmit}
             >
-              Continue
+              Submit
             </button>
           </div>
         </div>
       )}
-      {step == 2 && (
+      {/* {step == 2 && (
         <div className="session-second-div">
           <div className="session-first-div">
             <div
@@ -208,7 +209,7 @@ export default function NewSession() {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </form>
   );
 }

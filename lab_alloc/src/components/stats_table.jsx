@@ -6,26 +6,29 @@ import { BsCalendar2Month } from "react-icons/bs";
 import axios from "axios";
 
 export default function Stats(props) {
-  const [interval, setInterval] = useState(1);
+  const [interval, setInterval] = useState("Day");
   const [statInfo, setStatInfo] = useState([]);
   const [processedData, setProcessedData] = useState([]);
-  const [reset, setReset] = useState('2025-02-13')
-  const [dayState, setDayState] = useState(5);
-  const [weekState, setWeekState] = useState(5);
-  const [monthState, setMonthState] = useState(5);
+  const [weekStatInfo, setWeekStatInfo] = useState([]);
+  const [reset, setReset] = useState("2025-02-13");
+  const [dayState, setDayState] = useState(1);
+  const [weekState, setWeekState] = useState(1);
+  const [monthState, setMonthState] = useState(1);
 
   function handleInterval(value) {
     setInterval((prevState) => value);
   }
 
   useEffect(() => {
-    axios
-      .get("http://127.0.0.1:8000/api/daily")
-      .then((response) => {
-        setStatInfo(response.data);
-      })
-      .catch((error) => console.log("Error fetching Daily", error));
-  }, []);
+    if (interval === "Day") {
+      axios
+        .get("http://127.0.0.1:8000/api/daily")
+        .then((response) => {
+          setStatInfo(response.data);
+        })
+        .catch((error) => console.log("Error fetching Daily", error));
+    }
+  }, [interval]);
 
   useEffect(() => {
     const array = Array.from({ length: 5 }, (_, i) =>
@@ -43,22 +46,53 @@ export default function Stats(props) {
     }
   }, [statInfo]);
 
+  useEffect(() => {
+    if (interval === "Week") {
+      axios
+        .get(`http://127.0.0.1:8000/api/week/${weekState}/`)
+        .then((response) => {
+          if (response.data && Object.keys(response.data).length > 0) {
+            setWeekStatInfo(response.data);
+            console.log("Response Data:", response.data);
+          } else {
+            console.log("No data found in the response.");
+          }
+        })
+        .catch((error) => {
+          console.error("Error while fetching Week:", error);
+        });
+    }
+  }, [interval]);
+
+  useEffect(() => {
+    const array = Array.from({ length: 5 }, (_, i) =>
+      Array.from({ length: 10 }, (_, j) => 0)
+    );
+
+    weekStatInfo.map((elem, index) => {
+      array[elem.week_num - 1][elem.lab_id - 1] = elem.total_hours;
+    });
+
+    console.log("Processed Week Array", array);
+    setProcessedData((prevState) => array);
+  }, [weekStatInfo]);
+
   return (
     <div className="stats-outer">
       <div className="interval-outer">
-        <button className="interval" onClick={() => handleInterval(0)}>
+        <button className="interval" onClick={() => handleInterval("Day")}>
           <div className="interval-icon">
             <IoTodayOutline />
           </div>
           <div>Day</div>
         </button>
-        <button className="interval" onClick={() => handleInterval(1)}>
+        <button className="interval" onClick={() => handleInterval("Week")}>
           <div className="interval-icon">
             <BsCalendar4Week />
           </div>
           <div>Week</div>
         </button>
-        <button className="interval" onClick={() => handleInterval(2)}>
+        <button className="interval" onClick={() => handleInterval("Month")}>
           <div className="interval-icon">
             <BsCalendar2Month />
           </div>
@@ -106,17 +140,17 @@ export default function Stats(props) {
                   marginBottom: "0.3rem",
                 }}
               >
-                Day {index_i + 1}
+                {interval} {index_i + 1}
               </div>
-              <div className="weekDate">7/05 - 7/09</div>
+              {/* <div className="weekDate">7/05 - 7/09</div> */}
             </div>
             {lab_list.map((value, index_j) => (
               <div
                 className="week-div"
-                sstyle={{
+                style={{
                   background:
                     value > 0
-                      ? `linear-gradient(to top, #edf5ea 50%, transparent 50%)`
+                      ? `linear-gradient(to top, #edf5ea ${value}%, transparent 50%)`
                       : "transparent",
                 }}
               >
@@ -124,7 +158,16 @@ export default function Stats(props) {
                   <div className="week-info">
                     <div style={{ fontWeight: "500" }}>{value} h</div>
                     <div style={{ fontSize: "0.7rem", color: "#818493" }}>
-                      {Math.round((value / 15) * 100)}%
+                      {Math.round(
+                        (value /
+                          (interval === "Day"
+                            ? 15
+                            : interval === "Week"
+                            ? 15 * 7
+                            : 15 * 30)) *
+                          100
+                      )}
+                      %
                     </div>
                   </div>
                   <div className="lab-info-down"></div>

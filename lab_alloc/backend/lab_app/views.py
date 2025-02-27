@@ -1,13 +1,15 @@
 from django.shortcuts import render
 # from django.http import JsonResponse
 from rest_framework.decorators import api_view
-from lab_app.models import Schedules, User, Laboratory, Daily, Week, Month
+from lab_app.models import Schedules, User, Laboratory, Daily, Week, Month, Admin, ScheduleRequest
 from rest_framework import generics
-from lab_app.serializers import ScheduleSerializer, LaboratorySerializer, UserSerializer, DailySerializer, WeekSerializer, MonthSerializer
-from datetime import datetime
+from lab_app.serializers import ScheduleSerializer, LaboratorySerializer, UserSerializer, DailySerializer, WeekSerializer, MonthSerializer, AdminSerializer, ScheduleRequestSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from datetime import date, datetime, timedelta
+import qrcode
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 
 RESET_DATE = '2025-02-13'
 def calculate_day():
@@ -225,15 +227,82 @@ class DailyListDetailAPIView(generics.ListAPIView):
 
 daily_list_detail_view = DailyListDetailAPIView.as_view()
 
+# class WeekListDetailAPIView(generics.ListAPIView):
+#     queryset = Week.objects.all()
+#     serializer_class = WeekSerializer
+
+#     def get_queryset(self):
+#         try:
+#             week = self.kwargs.get('week')
+#             records = self.queryset.filter(week_num__gte = week, week_num__lte = week + 5).order_by('lab_id', 'week_num')
+#             print("Records",records)
+#         except Exception as e:
+#             Response({"Message" : "Error While Fetching Week"}, status = 404)
+
 class WeekListDetailAPIView(generics.ListAPIView):
-    queryset = Week.objects.all()
     serializer_class = WeekSerializer
 
     def get_queryset(self):
         try:
             week = self.kwargs.get('week')
-            records = self.queryset.filter(week_num__gte = week, week_num__lte = week + 5).order_by('lab_id', 'week_num')
+            if week is not None:
+                week = int(week)
+
+            records = Week.objects.filter(
+                week_num__gte=week,
+                week_num__lte=week + 4
+            ).order_by('lab_id', 'week_num')
+            return records 
+
         except Exception as e:
-            Response({"Message" : "Error While Fetching Week"}, status = 404)
+            print("Error while fetching week:", str(e))
+            return Week.objects.none()
 
 week_list_detail_view = WeekListDetailAPIView.as_view()
+
+class WeekListAPIView(generics.ListAPIView):
+    queryset = Week.objects.all()
+    serializer_class = WeekSerializer
+
+week_list_view = WeekListAPIView.as_view()
+
+class ScheduleRequestListCreateAPIView(generics.ListCreateAPIView):
+    queryset = ScheduleRequest.objects.all()
+    serializer_class = ScheduleRequestSerializer
+
+    def perform_create(self, serializer):
+        return super().perform_create(serializer)
+
+schedule_request_create_list_view = ScheduleRequestListCreateAPIView.as_view()
+
+class ScheduleRequestUpdateView(APIView):
+    def patch(self, request, id):
+        try:
+            schedule_request = ScheduleRequest.objects.get(id=id)
+            schedule_request.status = request.data.get("status", schedule_request.status)
+            schedule_request.approved_by_id = request.data.get("approved_by", schedule_request.approved_by_id)
+            schedule_request.save()
+            return Response({"message": "Schedule updated successfully"}, status=200)
+        except ScheduleRequest.DoesNotExist:
+            return Response({"error": "Schedule request not found"}, status=404)
+
+schedule_request_update_view = ScheduleRequestUpdateView.as_view()
+
+@csrf_exempt
+def handleQR(request, user_name):
+    cur_date = datetime.now().date()
+    cur_time = datetime.now().time()
+
+    record = Schedules.objects.filter(
+        username=user_name,
+        schedule_date=cur_date,
+        schedule_from__lte=cur_time,
+        schedule_to__gte=cur_time
+    ).first()
+    
+    if record:
+        data = ScheduleSerializer(record).data
+        return JsonResponse(data, status=200, safe=False)
+    else:
+        return JsonResponse({"Message": "No Schedule Found"}, status=404)
+

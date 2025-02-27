@@ -1,7 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Oswald:wght@200..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap");
-
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 body {
   box-sizing: border-box;
   margin: 0;
@@ -60,6 +62,15 @@ nav {
   background-color: transparent;
   color: black;
   transform: none;
+  
+.logo-container {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.dropdown-container {
+  position: relative;
+  display: inline-block;
 }
 
 /* Dropdown Menu Styling (Keeps dropdown functionality) */
@@ -244,6 +255,11 @@ nav {
   background: #28a745;
   color: white;
   padding: 10px 15px;
+
+.confirm-btn,
+.close-btn {
+  padding: 10px;
+  margin: 5px;
   border: none;
   cursor: pointer;
   border-radius: 5px;
@@ -672,49 +688,215 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   background-color: white;
 }
 
-.approve-outer-div {
+.show-checkin-dia {
   display: flex;
-  gap: 0.5rem;
-  flex-direction: column;
-  margin: 1rem;
-  font-family: "Roboto";
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  border-radius: 0.5rem;
-  padding: 0.5rem 1rem;
-  width: fit-content;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
-.approve-date {
+.check-in-outer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background-color: #2a2f38;
+  padding: 1.5rem;
+  border-radius: 10px;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.check-in-done {
+  display: flex;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  color: white;
+}
+
+.success {
+  background-color: #00f27f;
+  box-shadow: 0px 0px 15px rgba(0, 242, 127, 0.5);
+}
+
+.error {
+  background-color: #f24141;
+  box-shadow: 0px 0px 15px rgba(242, 65, 65, 0.5);
+}
+
+.check-in-msg {
+  font-family: "Roboto", sans-serif;
+  text-transform: uppercase;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  font-weight: 500;
+  color: white;
+  text-align: center;
+}
+
+.tools {
+  display: flex;
+  color: gray;
+  gap: 1rem;
+  margin: 0.25rem 0rem;
+}
+
+.tool-label {
+  color: rgb(93, 93, 93);
   font-family: "Roboto";
   font-size: 0.8rem;
-  color: #818493;
+  font-weight: 500;
 }
 
-.approve-logo {
+.tool-div {
+  display: flex;
+  gap: 0.25rem;
+  border: none;
+  outline: none;
+  padding: 0.5rem;
+  background-color: white;
+  transition: 0.4s ease;
+}
+
+.tool-div:hover {
+  cursor: pointer;
+  border-radius: 5px;
+  background-color: #e2e2e2;
+}
+
+.approve-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.header-div {
+  display: flex;
+}
+
+.header-div-cell {
+  display: flex;
+  font-family: "Roboto";
+  font-size: 0.85rem;
+  font-weight: 500;
+  gap: 0.2rem;
+  color: rgb(93, 93, 93);
+  background-color: #efefef;
+  width: 10rem;
+  height: 2rem;
+  align-items: center;
+  border: 1px solid #dbdbdb;
+  padding-left: 0.5rem;
+}
+
+.body-div {
+  display: flex;
+  flex-direction: column;
+}
+
+.body-div-outer {
+  display: flex;
+}
+
+.body-div-cell {
+  display: flex;
+  font-family: "Roboto";
+  font-size: 0.85rem;
+  font-weight: 500;
+  gap: 0.2rem;
+  width: 10rem;
+  height: 2rem;
+  align-items: center;
+  border: 1px solid #dbdbdb;
+  padding-left: 0.5rem;
+}
+
+.body-status-div {
+  display: flex;
+  align-items: center;
+}
+
+.body-status-div:hover {
+  cursor: pointer;
+}
+
+.approve-popup-outer {
+  display: flex;
+  flex-direction: column;
+  font-family: "Roboto";
+  font-size: 0.85rem;
+  background-color: rgb(32, 32, 32);
   color: white;
-  width: 1rem;
-  height: 1rem;
-  border-radius: 1rem;
-  background-color: #2ea3f4;
+  width: fit-content;
+  padding: 0.5rem 1rem;
+  justify-content: center;
+  border-radius: 0.5rem;
+  margin: 1rem;
+}
+
+.popup-content-sec {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.approve-popup-content {
+  display: flex;
+  gap: 1rem;
+  padding: 0.3rem 0.5rem;
+  height: 1.5rem;
+  align-items: center;
+  width: fit-content;
+  border-radius: 0.2rem 0.2rem;
+  background-color: rgb(61, 61, 61);
+  flex: 1;
+}
+
+.popup-icon {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1rem;
   padding: 0.2rem;
 }
 
-.approve-content-div {
+.approve-container {
+  transition: filter 0.3s ease;
+}
+
+.popup-close-btn {
   display: flex;
-  gap: 1rem;
+  justify-content: right;
+  padding: 0.25rem;
+  font-size: 1rem;
+}
+
+.popup-close-btn:hover {
+  cursor: pointer;
+}
+
+.assignee-icon {
+  color: white;
+  background-color: rgb(107, 107, 255);
+  width: 1rem;
+  height: 1rem;
+  padding: 0.2rem;
+  display: flex;
+  border-radius: 1rem;
+  justify-content: center;
   align-items: center;
 }
 
-.approve-sess-outer {
-  display: flex;
-  font-family: "Roboto";
-  font-size: 0.8rem;
-  gap: 1rem;
-  font-weight: 500;
-  color: rgb(84, 77, 77);
+.pending {
+  color: rgb(79, 79, 255);
 }
 
+.reject {
+  color: rgb(255, 41, 41);
+}
 
+.accept {
+  color: #00f27f;
+}
