@@ -5,7 +5,6 @@ class User(models.Model):
     username = models.CharField(max_length = 20, primary_key=True)
     email = models.EmailField()
     password = models.CharField(max_length = 128)
-
     
 class Laboratory(models.Model):
     lab_id = models.AutoField(primary_key=True)
@@ -20,7 +19,6 @@ class Admin(models.Model):
     password = models.CharField(max_length = 128)
     department = models.CharField(max_length = 50)
     name = models.CharField(max_length = 50)
-    lab_id = models.ForeignKey(Laboratory, on_delete=models.CASCADE, blank=True)
 
 class Schedules(models.Model):
     id = models.AutoField(primary_key=True)
@@ -29,7 +27,7 @@ class Schedules(models.Model):
     schedule_date = models.DateField()
     schedule_from = models.TimeField()
     schedule_to = models.TimeField()
-
+    
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['username', 'lab_id', 'schedule_date','schedule_from','schedule_to'], name='unique_schedule_per_user_lab')
@@ -80,7 +78,7 @@ class ScheduleRequest(models.Model):
     schedule_from = models.TimeField()
     schedule_to = models.TimeField()
     status = models.CharField(max_length=30, default="pending")
-    approved_by = models.ForeignKey(Admin, on_delete=models.CASCADE)
+    approved_by = models.ForeignKey(Admin, on_delete=models.CASCADE, null=True, blank=True)
     decision_date = models.DateField()
 
     class Meta:

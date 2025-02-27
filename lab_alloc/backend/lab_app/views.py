@@ -275,9 +275,18 @@ class ScheduleRequestListCreateAPIView(generics.ListCreateAPIView):
 
 schedule_request_create_list_view = ScheduleRequestListCreateAPIView.as_view()
 
-from django.utils.timezone import now  # Use timezone-aware datetime
+class ScheduleRequestUpdateView(APIView):
+    def patch(self, request, id):
+        try:
+            schedule_request = ScheduleRequest.objects.get(id=id)
+            schedule_request.status = request.data.get("status", schedule_request.status)
+            schedule_request.approved_by_id = request.data.get("approved_by", schedule_request.approved_by_id)
+            schedule_request.save()
+            return Response({"message": "Schedule updated successfully"}, status=200)
+        except ScheduleRequest.DoesNotExist:
+            return Response({"error": "Schedule request not found"}, status=404)
 
-from django.utils.timezone import now  # Use timezone-aware datetime
+schedule_request_update_view = ScheduleRequestUpdateView.as_view()
 
 @csrf_exempt
 def handleQR(request, user_name):
@@ -296,3 +305,4 @@ def handleQR(request, user_name):
         return JsonResponse(data, status=200, safe=False)
     else:
         return JsonResponse({"Message": "No Schedule Found"}, status=404)
+
