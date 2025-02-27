@@ -1,4 +1,11 @@
-import { Router } from "express";
-const router = Router();
+import express from 'express';
 
-export { router };
+const Router = express.Router();
+
+// Define routes
+Router.get('/', (req, res) => {
+    res.send('Hello from Main_route.js!');
+});
+
+// Named export
+export { Router };

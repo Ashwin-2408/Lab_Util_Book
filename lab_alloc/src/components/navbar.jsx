@@ -34,7 +34,7 @@ export default function NavBar(props) {
             <button className="notification-div">
               <CiCircleQuestion style={{ width: "2rem", height: "2rem" }} />
             </button>
-            <button className="notification-div">
+            <button onClick={() => handlePageChange("Notification")} className="notification-div">
               <IoNotificationsOutline style={{ fontSize: "1rem" }} />
             </button>
             <div>
