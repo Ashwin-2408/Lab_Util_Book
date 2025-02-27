@@ -3,8 +3,10 @@ import CustomSelect from "./components/custom_select.jsx";
 import NavBar from "./components/navbar.jsx";
 import { FaPlus } from "react-icons/fa6";
 import Button from "@mui/material/Button";
+import CancelLab from "./components/CancelLab.jsx";
 import CustTimeLine from "./components/timeline.jsx";
 import NewSession from "./components/new_session.jsx";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Stats from "./components/stats_table.jsx";
@@ -29,7 +31,7 @@ function App() {
   }
 
   useEffect(() => {
-    if (customSelect !== "--All--") {
+    if (curLab !== "--All--") {
       axios
         .get(`http://127.0.0.1:8000/api/schedule/${curLab}/${curDate}`)
         .then((response) => setSchedule(response.data))
@@ -119,8 +121,10 @@ function App() {
   return (
     <>
       <NavBar setPageState={setPageState} />
+
       <Routes>
         <Route path="/book" element={<NewSession />} />
+        <Route path="/cancel-lab" element={<CancelLab />} />
       </Routes>
 
       {pageState === "Schedule" && (
@@ -151,8 +155,12 @@ function App() {
               </nav>
               <div className="canvas-comp">
                 <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-                  <div style={{ padding: "0px 6px", fontWeight: "600" }}>Calendar</div>
-                  <CustomSelect labs={customSelect} setCurLab={setCurLab} />
+                  <div style={{ padding: "0px 6px", fontWeight: "600" }}>
+                    Calendar
+                  </div>
+                  <div>
+                    <CustomSelect labs={customSelect} setCurLab={setCurLab} />
+                  </div>
                 </div>
                 <div style={{ margin: "0rem 1rem" }}>
                   <Calendar setCurDate={setCurDate} />

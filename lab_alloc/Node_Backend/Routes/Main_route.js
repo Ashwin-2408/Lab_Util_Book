@@ -1,11 +1,8 @@
-import express from 'express';
+import { Router } from "express";
+import express from "express";
+import Resource_Router from "./Resource_Routes.js";
 
-const Router = express.Router();
+const router = express.Router();
+router.use("/resource", Resource_Router);
 
-// Define routes
-Router.get('/', (req, res) => {
-    res.send('Hello from Main_route.js!');
-});
-
-// Named export
 export { Router };

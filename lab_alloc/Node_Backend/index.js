@@ -1,4 +1,5 @@
-// filepath: /c:/Users/Abishek/Lab_Util_Book/lab_alloc/Node_Backend/index.js
+import "dotenv/config";
+
 import express from "express";
 import cors from "cors";
 import { Router } from "./Routes/Main_route.js";
@@ -7,6 +8,12 @@ import Notification from "./Schema/Notification.js";
 import notificationsRouter from "./Routes/notification_route.js";
 import cron from "node-cron";
 import { Op } from "sequelize";
+import Allocation from "./Schema/Allocation.js";
+import User from "./Schema/User.js";
+import Resource from "./Schema/Resource.js";
+import ResourceRequest from "./Schema/ResourceRequest.js";
+import Lab from "./Schema/Lab.js";
+import setupAssociations from "./Schema/Associations.js";
 
 const app = express();
 app.use(cors());
@@ -18,6 +25,15 @@ app.use("/", notificationsRouter);
 sequelize.sync({ alter: true }).then(() => {
   console.log("Database & tables synced!");
 });
+
+sequelize
+  .sync({ force: false })
+  .then(() => {
+    console.log("All tables have been initialized successfully.");
+  })
+  .catch((err) => {
+    console.error("Error initializing tables:", err);
+  });
 
 // Schedule job to check for upcoming sessions every minute
 cron.schedule("* * * * *", async () => {

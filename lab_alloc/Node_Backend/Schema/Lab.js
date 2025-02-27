@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import sequelize from "./db_connection.js";
+import Resource from "./Resource.js";
 
 const Lab = sequelize.define(
   "Lab",
@@ -31,5 +32,6 @@ const Lab = sequelize.define(
     timestamps: true,
   }
 );
+
 
 export default Lab;
