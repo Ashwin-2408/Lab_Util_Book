@@ -60,8 +60,8 @@ export default function NavBar(props) {
                 style={{ fontSize: "1.5rem" }}
               />
             </button>
-            <button className="notification-div">
-              <IoNotificationsOutline className="icon" />
+            <button onClick={() => handlePageChange("Notification")} className="notification-div">
+              <IoNotificationsOutline style={{ fontSize: "1rem" }} />
             </button>
             <div>
               <Menu />
