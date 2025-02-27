@@ -598,61 +598,6 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   background-color: white;
 }
 
-.approve-outer-div {
-  display: flex;
-  gap: 0.5rem;
-  flex-direction: column;
-  font-family: "Roboto";
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  border-radius: 0.5rem;
-  padding: 0.5rem 1rem;
-  width: fit-content;
-}
-
-.approve-date {
-  font-family: "Roboto";
-  font-size: 0.8rem;
-  color: #818493;
-}
-
-.approve-logo {
-  color: white;
-  width: 1rem;
-  height: 1rem;
-  border-radius: 1rem;
-  background-color: #2ea3f4;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.2rem;
-}
-
-.approve-content-div {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-}
-
-.approve-sess-outer {
-  display: flex;
-  font-family: "Roboto";
-  font-size: 0.8rem;
-  gap: 1rem;
-  font-weight: 500;
-  color: rgb(84, 77, 77);
-  margin: 1rem;
-}
-
-.approve-div:hover {
-  cursor: pointer;
-}
-
-.approve-canvas {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
 .show-checkin-dia {
   display: flex;
   justify-content: center;
@@ -701,4 +646,167 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   font-weight: 500;
   color: white;
   text-align: center;
+}
+
+.tools {
+  display: flex;
+  color: gray;
+  gap: 1rem;
+  margin: 0.25rem 0rem;
+}
+
+.tool-label {
+  color: rgb(93, 93, 93);
+  font-family: "Roboto";
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.tool-div {
+  display: flex;
+  gap: 0.25rem;
+  border: none;
+  outline: none;
+  padding: 0.5rem;
+  background-color: white;
+  transition: 0.4s ease;
+}
+
+.tool-div:hover {
+  cursor: pointer;
+  border-radius: 5px;
+  background-color: #e2e2e2;
+}
+
+.approve-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.header-div {
+  display: flex;
+}
+
+.header-div-cell {
+  display: flex;
+  font-family: "Roboto";
+  font-size: 0.85rem;
+  font-weight: 500;
+  gap: 0.2rem;
+  color: rgb(93, 93, 93);
+  background-color: #efefef;
+  width: 10rem;
+  height: 2rem;
+  align-items: center;
+  border: 1px solid #dbdbdb;
+  padding-left: 0.5rem;
+}
+
+.body-div {
+  display: flex;
+  flex-direction: column;
+}
+
+.body-div-outer {
+  display: flex;
+}
+
+.body-div-cell {
+  display: flex;
+  font-family: "Roboto";
+  font-size: 0.85rem;
+  font-weight: 500;
+  gap: 0.2rem;
+  width: 10rem;
+  height: 2rem;
+  align-items: center;
+  border: 1px solid #dbdbdb;
+  padding-left: 0.5rem;
+}
+
+.body-status-div {
+  display: flex;
+  align-items: center;
+}
+
+.body-status-div:hover {
+  cursor: pointer;
+}
+
+.approve-popup-outer {
+  display: flex;
+  flex-direction: column;
+  font-family: "Roboto";
+  font-size: 0.85rem;
+  background-color: rgb(32, 32, 32);
+  color: white;
+  width: fit-content;
+  padding: 0.5rem 1rem;
+  justify-content: center;
+  border-radius: 0.5rem;
+  margin: 1rem;
+}
+
+.popup-content-sec {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.approve-popup-content {
+  display: flex;
+  gap: 1rem;
+  padding: 0.3rem 0.5rem;
+  height: 1.5rem;
+  align-items: center;
+  width: fit-content;
+  border-radius: 0.2rem 0.2rem;
+  background-color: rgb(61, 61, 61);
+  flex: 1;
+}
+
+.popup-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  padding: 0.2rem;
+}
+
+.approve-container {
+  transition: filter 0.3s ease;
+}
+
+.popup-close-btn {
+  display: flex;
+  justify-content: right;
+  padding: 0.25rem;
+  font-size: 1rem;
+}
+
+.popup-close-btn:hover {
+  cursor: pointer;
+}
+
+.assignee-icon {
+  color: white;
+  background-color: rgb(107, 107, 255);
+  width: 1rem;
+  height: 1rem;
+  padding: 0.2rem;
+  display: flex;
+  border-radius: 1rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.pending {
+  color: rgb(79, 79, 255);
+}
+
+.reject {
+  color: rgb(255, 41, 41);
+}
+
+.accept {
+  color: #00f27f;
 }
