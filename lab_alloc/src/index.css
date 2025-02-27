@@ -46,6 +46,23 @@ nav {
   cursor: pointer;
 }
 
+/* Make Manage Labs Button Look Like Other Navbar Buttons */
+.dropdown-btn {
+  background-color: transparent;
+  color: black;
+  border: none;
+  padding: 10px 15px;
+  font-size: 0.8rem; /* Match other navbar buttons */
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+/* Remove Extra Hover Effects */
+.dropdown-btn:hover {
+  background-color: transparent;
+  color: black;
+  transform: none;
+  
 .logo-container {
   display: flex;
   gap: 0.5rem;
@@ -56,9 +73,8 @@ nav {
   display: inline-block;
 }
 
+/* Dropdown Menu Styling (Keeps dropdown functionality) */
 .dropdown-menu {
-  display: flex;
-  flex-direction: column;
   position: absolute;
   background-color: white;
   border: 1px solid #ccc;
@@ -68,7 +84,7 @@ nav {
   z-index: 10;
 }
 
-.dropdown-item {
+.dropdown-menu button {
   padding: 10px;
   border: none;
   background: none;
@@ -78,51 +94,93 @@ nav {
   color: black;
 }
 
-.dropdown-item:hover {
+.dropdown-menu button:hover {
   background-color: #f0f0f0;
   cursor: pointer;
 }
 
+
+
+/* General Container Styling */
 .cancel-lab-container {
   padding: 2rem;
   font-family: "Roboto", sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
+/* Policy Section */
 .policy-container {
-  background: #f8f9fa;
+  background: #fff3cd;
   padding: 15px;
   border-radius: 8px;
   margin-bottom: 20px;
-  border-left: 5px solid #dc3545;
+  border-left: 5px solid #ffc107;
 }
 
-.policy-container h2 {
+.policy-title {
   margin: 0 0 10px;
-  color: #dc3545;
+  color: #856404;
 }
 
-.policy-container ul {
+.policy-list {
   list-style-type: none;
   padding: 0;
 }
 
-.policy-container li {
+.policy-item {
   padding: 5px;
   font-size: 0.9rem;
 }
 
+.close-policy-btn {
+  background-color: #ffc107;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.close-policy-btn:hover {
+  background-color: #e0a800;
+}
+
+/* Review Policy Button */
+.review-policy-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 12px 18px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  display: inline-block;
+}
+
+.review-policy-btn:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+/* Search Bar */
 .search-container {
   margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
 }
 
 .search-bar {
-  width: 100%;
+  width: 90%;
+  max-width: 600px;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 1rem;
 }
 
+/* Lab List */
 .lab-list {
   display: flex;
   flex-direction: column;
@@ -137,22 +195,31 @@ nav {
   justify-content: space-between;
   align-items: center;
   border: 1px solid #ddd;
+  transition: box-shadow 0.3s ease-in-out;
 }
 
+.lab-item:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Cancel Button */
 .cancel-btn {
-  padding: 5px 10px;
   background-color: #dc3545;
   color: white;
+  padding: 8px 12px;
+  font-size: 0.9rem;
   border: none;
-  cursor: pointer;
   border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .cancel-btn:hover {
-  background-color: #c82333;
+  background-color: #b02a37;
+  transform: scale(1.05);
 }
 
-/* 🔴 Confirmation Modal */
+/* Confirmation Modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -170,6 +237,12 @@ nav {
   padding: 20px;
   border-radius: 10px;
   text-align: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.modal-title {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
 }
 
 .warning {
@@ -177,23 +250,38 @@ nav {
   font-weight: bold;
 }
 
+/* Modal Buttons */
+.confirm-btn {
+  background: #28a745;
+  color: white;
+  padding: 10px 15px;
+
 .confirm-btn,
 .close-btn {
   padding: 10px;
   margin: 5px;
   border: none;
   cursor: pointer;
+  border-radius: 5px;
 }
 
-.confirm-btn {
-  background: #dc3545;
-  color: white;
+.confirm-btn:hover {
+  background: #218838;
 }
 
 .close-btn {
   background: #6c757d;
   color: white;
+  padding: 10px 15px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
 }
+
+.close-btn:hover {
+  background: #545b62;
+}
+
 
 .user-mag-div {
   display: flex;

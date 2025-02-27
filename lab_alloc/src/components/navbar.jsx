@@ -34,7 +34,7 @@ export default function NavBar(props) {
             onMouseEnter={() => setShowDropdown(true)}
             onMouseLeave={() => setShowDropdown(false)}
           >
-            <button className="dropdown-btn">Manage Labs ▼</button>
+            <button className="dropdown-btn">Manage Labs </button>
             {showDropdown && (
               <div className="dropdown-menu">
                 <button onClick={() => handlePageChange("Renew Lab")}>
