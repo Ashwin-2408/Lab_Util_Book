@@ -19,3 +19,4 @@ router.get("/labs", async (req, res) => {
 });
 
 export default router;
+export { Router };
