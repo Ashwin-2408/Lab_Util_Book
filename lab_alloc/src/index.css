@@ -44,6 +44,11 @@ nav {
   cursor: pointer;
 }
 
+.logo-container {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
 .dropdown-container {
   position: relative;
   display: inline-block;
@@ -170,7 +175,8 @@ nav {
   font-weight: bold;
 }
 
-.confirm-btn, .close-btn {
+.confirm-btn,
+.close-btn {
   padding: 10px;
   margin: 5px;
   border: none;

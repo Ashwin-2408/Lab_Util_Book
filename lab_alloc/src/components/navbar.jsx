@@ -24,7 +24,9 @@ export default function NavBar(props) {
 
         <div className="nav-right-div">
           <button onClick={() => handlePageChange("Schedule")}>Schedule</button>
-          <button onClick={() => handlePageChange("Dashboard")}>Dashboard</button>
+          <button onClick={() => handlePageChange("Dashboard")}>
+            Dashboard
+          </button>
 
           {/* Manage Labs Dropdown */}
           <div
@@ -35,10 +37,16 @@ export default function NavBar(props) {
             <button className="dropdown-btn">Manage Labs ▼</button>
             {showDropdown && (
               <div className="dropdown-menu">
-                <button onClick={() => handlePageChange("Renew Lab")}>Renew Lab</button>
-
-                <button onClick={() => handlePageChange("Lab Bookings")}>Lab Bookings</button>
-                <button onClick={() => navigate("/cancel-lab")}>Cancel Lab</button> {/* Navigate to cancel lab page */}
+                <button onClick={() => handlePageChange("Renew Lab")}>
+                  Renew Lab
+                </button>
+                <button onClick={() => handlePageChange("Lab Bookings")}>
+                  Lab Bookings
+                </button>
+                <button onClick={() => navigate("/cancel-lab")}>
+                  Cancel Lab
+                </button>{" "}
+                {/* Navigate to cancel lab page */}
               </div>
             )}
           </div>
@@ -47,7 +55,10 @@ export default function NavBar(props) {
 
           <div className="user-mag-div">
             <button className="notification-div">
-              <CiCircleQuestion className="icon" />
+              <CiCircleQuestion
+                className="icon"
+                style={{ fontSize: "1.5rem" }}
+              />
             </button>
             <button className="notification-div">
               <IoNotificationsOutline className="icon" />
