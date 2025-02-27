@@ -1,4 +1,8 @@
 import { Router } from "express";
-const router = Router();
+import express from "express";
+import Resource_Router from "./Resource_Routes.js";
 
-export { router };
+const router = express.Router();
+router.use("/resource", Resource_Router);
+
+export default  router ;

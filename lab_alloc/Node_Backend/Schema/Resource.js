@@ -32,8 +32,4 @@ const Resource = sequelize.define(
   }
 );
 
-// Define relationships
-Lab.hasMany(Resource, { foreignKey: "lab_id", onDelete: "CASCADE" });
-Resource.belongsTo(Lab, { foreignKey: "lab_id" });
-
 export default Resource;
