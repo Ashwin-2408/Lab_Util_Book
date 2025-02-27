@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import { sequelize } from "./db_connection.js";
+import sequelize from "./db_connection.js";
 
 const Notification = sequelize.define("Notification", {
   id: {
@@ -15,9 +15,9 @@ const Notification = sequelize.define("Notification", {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
-  sessionStartTime: {  
+  sessionStartTime: {
     type: DataTypes.DATE,
-    allowNull: false,  
+    allowNull: false,
   },
   createdAt: {
     type: DataTypes.DATE,

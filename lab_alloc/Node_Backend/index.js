@@ -2,10 +2,10 @@ import "dotenv/config";
 
 import express from "express";
 import cors from "cors";
-import { Router } from "./Routes/Main_route.js";
-import { sequelize } from "./Schema/db_connection.js";
+import Router from "./Routes/Main_route.js";
+import sequelize from "./Schema/db_connection.js";
 import Notification from "./Schema/Notification.js";
-import notificationsRouter from "./Routes/notification_route.js";
+// import notificationsRouter from "./Routes/notification_route.js";
 import cron from "node-cron";
 import { Op } from "sequelize";
 import Allocation from "./Schema/Allocation.js";
@@ -19,7 +19,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(Router);
-app.use("/", notificationsRouter);
+// app.use("/", notificationsRouter);
 
 // Sync Database
 sequelize.sync({ alter: true }).then(() => {
