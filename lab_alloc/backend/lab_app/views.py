@@ -8,6 +8,9 @@ from datetime import datetime
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from datetime import date, datetime, timedelta
+import qrcode
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 
 RESET_DATE = '2025-02-13'
 def calculate_day():
@@ -272,3 +275,22 @@ class ScheduleRequestListCreateAPIView(generics.ListCreateAPIView):
         return super().perform_create(serializer)
 
 schedule_request_create_list_view = ScheduleRequestListCreateAPIView.as_view()
+
+@csrf_exempt
+def handleQR(request, *args, **kwargs):
+    user_name = str(kwargs.get('user_name'))
+    cur_date = datetime.now().date()
+    cur_time = datetime.now().time()
+
+    record = Schedules.objects.filter(
+        username=user_name,
+        schedule_date=cur_date,
+        schedule_to__lt=cur_time
+    ).first()
+    
+    if record:
+        data = ScheduleSerializer(record).data
+        return JsonResponse(data, status=200, safe=False)
+    else:
+        return JsonResponse({"Message": "No Schedule Found"}, status=404)
+    

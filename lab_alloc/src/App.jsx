@@ -24,7 +24,7 @@ function App() {
   }
 
   useEffect(() => {
-    if (customSelect != "--All--") {
+    if (curLab != "--All--") {
       axios
         .get(`http://127.0.0.1:8000/api/schedule/${curLab}/${curDate}`)
         .then((response) => {
