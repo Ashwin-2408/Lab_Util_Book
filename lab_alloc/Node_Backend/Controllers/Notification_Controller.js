@@ -1,6 +1,5 @@
 import Notification from "../Schema/Notification.js";
 
-// Fetch all notifications
 export const getNotifications = async (req, res) => {
   try {
     const notifications = await Notification.findAll({
@@ -12,7 +11,6 @@ export const getNotifications = async (req, res) => {
   }
 };
 
-// Add a new notification
 export const createNotification = async (req, res) => {
   try {
     const { message } = req.body;
@@ -27,7 +25,6 @@ export const createNotification = async (req, res) => {
   }
 };
 
-// Mark a notification as read
 export const markAsRead = async (req, res) => {
   try {
     const { id } = req.params;
@@ -46,8 +43,6 @@ export const markAsRead = async (req, res) => {
   }
 };
 
-
-// Delete a notification
 export const deleteNotification = async (req, res) => {
   try {
     const { id } = req.params;
@@ -60,5 +55,18 @@ export const deleteNotification = async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ error: "Failed to delete notification" });
+  }
+};
+
+export const deleteAllNotifications = async (req, res) => {
+  try {
+    await Notification.destroy({
+      where: {}, 
+      truncate: true 
+    });
+    res.status(200).json({ message: "All notifications deleted successfully" });
+  } catch (error) {
+    console.error("Failed to delete all notifications:", error);
+    res.status(500).json({ error: "Failed to delete all notifications" });
   }
 };

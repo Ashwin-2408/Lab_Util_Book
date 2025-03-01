@@ -3,14 +3,12 @@ import CustomSelect from "./components/custom_select.jsx";
 import NavBar from "./components/navbar.jsx";
 import { FaPlus } from "react-icons/fa6";
 import Button from "@mui/material/Button";
-import CancelLab from "./components/CancelLab.jsx";
 import CustTimeLine from "./components/timeline.jsx";
 import NewSession from "./components/new_session.jsx";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Stats from "./components/stats_table.jsx";
 import axios from "axios";
-import labGif from "./assets/lab_gif1.gif";
 import labImg1 from "./assets/lab_img1.jpg";
 import labImg2 from "./assets/lab_img2.jpg";
 
@@ -49,8 +47,8 @@ function App() {
 
   useEffect(() => {
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 60000); // Fetch notifications every minute
-    return () => clearInterval(interval); // Cleanup interval on component unmount
+    const interval = setInterval(fetchNotifications, 60000); 
+    return () => clearInterval(interval); 
   }, []);
 
   const fetchNotifications = () => {
@@ -64,7 +62,7 @@ function App() {
   };
 
   const checkForAlerts = (notifications) => {
-    const now = new Date();
+    const now = new Date();2
     const fiveMinutesLater = new Date(now.getTime() + 5 * 60000);
     const upcomingAlerts = notifications.filter(
       (notif) =>
@@ -74,7 +72,7 @@ function App() {
     );
     if (upcomingAlerts.length > 0) {
       upcomingAlerts.forEach((alert) => {
-        window.alert(`Upcoming session: ${alert.message}`);
+        window.alert(`There is a upcoming lab session for you .`);
         markAsRead(alert.id);
       });
     }
@@ -103,6 +101,18 @@ function App() {
     }
   };
 
+  const deleteAllNotifications = async () => {
+    const confirmed = window.confirm("Are you sure you want to delete all notifications?");
+    if (confirmed) {
+      try {
+        await axios.delete(`http://127.0.0.1:3001/notifications`);
+        setNotifications([]);
+      } catch (error) {
+        console.error("Error deleting all notifications:", error);
+      }
+    }
+  };
+
   const handleFilterChange = (event) => {
     setFilterCategory(event.target.value);
   };
@@ -120,10 +130,8 @@ function App() {
   return (
     <>
       <NavBar setPageState={setPageState} />
-
       <Routes>
         <Route path="/book" element={<NewSession />} />
-        <Route path="/cancel-lab" element={<CancelLab />} />
       </Routes>
 
       {pageState === "Schedule" && (
@@ -154,12 +162,8 @@ function App() {
               </nav>
               <div className="canvas-comp">
                 <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-                  <div style={{ padding: "0px 6px", fontWeight: "600" }}>
-                    Calendar
-                  </div>
-                  <div>
-                    <CustomSelect labs={customSelect} setCurLab={setCurLab} />
-                  </div>
+                  <div style={{ padding: "0px 6px", fontWeight: "600" }}>Calendar</div>
+                  <CustomSelect labs={customSelect} setCurLab={setCurLab} />
                 </div>
                 <div style={{ margin: "0rem 1rem" }}>
                   <Calendar setCurDate={setCurDate} />
@@ -199,7 +203,7 @@ function App() {
              padding: "1rem",
              width: "50%",
              maxWidth: "600px",
-             fontFamily: 'Roboto, sans-serif', // Apply a common font
+             fontFamily: 'Roboto, sans-serif', 
          }}>
              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem" }}>
                  <h2 style={{ fontSize: "1.5rem", fontWeight: "bold", color: "#333", margin: 0 }}>Notifications</h2>
@@ -226,6 +230,16 @@ function App() {
                          <option value="Others">Others</option>
                      </select>
                  </div>
+                 <Button
+                   variant="contained"
+                   style={{
+                     backgroundColor: "#d32f2f",
+                     color: "#fff",
+                   }}
+                   onClick={deleteAllNotifications}
+                 >
+                   Delete All
+                 </Button>
              </div>
 
              <div className="notification-list">
@@ -239,25 +253,25 @@ function App() {
                                  border: "1px solid #eee",
                                  boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
                                  borderRadius: "5px",
-                                 padding: "1rem", // Increased padding
-                                 marginBottom: "0.75rem", // Increased margin
+                                 padding: "1rem", 
+                                 marginBottom: "0.75rem", 
                                  display: "flex",
                                  alignItems: "center",
                                  cursor: "pointer",
-                                 width: "100%", // Ensure full width
-                                 justifyContent: "space-between", // Added to distribute space
+                                 width: "100%", 
+                                 justifyContent: "space-between", 
                              }}
                          >
-                             <div style={{ display: 'flex', alignItems: 'center' }}> {/* Container for image and text */}
+                             <div style={{ display: 'flex', alignItems: 'center' }}> 
                                  <img
                                      src={index % 2 === 0 ? labImg1 : labImg2}
                                      alt="Notification"
                                      style={{
-                                         width: "45px", // Increased image size
+                                         width: "45px", 
                                          height: "45px",
                                          borderRadius: "50%",
-                                         marginRight: "1rem", // Increased margin
-                                         objectFit: 'cover', // maintain aspect ratio
+                                         marginRight: "1rem", 
+                                         objectFit: 'cover', 
                                      }}
                                  />
                                  <div>

@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function NavBar(props) {
   const [showDropdown, setShowDropdown] = useState(false);
-  const navigate = useNavigate(); // For navigation
+  const navigate = useNavigate(); 
 
   function handlePageChange(page) {
     props.setPageState((prevState) => page);
@@ -26,7 +26,6 @@ export default function NavBar(props) {
           <button onClick={() => handlePageChange("Schedule")}>Schedule</button>
           <button onClick={() => handlePageChange("Dashboard")}>Dashboard</button>
 
-          {/* Manage Labs Dropdown */}
           <div
             className="dropdown-container"
             onMouseEnter={() => setShowDropdown(true)}
@@ -38,7 +37,7 @@ export default function NavBar(props) {
                 <button onClick={() => handlePageChange("Renew Lab")}>Renew Lab</button>
 
                 <button onClick={() => handlePageChange("Lab Bookings")}>Lab Bookings</button>
-                <button onClick={() => navigate("/cancel-lab")}>Cancel Lab</button> {/* Navigate to cancel lab page */}
+                <button onClick={() => navigate("/cancel-lab")}>Cancel Lab</button> 
               </div>
             )}
           </div>

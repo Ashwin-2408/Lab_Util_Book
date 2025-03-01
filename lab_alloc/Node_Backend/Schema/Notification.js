@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import { sequelize } from "./db_connection.js";
+import sequelize  from "./db_connection.js";
 
 const Notification = sequelize.define("Notification", {
   id: {
