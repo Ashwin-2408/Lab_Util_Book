@@ -11,9 +11,10 @@ import Stats from "./components/stats_table.jsx";
 import axios from "axios";
 import labImg1 from "./assets/lab_img1.jpg";
 import labImg2 from "./assets/lab_img2.jpg";
+import ApproveSession from "./components/approve_sess.jsx";
 
 function App() {
-  const [pageState, setPageState] = useState("Schedule");
+  const [pageState, setPageState] = useState("LabAlloc");
   const [schedule, setSchedule] = useState([]);
   const currentDate = new Date();
   const [curDate, setCurDate] = useState(currentDate);
@@ -22,9 +23,14 @@ function App() {
   const [notifications, setNotifications] = useState([]);
   const navigate = useNavigate();
   const [filterCategory, setFilterCategory] = useState("All");
+  const [curDashBoard, setDashBoard] = useState("overview");
 
   function handleNewSession() {
     navigate("/book");
+  }
+
+  function handleChangeDashboard(value) {
+    setDashBoard(value);
   }
 
   useEffect(() => {
@@ -138,7 +144,7 @@ function App() {
         <Route path="/book" element={<NewSession />} />
       </Routes>
 
-      {pageState === "Schedule" && (
+      {pageState === "LabAlloc" && (
         <div>
           <Button
             variant="contained"
@@ -146,12 +152,16 @@ function App() {
               gap: "0.5rem",
               marginLeft: "2.3rem",
               marginTop: "1rem",
-              backgroundColor: "#1976d2",
+              padding: "0.5rem 1rem",
+              backgroundColor: "black",
               color: "#fff",
+              fontFamily: "Roboto",
+              fontSize: "0.75rem",
+              textTransform: "none",
             }}
             onClick={handleNewSession}
           >
-            <FaPlus /> New
+            Book a Lab
           </Button>
           <div className="canvas">
             <div className="canvas-left-div">
@@ -159,10 +169,18 @@ function App() {
                 Lab Utilization
               </h2>
               <nav className="lab-nav">
-                <button>Overview</button>
-                <button>Calendar</button>
-                <button>List</button>
-                <button>Heatmap</button>
+                <button onClick={() => handleChangeDashboard("overview")}>
+                  Overview
+                </button>
+                <button onClick={() => handleChangeDashboard("calendar")}>
+                  Timeline
+                </button>
+                <button onClick={() => handleChangeDashboard("labstats")}>
+                  Lab Stats
+                </button>
+                <button onClick={() => handleChangeDashboard("headmap")}>
+                  Heatmap
+                </button>
               </nav>
               <div className="canvas-comp">
                 <div
@@ -181,29 +199,40 @@ function App() {
               </div>
             </div>
             <div className="canvas-right-div">
-              <h2>Details</h2>
-              {schedule && <CustTimeLine data={schedule} />}
+              {curDashBoard === "calendar" && (
+                <>
+                  <h2>Calendar</h2>
+                  {schedule && <CustTimeLine data={schedule} />}
+                </>
+              )}
+              {curDashBoard === "notdecided" && (
+                <>
+                  <div
+                    style={{
+                      position: "relative",
+                      display: "flex",
+                      flexDirection: "column",
+                      flex: "wrap",
+                      gap: "1rem",
+                      marginTop: "1rem",
+                      marginBottom: "2rem",
+                    }}
+                  >
+                    <h2
+                      style={{
+                        fontFamily: "Roboto",
+                        padding: "0rem",
+                        margin: "0rem",
+                      }}
+                    >
+                      Lab Statistics
+                    </h2>
+                    <Stats labs={customSelect} />
+                  </div>
+                </>
+              )}
             </div>
           </div>
-        </div>
-      )}
-
-      {pageState === "Dashboard" && (
-        <div
-          style={{
-            position: "relative",
-            marginLeft: "2rem",
-            display: "flex",
-            flexDirection: "column",
-            gap: "1rem",
-            marginTop: "2rem",
-            marginBottom: "2rem",
-          }}
-        >
-          <h2 style={{ fontFamily: "Roboto", padding: "0rem", margin: "0rem" }}>
-            Lab Statistics
-          </h2>
-          <Stats labs={customSelect} />
         </div>
       )}
 
@@ -309,6 +338,7 @@ function App() {
              </div>
          </div>
       )}
+      {pageState === "Approve" && <ApproveSession />}
     </>
   );
 }
