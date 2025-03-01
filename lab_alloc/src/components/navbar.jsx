@@ -50,7 +50,7 @@ export default function NavBar(props) {
               </div>
             )}
           </div>
-
+          <button onClick={() => handlePageChange("Approve")}>Approve</button>
           <button onClick={() => handlePageChange("Members")}>Members</button>
 
           <div className="user-mag-div">
@@ -60,7 +60,10 @@ export default function NavBar(props) {
                 style={{ fontSize: "1.5rem" }}
               />
             </button>
-            <button onClick={() => handlePageChange("Notification")} className="notification-div">
+            <button
+              onClick={() => handlePageChange("Notification")}
+              className="notification-div"
+            >
               <IoNotificationsOutline style={{ fontSize: "1rem" }} />
             </button>
             <div>

@@ -8,22 +8,19 @@ import ResourceAllocationInterface from "./components/Resource_Allocation_Interf
 
 import Scanner from "./components/scanner.jsx";
 import CancelLab from "./components/CancelLab.jsx";
-import Approve from "./components/approve_sess.jsx";
-import ApprovePopUp from "./components/approve_popup.jsx";
 function MainApp() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/book" element={<NewSession />} />
-        <Route path="/temp" element={<ApproveSession />} />
+        <Route path="/approve" element={<ApproveSession />} />
         <Route
           path="/resource"
           element={<ResourceAllocationInterface></ResourceAllocationInterface>}
         />
         <Route path="/scan" element={<Scanner />} />
         <Route path="/cancel-lab" element={<CancelLab />} />
-        <Route path="/temp" element={<Approve />} />
         <Route path="/admin" element={<AdminInterface></AdminInterface>} />
       </Routes>
     </Router>

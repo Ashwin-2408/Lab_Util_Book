@@ -10,9 +10,9 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Stats from "./components/stats_table.jsx";
 import axios from "axios";
-import labGif from "./assets/lab_gif1.gif";
 import labImg1 from "./assets/lab_img1.jpg";
 import labImg2 from "./assets/lab_img2.jpg";
+import ApproveSession from "./components/approve_sess.jsx";
 
 function App() {
   const [pageState, setPageState] = useState("Schedule");
@@ -337,6 +337,7 @@ function App() {
           </div>
         </div>
       )}
+      {pageState === "Approve" && <ApproveSession />}
     </>
   );
 }

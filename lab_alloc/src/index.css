@@ -62,7 +62,8 @@ nav {
   background-color: transparent;
   color: black;
   transform: none;
-  
+}
+
 .logo-container {
   display: flex;
   gap: 0.5rem;
@@ -99,8 +100,6 @@ nav {
   cursor: pointer;
 }
 
-
-
 /* General Container Styling */
 .cancel-lab-container {
   padding: 2rem;
@@ -117,7 +116,6 @@ nav {
   margin-bottom: 20px;
   border-left: 5px solid #ffc107;
 }
-
 .policy-title {
   margin: 0 0 10px;
   color: #856404;
@@ -255,7 +253,7 @@ nav {
   background: #28a745;
   color: white;
   padding: 10px 15px;
-
+}
 .confirm-btn,
 .close-btn {
   padding: 10px;
@@ -281,7 +279,6 @@ nav {
 .close-btn:hover {
   background: #545b62;
 }
-
 
 .user-mag-div {
   display: flex;

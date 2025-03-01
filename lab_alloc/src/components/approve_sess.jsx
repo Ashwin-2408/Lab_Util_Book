@@ -10,6 +10,7 @@ import { SiNamebase } from "react-icons/si";
 import { useEffect, useState } from "react";
 import ApprovePopUp from "./approve_popup";
 import axios from "axios";
+import { PropaneSharp } from "@mui/icons-material";
 
 export default function Approve() {
   const [reqData, setReqData] = useState([]);
@@ -54,7 +55,7 @@ export default function Approve() {
   }
 
   return (
-    <div>
+    <div style={{ margin: "1rem" }}>
       <div className={`approve-container ${popUp ? "blurred" : ""}`}>
         <div className="tools">
           <button className="tool-div">
@@ -107,7 +108,9 @@ export default function Approve() {
               <div className="body-div-outer" key={index}>
                 <div className="body-div-cell">{elem.username}</div>
                 <div className="body-div-cell">
-                  <div className="assignee-icon">A</div>
+                  <div className="assignee-icon">
+                    {elem.approved_by.charAt(0).toUpperCase()}
+                  </div>
                   <div>{elem.approved_by ? elem.approved_by : "None"}</div>
                 </div>
                 <div

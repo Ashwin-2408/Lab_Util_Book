@@ -288,6 +288,12 @@ class ScheduleRequestUpdateView(APIView):
 
 schedule_request_update_view = ScheduleRequestUpdateView.as_view()
 
+class AdminListAPIView(generics.ListAPIView):
+    queryset = Admin.objects.all()
+    serializer_class = AdminSerializer
+
+admin_list_view = AdminListAPIView.as_view()
+
 @csrf_exempt
 def handleQR(request, user_name):
     cur_date = datetime.now().date()
@@ -305,4 +311,3 @@ def handleQR(request, user_name):
         return JsonResponse(data, status=200, safe=False)
     else:
         return JsonResponse({"Message": "No Schedule Found"}, status=404)
-
