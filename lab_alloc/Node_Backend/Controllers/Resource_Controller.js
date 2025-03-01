@@ -1,7 +1,7 @@
 import { Op } from "sequelize";
 import Resource from "../Schema/Resource.js";
 import Lab from "../Schema/Lab.js";
-
+// ashdf
 export const getAvailableResources = async (req, res) => {
   try {
     const { labName, resourceType } = req.body; // ✅ Read from request body

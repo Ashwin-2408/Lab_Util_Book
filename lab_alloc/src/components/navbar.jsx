@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function NavBar(props) {
   const [showDropdown, setShowDropdown] = useState(false);
-  const navigate = useNavigate(); // For navigation
+  const navigate = useNavigate(); 
 
   function handlePageChange(page) {
     props.setPageState((prevState) => page);
@@ -28,7 +28,6 @@ export default function NavBar(props) {
             Dashboard
           </button>
 
-          {/* Manage Labs Dropdown */}
           <div
             className="dropdown-container"
             onMouseEnter={() => setShowDropdown(true)}

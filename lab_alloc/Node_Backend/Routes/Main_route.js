@@ -1,6 +1,6 @@
 import { Router } from "express";
 import Resource_Router from "./Resource_Routes.js";
-import Lab from "../Schema/Lab.js"; // Ensure correct path
+import Lab from "../Schema/Lab.js"; 
 
 const router = Router();
 
