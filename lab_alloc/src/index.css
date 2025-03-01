@@ -62,6 +62,7 @@ nav {
   background-color: transparent;
   color: black;
   transform: none;
+}
   
 .logo-container {
   display: flex;
@@ -255,6 +256,7 @@ nav {
   background: #28a745;
   color: white;
   padding: 10px 15px;
+}
 
 .confirm-btn,
 .close-btn {
