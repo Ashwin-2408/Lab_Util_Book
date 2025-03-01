@@ -20,32 +20,48 @@ nav {
 }
 
 .nav-inner-div {
-  margin-left: 1rem;
+  margin: 0rem 1rem;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
 }
 
-.nav-right-div {
+.nav-mid-div {
   display: flex;
   font-size: 0.8rem;
   gap: 1.2rem;
-  margin-right: 1rem;
+  margin: 1rem 0rem;
   align-items: center;
 }
 
-.nav-right-div button {
+.nav-mid-div button {
   text-decoration: none;
   color: black;
   border: none;
   background-color: transparent;
 }
 
-.nav-right-div button:hover {
+.nav-mid-div button:hover {
   cursor: pointer;
 }
 
+.nav-right-div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0rem 1rem;
+}
+
+.nav-bar-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-family: "Roboto";
+  letter-spacing: 0.5px;
+  font-weight: 500;
+  justify-content: center;
+}
 /* Make Manage Labs Button Look Like Other Navbar Buttons */
 .dropdown-btn {
   background-color: transparent;
@@ -62,12 +78,16 @@ nav {
   background-color: transparent;
   color: black;
   transform: none;
-  
+}
 .logo-container {
   display: flex;
-  gap: 0.5rem;
   align-items: center;
+  font-family: "Roboto";
+  font-weight: 500;
+  font-size: 1.1rem;
+  gap: 0.5rem;
 }
+
 .dropdown-container {
   position: relative;
   display: inline-block;
@@ -98,8 +118,6 @@ nav {
   background-color: #f0f0f0;
   cursor: pointer;
 }
-
-
 
 /* General Container Styling */
 .cancel-lab-container {
@@ -255,7 +273,7 @@ nav {
   background: #28a745;
   color: white;
   padding: 10px 15px;
-
+}
 .confirm-btn,
 .close-btn {
   padding: 10px;
@@ -281,7 +299,6 @@ nav {
 .close-btn:hover {
   background: #545b62;
 }
-
 
 .user-mag-div {
   display: flex;
@@ -524,10 +541,12 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   justify-content: space-between;
   width: 10rem;
 }
+
 .col-1 {
   display: flex;
   flex-direction: column;
 }
+
 .stats-table {
   margin: 1rem 0rem;
   display: flex;
@@ -537,6 +556,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 .stats-outer {
   position: relative;
 }
+
 .week-div {
   display: flex;
   align-items: center;
@@ -601,6 +621,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   justify-content: space-between;
   gap: 1rem;
 }
+
 .cur-lab-name {
   font-family: "Roboto";
   font-size: 0.7rem;

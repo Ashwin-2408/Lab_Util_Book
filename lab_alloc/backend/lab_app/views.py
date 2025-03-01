@@ -305,4 +305,3 @@ def handleQR(request, user_name):
         return JsonResponse(data, status=200, safe=False)
     else:
         return JsonResponse({"Message": "No Schedule Found"}, status=404)
-
