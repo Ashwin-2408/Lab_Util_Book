@@ -36,12 +36,6 @@ export default function NavBar(props) {
             <button className="dropdown-btn">Manage Labs </button>
             {showDropdown && (
               <div className="dropdown-menu">
-<<<<<<< HEAD
-                <button onClick={() => handlePageChange("Renew Lab")}>Renew Lab</button>
-
-                <button onClick={() => handlePageChange("Lab Bookings")}>Lab Bookings</button>
-                <button onClick={() => navigate("/cancel-lab")}>Cancel Lab</button> 
-=======
                 <button onClick={() => handlePageChange("Renew Lab")}>
                   Renew Lab
                 </button>
@@ -52,7 +46,6 @@ export default function NavBar(props) {
                   Cancel Lab
                 </button>{" "}
                 {/* Navigate to cancel lab page */}
->>>>>>> 0ee3c4fd9cea70a568112600cefe396ba441a624
               </div>
             )}
           </div>
