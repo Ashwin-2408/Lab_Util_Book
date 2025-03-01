@@ -66,13 +66,4 @@ class AdminSerializer(serializers.ModelSerializer):
 class ScheduleRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = ScheduleRequest
-        fields = [
-            'username',
-            'lab_id',
-            'schedule_date',
-            'schedule_from',
-            'schedule_to',
-            'status',
-            'approved_by',
-            'decision_date'
-        ]
+        fields = '__all__'

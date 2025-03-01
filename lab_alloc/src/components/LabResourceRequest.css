@@ -1,0 +1,75 @@
+/* LabResourceRequest.css */
+
+.container {
+    max-width: 672px; /* equivalent to max-w-2xl */
+    margin-left: auto;
+    margin-right: auto;
+    padding: 1.5rem; /* equivalent to p-6 */
+    background-color: white;
+    border-radius: 0.5rem; /* equivalent to rounded-lg */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* equivalent to shadow-md */
+  }
+  
+  .title {
+    font-size: 1.5rem; /* equivalent to text-2xl */
+    font-weight: 600; /* equivalent to font-semibold */
+    color: red; /* as specified in text-red */
+    margin-bottom: 1rem; /* equivalent to mb-4 */
+  }
+  
+  .search-controls {
+    display: flex;
+    gap: 1rem; /* equivalent to gap-4 */
+    margin-bottom: 1rem; /* equivalent to mb-4 */
+  }
+  
+  .input-field {
+    width: 100%;
+    padding: 0.5rem; /* equivalent to p-2 */
+    border: 1px solid #e5e7eb; /* default border color */
+    border-radius: 0.375rem; /* equivalent to rounded-md */
+  }
+  
+  .search-button {
+    background-color: #3b82f6; /* equivalent to bg-blue-500 */
+    color: white;
+    padding: 0.5rem 1rem; /* equivalent to px-4 py-2 */
+    border: none;
+    border-radius: 0.375rem; /* equivalent to rounded-md */
+    cursor: pointer;
+  }
+  
+  .search-button:hover {
+    background-color: #2563eb; /* slightly darker blue for hover state */
+  }
+  
+  .resource-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem; /* equivalent to space-y-2 */
+  }
+  
+  .resource-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem; /* equivalent to p-3 */
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem; /* equivalent to rounded-md */
+  }
+  
+  .request-button {
+    background-color: #22c55e; /* equivalent to bg-green-500 */
+    color: white;
+    padding: 0.25rem 0.75rem; /* equivalent to px-3 py-1 */
+    border: none;
+    border-radius: 0.375rem; /* equivalent to rounded-md */
+    cursor: pointer;
+  }
+  
+  .request-button:hover {
+    background-color: #16a34a; /* slightly darker green for hover state */
+  }

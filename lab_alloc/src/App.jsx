@@ -120,9 +120,13 @@ function App() {
   const filteredNotifications = notifications.filter((notif) => {
     if (filterCategory === "All") return true;
     if (filterCategory === "Booking") return notif.message.includes("booking");
-    if (filterCategory === "Availability") return notif.message.includes("available");
+    if (filterCategory === "Availability")
+      return notif.message.includes("available");
     if (filterCategory === "Others") {
-      return !notif.message.includes("booking") && !notif.message.includes("available");
+      return (
+        !notif.message.includes("booking") &&
+        !notif.message.includes("available")
+      );
     }
     return false;
   });
@@ -151,7 +155,7 @@ function App() {
           </Button>
           <div className="canvas">
             <div className="canvas-left-div">
-              <h2 style={{ fontFamily: "Roboto", padding: "0px 6px", color: "#fff" }}>
+              <h2 style={{ fontFamily: "Roboto", padding: "0px 6px" }}>
                 Lab Utilization
               </h2>
               <nav className="lab-nav">
@@ -161,9 +165,21 @@ function App() {
                 <button>Heatmap</button>
               </nav>
               <div className="canvas-comp">
+<<<<<<< HEAD
                 <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
                   <div style={{ padding: "0px 6px", fontWeight: "600" }}>Calendar</div>
                   <CustomSelect labs={customSelect} setCurLab={setCurLab} />
+=======
+                <div
+                  style={{ display: "flex", gap: "1rem", alignItems: "center" }}
+                >
+                  <div style={{ padding: "0px 6px", fontWeight: "600" }}>
+                    Calendar
+                  </div>
+                  <div>
+                    <CustomSelect labs={customSelect} setCurLab={setCurLab} />
+                  </div>
+>>>>>>> 0ee3c4fd9cea70a568112600cefe396ba441a624
                 </div>
                 <div style={{ margin: "0rem 1rem" }}>
                   <Calendar setCurDate={setCurDate} />
@@ -198,6 +214,7 @@ function App() {
       )}
 
       {pageState === "Notification" && (
+<<<<<<< HEAD
         <div style={{
              marginLeft: "2rem",
              padding: "1rem",
@@ -298,6 +315,144 @@ function App() {
                  )}
              </div>
          </div>
+=======
+        <div
+          style={{
+            marginLeft: "2rem",
+            padding: "1rem",
+            width: "50%",
+            maxWidth: "600px",
+            fontFamily: "Roboto, sans-serif", // Apply a common font
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: "1rem",
+            }}
+          >
+            <h2
+              style={{
+                fontSize: "1.5rem",
+                fontWeight: "bold",
+                color: "#333",
+                margin: 0,
+              }}
+            >
+              Notifications
+            </h2>
+            <div>
+              <label
+                htmlFor="notification-filter"
+                style={{
+                  marginRight: "0.5rem",
+                  fontSize: "0.9rem",
+                  color: "#666",
+                }}
+              >
+                Filter by:
+              </label>
+              <select
+                id="notification-filter"
+                value={filterCategory}
+                onChange={handleFilterChange}
+                style={{
+                  padding: "0.3rem 0.6rem",
+                  borderRadius: "5px",
+                  borderColor: "#ccc",
+                  fontSize: "0.9rem",
+                  cursor: "pointer",
+                  appearance: "none",
+                  background: `url('data:image/svg+xml;utf8,<svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 0.5rem center`,
+                  backgroundSize: "16px",
+                }}
+              >
+                <option value="All">All</option>
+                <option value="Booking">Booking Updates</option>
+                <option value="Availability">Availability Updates</option>
+                <option value="Others">Others</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="notification-list">
+            {filteredNotifications.length > 0 ? (
+              filteredNotifications.map((notif, index) => (
+                <div
+                  key={notif.id}
+                  className="notification-item"
+                  style={{
+                    backgroundColor: "#fff",
+                    border: "1px solid #eee",
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+                    borderRadius: "5px",
+                    padding: "1rem", // Increased padding
+                    marginBottom: "0.75rem", // Increased margin
+                    display: "flex",
+                    alignItems: "center",
+                    cursor: "pointer",
+                    width: "100%", // Ensure full width
+                    justifyContent: "space-between", // Added to distribute space
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    {" "}
+                    {/* Container for image and text */}
+                    <img
+                      src={index % 2 === 0 ? labImg1 : labImg2}
+                      alt="Notification"
+                      style={{
+                        width: "45px", // Increased image size
+                        height: "45px",
+                        borderRadius: "50%",
+                        marginRight: "1rem", // Increased margin
+                        objectFit: "cover", // maintain aspect ratio
+                      }}
+                    />
+                    <div>
+                      <div
+                        style={{
+                          fontSize: "1rem",
+                          fontWeight: "bold",
+                          color: "#444",
+                        }}
+                      >
+                        {notif.message}
+                      </div>
+                      <div style={{ fontSize: "0.8rem", color: "#777" }}>
+                        {new Date(notif.sessionStartTime).toLocaleString()}
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <button
+                      onClick={() => deleteNotification(notif.id)}
+                      style={{
+                        marginLeft: "0.5rem",
+                        cursor: "pointer",
+                        padding: "0.25rem 0.5rem",
+                        borderRadius: "4px",
+                        border: "1px solid #ccc",
+                        backgroundColor: "#fdd",
+                        color: "#900",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p style={{ fontSize: "0.9rem", color: "#777" }}>
+                No new notifications.
+              </p>
+            )}
+          </div>
+        </div>
+>>>>>>> 0ee3c4fd9cea70a568112600cefe396ba441a624
       )}
     </>
   );

@@ -15,9 +15,9 @@ const Notification = sequelize.define("Notification", {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
-  sessionStartTime: {  
+  sessionStartTime: {
     type: DataTypes.DATE,
-    allowNull: false,  
+    allowNull: false,
   },
   createdAt: {
     type: DataTypes.DATE,
