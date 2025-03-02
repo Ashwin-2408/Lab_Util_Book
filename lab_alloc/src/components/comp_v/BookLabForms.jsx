@@ -19,17 +19,39 @@ export default function BookLabForm() {
     return dateString;
   }
 
-  function handleDecision(acceptance, session_id) {
-    axios
-      .patch(`http://127.0.0.1:8000/api/schedule_req/${session_id}/`, {
-        status: acceptance,
-        approved_by: "admin1",
-      })
-      .then((response) => {
-        console.log(response.data);
-        setRefresh((prevState) => !prevState);
-      })
-      .catch((error) => console.log("Error while approval", error));
+  async function handleDecision(acceptance, session_id) {
+    try {
+      const response = await axios.patch(
+        `http://127.0.0.1:8000/api/schedule_req/${session_id}/`,
+        {
+          status: acceptance,
+          approved_by: "admin1",
+        }
+      );
+      console.log(response.data);
+      if (response.status === 200 && acceptance === "approved") {
+        try {
+          const createResponse = await axios.post(
+            "http://127.0.0.1:8000/api/schedule/create",
+            {
+              data: session_id,
+            }
+          );
+          console.log(createResponse.data);
+        } catch (error) {
+          console.error(
+            "Error while creating session:",
+            error.response?.data || error.message
+          );
+        }
+      }
+      setRefresh((prevState) => !prevState);
+    } catch (error) {
+      console.error(
+        "Error while approval:",
+        error.response?.data || error.message
+      );
+    }
   }
 
   useEffect(() => {
@@ -42,7 +64,7 @@ export default function BookLabForm() {
       .catch((error) =>
         console.log("Error while fetching Schedule_Request", error)
       );
-  }, []);
+  }, [refresh]);
 
   const [formData, setFormData] = useState({
     lab_name: "",
@@ -80,7 +102,7 @@ export default function BookLabForm() {
     data.append("schedule_to", formData.schedule_to);
 
     const response = await axios.post(
-      "http://127.0.0.1:8000/api/schedule/create",
+      "http://127.0.0.1:8000/api/schedule_req/create",
       data
     );
     console.log(response.data);

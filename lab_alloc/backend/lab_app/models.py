@@ -23,7 +23,7 @@ class Admin(models.Model):
 class Schedules(models.Model):
     id = models.AutoField(primary_key=True)
     username = models.ForeignKey(User, on_delete=models.CASCADE)
-    lab_id = models.ForeignKey(Laboratory, on_delete=models.CASCADE, null=True)
+    lab_id = models.ForeignKey(Laboratory, on_delete=models.CASCADE)
     schedule_date = models.DateField()
     schedule_from = models.TimeField()
     schedule_to = models.TimeField()

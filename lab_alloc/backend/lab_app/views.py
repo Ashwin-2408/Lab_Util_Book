@@ -7,6 +7,7 @@ from lab_app.serializers import ScheduleSerializer, LaboratorySerializer, UserSe
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from datetime import date, datetime, timedelta
+from rest_framework import status
 import qrcode
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
@@ -130,22 +131,48 @@ schedule_processor = ScheduleProcessor()
 schedule_processor.process_labs()
 
 
+# class ScheduleCreateAPIView(APIView):
+#     def post(self, request):
+#         data = request.data.copy()
+#         data['lab_id'] = Laboratory.objects.get(lab_name = data['lab_name']).lab_id
+#         data.pop('lab_name')
+
+#         serializer = ScheduleSerializer(data=data)
+#         if(serializer.is_valid()):
+#             schedule_from = serializer.validated_data['schedule_from']
+#             schedule_to = serializer.validated_data['schedule_to']
+#             lab_id = serializer.validated_data['lab_id'].lab_id
+#             if schedule_processor.add_session((schedule_from, schedule_to), lab_id):
+#                 serializer.save()
+#                 return Response({"Message": "Successfully created a session"})
+#             else:
+#                 return Response({"Message" : "Cannot create a session"})
+
+# schedule_create_view = ScheduleCreateAPIView.as_view()
+
 class ScheduleCreateAPIView(APIView):
     def post(self, request):
-        data = request.data.copy()
-        data['lab_id'] = Laboratory.objects.get(lab_name = data['lab_name']).lab_id
-        data.pop('lab_name')
-
-        serializer = ScheduleSerializer(data=data)
-        if(serializer.is_valid()):
-            schedule_from = serializer.validated_data['schedule_from']
-            schedule_to = serializer.validated_data['schedule_to']
-            lab_id = serializer.validated_data['lab_id'].lab_id
-            if schedule_processor.add_session((schedule_from, schedule_to), lab_id):
+        try:
+            session_id = request.data.get('data')
+            session_record = ScheduleRequest.objects.get(id=session_id)
+            schedule_record = {
+                "username": session_record.username.username,
+                "lab_id": session_record.lab_id.lab_id,
+                "schedule_date": session_record.schedule_date,
+                "schedule_from": session_record.schedule_from,
+                "schedule_to": session_record.schedule_to,
+            }
+            serializer = ScheduleSerializer(data=schedule_record)
+            if serializer.is_valid():
                 serializer.save()
-                return Response({"Message": "Successfully created a session"})
-            else:
-                return Response({"Message" : "Cannot create a session"})
+                return Response({"message": "Successfully Created Session"}, status=status.HTTP_201_CREATED)
+
+            return Response({"message": "Validation Error", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+        except ScheduleRequest.DoesNotExist:
+            return Response({"message": "Session ID not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"message": "Error While Creating Session", "error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 schedule_create_view = ScheduleCreateAPIView.as_view()
 
@@ -266,14 +293,26 @@ class WeekListAPIView(generics.ListAPIView):
 
 week_list_view = WeekListAPIView.as_view()
 
-class ScheduleRequestListCreateAPIView(generics.ListCreateAPIView):
+class ScheduleRequestListAPIView(generics.ListAPIView):
     queryset = ScheduleRequest.objects.all()
     serializer_class = ScheduleRequestSerializer
 
-    def perform_create(self, serializer):
-        return super().perform_create(serializer)
+schedule_request_list_view = ScheduleRequestListAPIView.as_view()
 
-schedule_request_create_list_view = ScheduleRequestListCreateAPIView.as_view()
+class ScheduleRequestCreateView(APIView):
+    def post(self, request):
+        data = request.data.copy()
+        data['lab_id'] = Laboratory.objects.get(lab_name = data['lab_name']).lab_id
+        data.pop('lab_name')
+
+        serializer = ScheduleRequestSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"Message" : "Successfully Submitted the Form"}, status=200)
+        else:
+            return Response({"Message" : "Error while submitting form"}, status=500)
+
+schedule_request_create_view = ScheduleRequestCreateView.as_view()
 
 class ScheduleRequestUpdateView(APIView):
     def patch(self, request, id):
