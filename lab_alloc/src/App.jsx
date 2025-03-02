@@ -1,7 +1,6 @@
 import Calendar from "./components/calender.jsx";
 import CustomSelect from "./components/custom_select.jsx";
 import NavBar from "./components/navbar.jsx";
-import { FaPlus } from "react-icons/fa6";
 import Button from "@mui/material/Button";
 import CustTimeLine from "./components/timeline.jsx";
 import NewSession from "./components/new_session.jsx";
@@ -12,9 +11,10 @@ import axios from "axios";
 import labImg1 from "./assets/lab_img1.jpg";
 import labImg2 from "./assets/lab_img2.jpg";
 import ApproveSession from "./components/approve_sess.jsx";
+import Dashboard from "./components/comp_v/Dashboard.jsx";
 
 function App() {
-  const [pageState, setPageState] = useState("LabAlloc");
+  const [pageState, setPageState] = useState("Dashboard");
   const [schedule, setSchedule] = useState([]);
   const currentDate = new Date();
   const [curDate, setCurDate] = useState(currentDate);
@@ -53,8 +53,8 @@ function App() {
 
   useEffect(() => {
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 60000); 
-    return () => clearInterval(interval); 
+    const interval = setInterval(fetchNotifications, 60000);
+    return () => clearInterval(interval);
   }, []);
 
   const fetchNotifications = () => {
@@ -68,7 +68,8 @@ function App() {
   };
 
   const checkForAlerts = (notifications) => {
-    const now = new Date();2
+    const now = new Date();
+    2;
     const fiveMinutesLater = new Date(now.getTime() + 5 * 60000);
     const upcomingAlerts = notifications.filter(
       (notif) =>
@@ -108,7 +109,9 @@ function App() {
   };
 
   const deleteAllNotifications = async () => {
-    const confirmed = window.confirm("Are you sure you want to delete all notifications?");
+    const confirmed = window.confirm(
+      "Are you sure you want to delete all notifications?"
+    );
     if (confirmed) {
       try {
         await axios.delete(`http://127.0.0.1:3001/notifications`);
@@ -143,9 +146,16 @@ function App() {
       <Routes>
         <Route path="/book" element={<NewSession />} />
       </Routes>
-
+      {pageState === "Dashboard" && <Dashboard />}
       {pageState === "LabAlloc" && (
-        <div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            height: "100vh",
+            justifyContent: "center",
+          }}
+        >
           <Button
             variant="contained"
             style={{
@@ -158,6 +168,7 @@ function App() {
               fontFamily: "Roboto",
               fontSize: "0.75rem",
               textTransform: "none",
+              width: "fit-content",
             }}
             onClick={handleNewSession}
           >
@@ -168,7 +179,7 @@ function App() {
               <h2 style={{ fontFamily: "Roboto", padding: "0px 6px" }}>
                 Lab Utilization
               </h2>
-              <nav className="lab-nav">
+              <div className="lab-nav">
                 <button onClick={() => handleChangeDashboard("overview")}>
                   Overview
                 </button>
@@ -181,7 +192,7 @@ function App() {
                 <button onClick={() => handleChangeDashboard("headmap")}>
                   Heatmap
                 </button>
-              </nav>
+              </div>
               <div className="canvas-comp">
                 <div
                   style={{ display: "flex", gap: "1rem", alignItems: "center" }}
@@ -237,106 +248,150 @@ function App() {
       )}
 
       {pageState === "Notification" && (
-        <div style={{
-             marginLeft: "2rem",
-             padding: "1rem",
-             width: "50%",
-             maxWidth: "600px",
-             fontFamily: 'Roboto, sans-serif', 
-         }}>
-             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem" }}>
-                 <h2 style={{ fontSize: "1.5rem", fontWeight: "bold", color: "#333", margin: 0 }}>Notifications</h2>
-                 <div>
-                     <label htmlFor="notification-filter" style={{ marginRight: "0.5rem", fontSize: "0.9rem", color: "#666" }}>Filter by:</label>
-                     <select
-                         id="notification-filter"
-                         value={filterCategory}
-                         onChange={handleFilterChange}
-                         style={{
-                             padding: "0.3rem 0.6rem",
-                             borderRadius: "5px",
-                             borderColor: "#ccc",
-                             fontSize: "0.9rem",
-                             cursor: "pointer",
-                             appearance: 'none', 
-                             background: `url('data:image/svg+xml;utf8,<svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 0.5rem center`,
-                             backgroundSize: '16px',
-                         }}
-                     >
-                         <option value="All">All</option>
-                         <option value="Booking">Booking Updates</option>
-                         <option value="Availability">Availability Updates</option>
-                         <option value="Others">Others</option>
-                     </select>
-                 </div>
-                 <Button
-                   variant="contained"
-                   style={{
-                     backgroundColor: "#d32f2f",
-                     color: "#fff",
-                   }}
-                   onClick={deleteAllNotifications}
-                 >
-                   Delete All
-                 </Button>
-             </div>
+        <div
+          style={{
+            marginLeft: "2rem",
+            padding: "1rem",
+            width: "50%",
+            maxWidth: "600px",
+            fontFamily: "Roboto, sans-serif",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: "1rem",
+            }}
+          >
+            <h2
+              style={{
+                fontSize: "1.5rem",
+                fontWeight: "bold",
+                color: "#333",
+                margin: 0,
+              }}
+            >
+              Notifications
+            </h2>
+            <div>
+              <label
+                htmlFor="notification-filter"
+                style={{
+                  marginRight: "0.5rem",
+                  fontSize: "0.9rem",
+                  color: "#666",
+                }}
+              >
+                Filter by:
+              </label>
+              <select
+                id="notification-filter"
+                value={filterCategory}
+                onChange={handleFilterChange}
+                style={{
+                  padding: "0.3rem 0.6rem",
+                  borderRadius: "5px",
+                  borderColor: "#ccc",
+                  fontSize: "0.9rem",
+                  cursor: "pointer",
+                  appearance: "none",
+                  background: `url('data:image/svg+xml;utf8,<svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 0.5rem center`,
+                  backgroundSize: "16px",
+                }}
+              >
+                <option value="All">All</option>
+                <option value="Booking">Booking Updates</option>
+                <option value="Availability">Availability Updates</option>
+                <option value="Others">Others</option>
+              </select>
+            </div>
+            <Button
+              variant="contained"
+              style={{
+                backgroundColor: "#d32f2f",
+                color: "#fff",
+              }}
+              onClick={deleteAllNotifications}
+            >
+              Delete All
+            </Button>
+          </div>
 
-             <div className="notification-list">
-                 {filteredNotifications.length > 0 ? (
-                     filteredNotifications.map((notif, index) => (
-                         <div
-                             key={notif.id}
-                             className="notification-item"
-                             style={{
-                                 backgroundColor: "#fff",
-                                 border: "1px solid #eee",
-                                 boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-                                 borderRadius: "5px",
-                                 padding: "1rem", 
-                                 marginBottom: "0.75rem", 
-                                 display: "flex",
-                                 alignItems: "center",
-                                 cursor: "pointer",
-                                 width: "100%", 
-                                 justifyContent: "space-between", 
-                             }}
-                         >
-                             <div style={{ display: 'flex', alignItems: 'center' }}> 
-                                 <img
-                                     src={index % 2 === 0 ? labImg1 : labImg2}
-                                     alt="Notification"
-                                     style={{
-                                         width: "45px", 
-                                         height: "45px",
-                                         borderRadius: "50%",
-                                         marginRight: "1rem", 
-                                         objectFit: 'cover', 
-                                     }}
-                                 />
-                                 <div>
-                                     <div style={{ fontSize: "1rem", fontWeight: "bold", color: "#444" }}>{notif.message}</div>
-                                     <div style={{ fontSize: "0.8rem", color: "#777" }}>{new Date(notif.sessionStartTime).toLocaleString()}</div>
-                                 </div>
-                             </div>
-                             <div> 
-                                    <button onClick={() => deleteNotification(notif.id)} style={{
-                                     marginLeft: '0.5rem',
-                                     cursor: 'pointer',
-                                     padding: '0.25rem 0.5rem',
-                                     borderRadius: '4px',
-                                     border: '1px solid #ccc',
-                                     backgroundColor: '#fdd',   
-                                     color: '#900',            
-                                     fontWeight: 'bold',      
-                                 }}>Delete</button>
-                             </div>
-                         </div>
-                     ))
-                 ) : (
-                     <p style={{ fontSize: "0.9rem", color: "#777" }}>No new notifications.</p>
-                 )}
-             </div>
-         </div>
+          <div className="notification-list">
+            {filteredNotifications.length > 0 ? (
+              filteredNotifications.map((notif, index) => (
+                <div
+                  key={notif.id}
+                  className="notification-item"
+                  style={{
+                    backgroundColor: "#fff",
+                    border: "1px solid #eee",
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+                    borderRadius: "5px",
+                    padding: "1rem",
+                    marginBottom: "0.75rem",
+                    display: "flex",
+                    alignItems: "center",
+                    cursor: "pointer",
+                    width: "100%",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <img
+                      src={index % 2 === 0 ? labImg1 : labImg2}
+                      alt="Notification"
+                      style={{
+                        width: "45px",
+                        height: "45px",
+                        borderRadius: "50%",
+                        marginRight: "1rem",
+                        objectFit: "cover",
+                      }}
+                    />
+                    <div>
+                      <div
+                        style={{
+                          fontSize: "1rem",
+                          fontWeight: "bold",
+                          color: "#444",
+                        }}
+                      >
+                        {notif.message}
+                      </div>
+                      <div style={{ fontSize: "0.8rem", color: "#777" }}>
+                        {new Date(notif.sessionStartTime).toLocaleString()}
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <button
+                      onClick={() => deleteNotification(notif.id)}
+                      style={{
+                        marginLeft: "0.5rem",
+                        cursor: "pointer",
+                        padding: "0.25rem 0.5rem",
+                        borderRadius: "4px",
+                        border: "1px solid #ccc",
+                        backgroundColor: "#fdd",
+                        color: "#900",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p style={{ fontSize: "0.9rem", color: "#777" }}>
+                No new notifications.
+              </p>
+            )}
+          </div>
+        </div>
       )}
       {pageState === "Approve" && <ApproveSession />}
     </>

@@ -15,7 +15,7 @@ import {
 export default function NavBar(props) {
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
-  
+
   function handlePageChange(page) {
     props.setPageState((prevState) => page);
     console.log("Changed State : ", page);

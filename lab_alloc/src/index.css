@@ -4,6 +4,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 body {
   box-sizing: border-box;
   margin: 0;
@@ -17,6 +18,14 @@ body {
 nav {
   font-family: "Roboto";
   border-bottom: 1.2px solid rgb(198, 198, 198);
+  backdrop-filter: blur(120px);
+  -webkit-backdrop-filter: blur(120px);
+  transition: all 0.3s ease-in-out;
+  position: fixed;
+  z-index: 1000;
+  width: 100%;
+  top: 0;
+  left: 0;
 }
 
 .nav-inner-div {
@@ -80,7 +89,6 @@ nav {
   transform: none;
 }
 
-}
 .logo-container {
   display: flex;
   align-items: center;
@@ -274,7 +282,8 @@ nav {
   background: #28a745;
   color: white;
   padding: 10px 15px;
-}}
+}
+
 .confirm-btn,
 .close-btn {
   padding: 10px;
@@ -921,4 +930,152 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .accept {
   color: #00f27f;
+}
+
+.dashboard-sec-1 {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-family: "Roboto", sans-serif;
+  height: 80vh;
+  background-color: #f4f4f5;
+}
+
+.dashboard-sec-1 div {
+  width: 50%;
+  text-align: center;
+}
+
+.book-btn {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.overview-section {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+.overview-card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 120px;
+  transition: 0.5s ease;
+}
+
+.overview-card:hover {
+  cursor: pointer;
+  transform: translateY(-5px);
+}
+
+.overview-card-upper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.overview-card-label {
+  font-size: 1rem;
+  color: #7b7b83;
+  font-weight: 300;
+  font-family: "Roboto";
+}
+
+.overview-card-icon {
+  background: #f4f4f5;
+  border-radius: 50%;
+  padding: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.overview-card-content {
+  font-size: 1.5rem;
+  font-weight: bold;
+  font-family: "Roboto";
+}
+
+.key-features {
+  padding: 20px;
+  margin: 1rem 0.75rem;
+  background-color: #f8f9fa;
+  font-family: "Roboto";
+  background-color: #f4f4f5;
+}
+
+.section-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.section-subtitle {
+  font-size: 16px;
+  color: #6c757d;
+  margin-bottom: 24px;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  min-height: 120px;
+}
+
+.feature-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+  text-align: left;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+.feature-icon {
+  background: #e9ecef;
+  border-radius: 50%;
+  padding: 12px;
+  display: inline-block;
+}
+
+.feature-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 16px;
+}
+
+.feature-description {
+  font-size: 14px;
+  color: #6c757d;
+  margin: 8px 0 16px;
+}
+
+.learn-more {
+  font-size: 14px;
+  color: black;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.feature-card:hover {
+  cursor: pointer;
 }
