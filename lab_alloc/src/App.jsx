@@ -3,14 +3,12 @@ import CustomSelect from "./components/custom_select.jsx";
 import NavBar from "./components/navbar.jsx";
 import Button from "@mui/material/Button";
 import CustTimeLine from "./components/timeline.jsx";
-import NewSession from "./components/new_session.jsx";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Stats from "./components/stats_table.jsx";
 import axios from "axios";
 import labImg1 from "./assets/lab_img1.jpg";
 import labImg2 from "./assets/lab_img2.jpg";
-import ApproveSession from "./components/approve_sess.jsx";
 import Dashboard from "./components/comp_v/Dashboard.jsx";
 
 function App() {
@@ -143,9 +141,6 @@ function App() {
   return (
     <>
       <NavBar setPageState={setPageState} />
-      <Routes>
-        <Route path="/book" element={<NewSession />} />
-      </Routes>
       {pageState === "Dashboard" && <Dashboard />}
       {pageState === "LabAlloc" && (
         <div
@@ -393,7 +388,6 @@ function App() {
           </div>
         </div>
       )}
-      {pageState === "Approve" && <ApproveSession />}
     </>
   );
 }

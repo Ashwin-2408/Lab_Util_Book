@@ -281,6 +281,7 @@ class ScheduleRequestUpdateView(APIView):
             schedule_request = ScheduleRequest.objects.get(id=id)
             schedule_request.status = request.data.get("status", schedule_request.status)
             schedule_request.approved_by_id = request.data.get("approved_by", schedule_request.approved_by_id)
+            print("Request Record", schedule_request)
             schedule_request.save()
             return Response({"message": "Schedule updated successfully"}, status=200)
         except ScheduleRequest.DoesNotExist:

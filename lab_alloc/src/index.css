@@ -854,7 +854,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   cursor: pointer;
 }
 
-.approve-popup-outer {
+/* .approve-popup-outer {
   display: flex;
   flex-direction: column;
   font-family: "Roboto";
@@ -930,7 +930,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .accept {
   color: #00f27f;
-}
+} */
 
 .dashboard-sec-1 {
   display: flex;

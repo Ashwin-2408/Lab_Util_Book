@@ -79,7 +79,7 @@ class ScheduleRequest(models.Model):
     schedule_to = models.TimeField()
     status = models.CharField(max_length=30, default="pending")
     approved_by = models.ForeignKey(Admin, on_delete=models.CASCADE, null=True, blank=True)
-    decision_date = models.DateField()
+    decision_date = models.DateField(null=True, blank=True)
 
     class Meta:
         constraints = [

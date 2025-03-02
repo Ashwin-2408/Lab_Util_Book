@@ -2,8 +2,14 @@ import { motion } from "framer-motion";
 import Button from "@mui/material/Button";
 import Overview from "./Overview";
 import KeyFeatures from "./KeyFeatures";
-
+import { useNavigate } from "react-router-dom";
 export default function Dashboard() {
+  const navigate = useNavigate();
+
+  function handleNewSession() {
+    navigate("/book");
+  }
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -56,6 +62,7 @@ export default function Dashboard() {
               width: "8rem",
               padding: "0.6rem 1rem",
             }}
+            onClick={handleNewSession}
           >
             Book a Lab
           </Button>
