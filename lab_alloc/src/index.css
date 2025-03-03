@@ -62,7 +62,8 @@ nav {
   background-color: transparent;
   color: black;
   transform: none;
-  
+}
+
 .logo-container {
   display: flex;
   gap: 0.5rem;
@@ -98,8 +99,6 @@ nav {
   background-color: #f0f0f0;
   cursor: pointer;
 }
-
-
 
 /* General Container Styling */
 .cancel-lab-container {
@@ -255,6 +254,7 @@ nav {
   background: #28a745;
   color: white;
   padding: 10px 15px;
+}
 
 .confirm-btn,
 .close-btn {
@@ -281,7 +281,6 @@ nav {
 .close-btn:hover {
   background: #545b62;
 }
-
 
 .user-mag-div {
   display: flex;
