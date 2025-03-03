@@ -1,7 +1,7 @@
 import { Op } from "sequelize";
 import Resource from "../Schema/Resource.js";
 import Lab from "../Schema/Lab.js";
-// ashdf
+
 export const getAvailableResources = async (req, res) => {
   try {
     const { labName, resourceType } = req.body; // ✅ Read from request body
@@ -12,7 +12,7 @@ export const getAvailableResources = async (req, res) => {
         .json({ error: "labName and resourceType are required" });
     }
 
-    // Fetch available resources along with their IDs
+    // Fetch available resources along with lab name
     const resources = await Resource.findAll({
       where: {
         status: "Available",
@@ -23,21 +23,25 @@ export const getAvailableResources = async (req, res) => {
           model: Lab,
           as: "lab",
           where: { lab_name: { [Op.like]: `%${labName}%` } },
-          attributes: [],
+          attributes: ["lab_name"], // ✅ Fetch lab name
         },
       ],
-      attributes: ["resource_id"], // Fetch only resource_id
+      attributes: ["resource_id", "type"], // ✅ Fetch resource_id and type
     });
 
-    // Extract resource IDs
-    const resourceIds = resources.map((resource) => resource.resource_id);
+    // Format response to include resource ID, type, and lab name
+    const formattedResources = resources.map((resource) => ({
+      resource_id: resource.resource_id,
+      type: resource.type,
+      lab_name: resource.lab.lab_name, // ✅ Access the lab name from the relation
+    }));
 
     res.status(200).json({
-      quantity: resourceIds.length, // Total count of available resources
-      resourceIds, // List of resource IDs
+      quantity: formattedResources.length, // Total count of available resources
+      resources: formattedResources, // List of resource details
     });
   } catch (error) {
-    console.error("Error fetching resource count:", error);
+    console.error("Error fetching resource data:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };

@@ -1,6 +1,6 @@
 import Resource from "../Schema/Resource.js";
 import ResourceRequest from "../Schema/ResourceRequest.js";
-// asdfhas
+import Lab from "../Schema/Lab.js";
 
 export const requestResource = async (req, res) => {
   try {
@@ -64,7 +64,14 @@ export const getUserRequests = async (req, res) => {
       include: [
         {
           model: Resource,
-          attributes: ["resource_id", "status", "createdAt"],
+          attributes: ["resource_id", "status", "createdAt", "type"],
+          include: [
+            {
+              model: Lab,
+              attributes: ["lab_name"], // Include Lab Name
+              as: "lab",
+            },
+          ],
         },
       ],
     });
