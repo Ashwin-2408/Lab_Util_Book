@@ -1,19 +1,18 @@
 import Calendar from "./components/calender.jsx";
 import CustomSelect from "./components/custom_select.jsx";
 import NavBar from "./components/navbar.jsx";
-import { FaPlus } from "react-icons/fa6";
 import Button from "@mui/material/Button";
 import CustTimeLine from "./components/timeline.jsx";
-import NewSession from "./components/new_session.jsx";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Stats from "./components/stats_table.jsx";
 import axios from "axios";
 import labImg1 from "./assets/lab_img1.jpg";
 import labImg2 from "./assets/lab_img2.jpg";
+import Dashboard from "./components/comp_v/Dashboard.jsx";
 
 function App() {
-  const [pageState, setPageState] = useState("Schedule");
+  const [pageState, setPageState] = useState("Dashboard");
   const [schedule, setSchedule] = useState([]);
   const currentDate = new Date();
   const [curDate, setCurDate] = useState(currentDate);
@@ -22,9 +21,14 @@ function App() {
   const [notifications, setNotifications] = useState([]);
   const navigate = useNavigate();
   const [filterCategory, setFilterCategory] = useState("All");
+  const [curDashBoard, setDashBoard] = useState("overview");
 
   function handleNewSession() {
     navigate("/book");
+  }
+
+  function handleChangeDashboard(value) {
+    setDashBoard(value);
   }
 
   useEffect(() => {
@@ -47,8 +51,8 @@ function App() {
 
   useEffect(() => {
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 60000); 
-    return () => clearInterval(interval); 
+    const interval = setInterval(fetchNotifications, 60000);
+    return () => clearInterval(interval);
   }, []);
 
   const fetchNotifications = () => {
@@ -62,7 +66,8 @@ function App() {
   };
 
   const checkForAlerts = (notifications) => {
-    const now = new Date();2
+    const now = new Date();
+    2;
     const fiveMinutesLater = new Date(now.getTime() + 5 * 60000);
     const upcomingAlerts = notifications.filter(
       (notif) =>
@@ -102,7 +107,9 @@ function App() {
   };
 
   const deleteAllNotifications = async () => {
-    const confirmed = window.confirm("Are you sure you want to delete all notifications?");
+    const confirmed = window.confirm(
+      "Are you sure you want to delete all notifications?"
+    );
     if (confirmed) {
       try {
         await axios.delete(`http://127.0.0.1:3001/notifications`);
@@ -134,36 +141,53 @@ function App() {
   return (
     <>
       <NavBar setPageState={setPageState} />
-      <Routes>
-        <Route path="/book" element={<NewSession />} />
-      </Routes>
-
-      {pageState === "Schedule" && (
-        <div>
+      {pageState === "Dashboard" && <Dashboard />}
+      {pageState === "LabAlloc" && (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            height: "100vh",
+            justifyContent: "center",
+          }}
+        >
           <Button
             variant="contained"
             style={{
               gap: "0.5rem",
               marginLeft: "2.3rem",
               marginTop: "1rem",
-              backgroundColor: "#1976d2",
+              padding: "0.5rem 1rem",
+              backgroundColor: "black",
               color: "#fff",
+              fontFamily: "Roboto",
+              fontSize: "0.75rem",
+              textTransform: "none",
+              width: "fit-content",
             }}
             onClick={handleNewSession}
           >
-            <FaPlus /> New
+            Book a Lab
           </Button>
           <div className="canvas">
             <div className="canvas-left-div">
               <h2 style={{ fontFamily: "Roboto", padding: "0px 6px" }}>
                 Lab Utilization
               </h2>
-              <nav className="lab-nav">
-                <button>Overview</button>
-                <button>Calendar</button>
-                <button>List</button>
-                <button>Heatmap</button>
-              </nav>
+              <div className="lab-nav">
+                <button onClick={() => handleChangeDashboard("overview")}>
+                  Overview
+                </button>
+                <button onClick={() => handleChangeDashboard("calendar")}>
+                  Timeline
+                </button>
+                <button onClick={() => handleChangeDashboard("labstats")}>
+                  Lab Stats
+                </button>
+                <button onClick={() => handleChangeDashboard("headmap")}>
+                  Heatmap
+                </button>
+              </div>
               <div className="canvas-comp">
                 <div
                   style={{ display: "flex", gap: "1rem", alignItems: "center" }}
@@ -181,133 +205,188 @@ function App() {
               </div>
             </div>
             <div className="canvas-right-div">
-              <h2>Details</h2>
-              {schedule && <CustTimeLine data={schedule} />}
+              {curDashBoard === "calendar" && (
+                <>
+                  <h2>Calendar</h2>
+                  {schedule && <CustTimeLine data={schedule} />}
+                </>
+              )}
+              {curDashBoard === "notdecided" && (
+                <>
+                  <div
+                    style={{
+                      position: "relative",
+                      display: "flex",
+                      flexDirection: "column",
+                      flex: "wrap",
+                      gap: "1rem",
+                      marginTop: "1rem",
+                      marginBottom: "2rem",
+                    }}
+                  >
+                    <h2
+                      style={{
+                        fontFamily: "Roboto",
+                        padding: "0rem",
+                        margin: "0rem",
+                      }}
+                    >
+                      Lab Statistics
+                    </h2>
+                    <Stats labs={customSelect} />
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
       )}
 
-      {pageState === "Dashboard" && (
+      {pageState === "Notification" && (
         <div
           style={{
-            position: "relative",
             marginLeft: "2rem",
-            display: "flex",
-            flexDirection: "column",
-            gap: "1rem",
-            marginTop: "2rem",
-            marginBottom: "2rem",
+            padding: "1rem",
+            width: "50%",
+            maxWidth: "600px",
+            fontFamily: "Roboto, sans-serif",
           }}
         >
-          <h2 style={{ fontFamily: "Roboto", padding: "0rem", margin: "0rem" }}>
-            Lab Statistics
-          </h2>
-          <Stats labs={customSelect} />
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: "1rem",
+            }}
+          >
+            <h2
+              style={{
+                fontSize: "1.5rem",
+                fontWeight: "bold",
+                color: "#333",
+                margin: 0,
+              }}
+            >
+              Notifications
+            </h2>
+            <div>
+              <label
+                htmlFor="notification-filter"
+                style={{
+                  marginRight: "0.5rem",
+                  fontSize: "0.9rem",
+                  color: "#666",
+                }}
+              >
+                Filter by:
+              </label>
+              <select
+                id="notification-filter"
+                value={filterCategory}
+                onChange={handleFilterChange}
+                style={{
+                  padding: "0.3rem 0.6rem",
+                  borderRadius: "5px",
+                  borderColor: "#ccc",
+                  fontSize: "0.9rem",
+                  cursor: "pointer",
+                  appearance: "none",
+                  background: `url('data:image/svg+xml;utf8,<svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 0.5rem center`,
+                  backgroundSize: "16px",
+                }}
+              >
+                <option value="All">All</option>
+                <option value="Booking">Booking Updates</option>
+                <option value="Availability">Availability Updates</option>
+                <option value="Others">Others</option>
+              </select>
+            </div>
+            <Button
+              variant="contained"
+              style={{
+                backgroundColor: "#d32f2f",
+                color: "#fff",
+              }}
+              onClick={deleteAllNotifications}
+            >
+              Delete All
+            </Button>
+          </div>
+
+          <div className="notification-list">
+            {filteredNotifications.length > 0 ? (
+              filteredNotifications.map((notif, index) => (
+                <div
+                  key={notif.id}
+                  className="notification-item"
+                  style={{
+                    backgroundColor: "#fff",
+                    border: "1px solid #eee",
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+                    borderRadius: "5px",
+                    padding: "1rem",
+                    marginBottom: "0.75rem",
+                    display: "flex",
+                    alignItems: "center",
+                    cursor: "pointer",
+                    width: "100%",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <img
+                      src={index % 2 === 0 ? labImg1 : labImg2}
+                      alt="Notification"
+                      style={{
+                        width: "45px",
+                        height: "45px",
+                        borderRadius: "50%",
+                        marginRight: "1rem",
+                        objectFit: "cover",
+                      }}
+                    />
+                    <div>
+                      <div
+                        style={{
+                          fontSize: "1rem",
+                          fontWeight: "bold",
+                          color: "#444",
+                        }}
+                      >
+                        {notif.message}
+                      </div>
+                      <div style={{ fontSize: "0.8rem", color: "#777" }}>
+                        {new Date(notif.sessionStartTime).toLocaleString()}
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <button
+                      onClick={() => deleteNotification(notif.id)}
+                      style={{
+                        marginLeft: "0.5rem",
+                        cursor: "pointer",
+                        padding: "0.25rem 0.5rem",
+                        borderRadius: "4px",
+                        border: "1px solid #ccc",
+                        backgroundColor: "#fdd",
+                        color: "#900",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p style={{ fontSize: "0.9rem", color: "#777" }}>
+                No new notifications.
+              </p>
+            )}
+          </div>
         </div>
-      )}
-
-      {pageState === "Notification" && (
-        <div style={{
-             marginLeft: "2rem",
-             padding: "1rem",
-             width: "50%",
-             maxWidth: "600px",
-             fontFamily: 'Roboto, sans-serif', 
-         }}>
-             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem" }}>
-                 <h2 style={{ fontSize: "1.5rem", fontWeight: "bold", color: "#333", margin: 0 }}>Notifications</h2>
-                 <div>
-                     <label htmlFor="notification-filter" style={{ marginRight: "0.5rem", fontSize: "0.9rem", color: "#666" }}>Filter by:</label>
-                     <select
-                         id="notification-filter"
-                         value={filterCategory}
-                         onChange={handleFilterChange}
-                         style={{
-                             padding: "0.3rem 0.6rem",
-                             borderRadius: "5px",
-                             borderColor: "#ccc",
-                             fontSize: "0.9rem",
-                             cursor: "pointer",
-                             appearance: 'none', 
-                             background: `url('data:image/svg+xml;utf8,<svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 0.5rem center`,
-                             backgroundSize: '16px',
-                         }}
-                     >
-                         <option value="All">All</option>
-                         <option value="Booking">Booking Updates</option>
-                         <option value="Availability">Availability Updates</option>
-                         <option value="Others">Others</option>
-                     </select>
-                 </div>
-                 <Button
-                   variant="contained"
-                   style={{
-                     backgroundColor: "#d32f2f",
-                     color: "#fff",
-                   }}
-                   onClick={deleteAllNotifications}
-                 >
-                   Delete All
-                 </Button>
-             </div>
-
-             <div className="notification-list">
-                 {filteredNotifications.length > 0 ? (
-                     filteredNotifications.map((notif, index) => (
-                         <div
-                             key={notif.id}
-                             className="notification-item"
-                             style={{
-                                 backgroundColor: "#fff",
-                                 border: "1px solid #eee",
-                                 boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-                                 borderRadius: "5px",
-                                 padding: "1rem", 
-                                 marginBottom: "0.75rem", 
-                                 display: "flex",
-                                 alignItems: "center",
-                                 cursor: "pointer",
-                                 width: "100%", 
-                                 justifyContent: "space-between", 
-                             }}
-                         >
-                             <div style={{ display: 'flex', alignItems: 'center' }}> 
-                                 <img
-                                     src={index % 2 === 0 ? labImg1 : labImg2}
-                                     alt="Notification"
-                                     style={{
-                                         width: "45px", 
-                                         height: "45px",
-                                         borderRadius: "50%",
-                                         marginRight: "1rem", 
-                                         objectFit: 'cover', 
-                                     }}
-                                 />
-                                 <div>
-                                     <div style={{ fontSize: "1rem", fontWeight: "bold", color: "#444" }}>{notif.message}</div>
-                                     <div style={{ fontSize: "0.8rem", color: "#777" }}>{new Date(notif.sessionStartTime).toLocaleString()}</div>
-                                 </div>
-                             </div>
-                             <div> 
-                                    <button onClick={() => deleteNotification(notif.id)} style={{
-                                     marginLeft: '0.5rem',
-                                     cursor: 'pointer',
-                                     padding: '0.25rem 0.5rem',
-                                     borderRadius: '4px',
-                                     border: '1px solid #ccc',
-                                     backgroundColor: '#fdd',   
-                                     color: '#900',            
-                                     fontWeight: 'bold',      
-                                 }}>Delete</button>
-                             </div>
-                         </div>
-                     ))
-                 ) : (
-                     <p style={{ fontSize: "0.9rem", color: "#777" }}>No new notifications.</p>
-                 )}
-             </div>
-         </div>
       )}
     </>
   );
