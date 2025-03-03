@@ -9,9 +9,8 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Stats from "./components/stats_table.jsx";
 import axios from "axios";
-import labImg1 from "./assets/lab_img1.jpg";
-import labImg2 from "./assets/lab_img2.jpg";
 import ApproveSession from "./components/approve_sess.jsx";
+import { Trash, BellRing, CheckCircle, Info, XCircle, Filter, Check, TriangleAlert } from "lucide-react";
 
 function App() {
   const [pageState, setPageState] = useState("LabAlloc");
@@ -22,8 +21,9 @@ function App() {
   const [curLab, setCurLab] = useState("--All--");
   const [notifications, setNotifications] = useState([]);
   const navigate = useNavigate();
-  const [filterCategory, setFilterCategory] = useState("All");
   const [curDashBoard, setDashBoard] = useState("overview");
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [notificationFilters, setNotificationFilters] = useState([]);
 
   function handleNewSession() {
     navigate("/book");
@@ -53,8 +53,8 @@ function App() {
 
   useEffect(() => {
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 60000); 
-    return () => clearInterval(interval); 
+    const interval = setInterval(fetchNotifications, 60000);
+    return () => clearInterval(interval);
   }, []);
 
   const fetchNotifications = () => {
@@ -68,35 +68,50 @@ function App() {
   };
 
   const checkForAlerts = (notifications) => {
-    const now = new Date();2
+    const now = new Date();
     const fiveMinutesLater = new Date(now.getTime() + 5 * 60000);
     const upcomingAlerts = notifications.filter(
       (notif) =>
-        new Date(notif.sessionStartTime) >= now &&
-        new Date(notif.sessionStartTime) <= fiveMinutesLater &&
+        new Date(notif.timestamp) >= now &&
+        new Date(notif.timestamp) <= fiveMinutesLater &&
         !notif.isRead
     );
     if (upcomingAlerts.length > 0) {
       upcomingAlerts.forEach((alert) => {
         window.alert(`There is a upcoming lab session for you .`);
-        markAsRead(alert.id);
       });
     }
   };
 
-  const markAsRead = (id) => {
+  const markNAsRead = async (id) => {
+    console.log("Marking as read:", id);
+
     axios
       .patch(`http://127.0.0.1:3001/notifications/${id}`)
-      .then(() => {
+      .then((response) => {
+        console.log("API Response:", response.data);
         setNotifications((prev) =>
           prev.map((notif) =>
             notif.id === id ? { ...notif, isRead: true } : notif
           )
         );
-        fetchNotifications();
       })
-      .catch((error) => console.error("Error updating notification:", error));
+      .catch((error) => {
+        console.error("Error updating notification:", error.response || error);
+      });
   };
+
+  const markAllAsRead = async () => {
+    axios
+      .patch(`http://127.0.0.1:3001/notifications`)
+      .then(() => {
+        setNotifications((prev) =>
+          prev.map((notif) => ({ ...notif, isRead: true }))
+        );
+      })
+      .catch((error) => console.error("Error updating notifications:", error));
+  };
+
 
   const deleteNotification = async (id) => {
     try {
@@ -119,23 +134,41 @@ function App() {
     }
   };
 
-  const handleFilterChange = (event) => {
-    setFilterCategory(event.target.value);
+  const toggleFilter = () => {
+    setFilterOpen(!filterOpen);
   };
 
-  const filteredNotifications = notifications.filter((notif) => {
-    if (filterCategory === "All") return true;
-    if (filterCategory === "Booking") return notif.message.includes("booking");
-    if (filterCategory === "Availability")
-      return notif.message.includes("available");
-    if (filterCategory === "Others") {
-      return (
-        !notif.message.includes("booking") &&
-        !notif.message.includes("available")
-      );
+  const applyFilter = (filterType) => {
+    if (notificationFilters.includes(filterType)) {
+      setNotificationFilters(notificationFilters.filter(f => f !== filterType));
+    } else {
+      setNotificationFilters([...notificationFilters, filterType]);
     }
-    return false;
-  });
+  };
+
+  const filteredNotifications = () => {
+    if (notificationFilters.length === 0 || notificationFilters.includes('all')) {
+      return notifications;
+    }
+
+    let filtered = notifications;
+
+    if (notificationFilters.includes('unread')) {
+      filtered = filtered.filter(notification => !notification.isRead);
+    }
+
+    const typeFilters = notificationFilters.filter(f => f !== 'unread' && f !== 'all');
+    if (typeFilters.length > 0) {
+      filtered = filtered.filter(notification => typeFilters.includes(notification.type));
+    }
+
+    return filtered;
+  };
+
+
+  const isFilterSelected = (filterType) => {
+    return notificationFilters.includes(filterType);
+  };
 
   return (
     <>
@@ -237,107 +270,293 @@ function App() {
       )}
 
       {pageState === "Notification" && (
-        <div style={{
-             marginLeft: "2rem",
-             padding: "1rem",
-             width: "50%",
-             maxWidth: "600px",
-             fontFamily: 'Roboto, sans-serif', 
-         }}>
-             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem" }}>
-                 <h2 style={{ fontSize: "1.5rem", fontWeight: "bold", color: "#333", margin: 0 }}>Notifications</h2>
-                 <div>
-                     <label htmlFor="notification-filter" style={{ marginRight: "0.5rem", fontSize: "0.9rem", color: "#666" }}>Filter by:</label>
-                     <select
-                         id="notification-filter"
-                         value={filterCategory}
-                         onChange={handleFilterChange}
-                         style={{
-                             padding: "0.3rem 0.6rem",
-                             borderRadius: "5px",
-                             borderColor: "#ccc",
-                             fontSize: "0.9rem",
-                             cursor: "pointer",
-                             appearance: 'none', 
-                             background: `url('data:image/svg+xml;utf8,<svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 0.5rem center`,
-                             backgroundSize: '16px',
-                         }}
-                     >
-                         <option value="All">All</option>
-                         <option value="Booking">Booking Updates</option>
-                         <option value="Availability">Availability Updates</option>
-                         <option value="Others">Others</option>
-                     </select>
-                 </div>
-                 <Button
-                   variant="contained"
-                   style={{
-                     backgroundColor: "#d32f2f",
-                     color: "#fff",
-                   }}
-                   onClick={deleteAllNotifications}
-                 >
-                   Delete All
-                 </Button>
-             </div>
+        <div style={{ maxWidth: '72rem', margin: '0 auto', padding: '1.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', width: '100%' }}>
+            <div>
+              <h2 style={{ fontSize: '1.875rem', fontWeight: 'bold', marginRight: 'auto', fontFamily: 'Roboto' }}>Notifications</h2>
+              <p style={{ fontSize: '1rem', color: '#6B7280', marginBottom: '1rem', fontFamily: 'Roboto' }}>Stay updated on your bookings, resource requests, and system announcements.</p>
+            </div>
+            <div style={{ display: 'flex', gap: '0.5rem', marginLeft: 'auto' }}>
+              <div style={{ display: 'flex', gap: '0.75rem', marginLeft: 'auto' }}>
+                <div style={{ position: 'relative' }}>
+                  <button
+                    style={{
+                      border: '1px solid #9CA3AF',
+                      padding: '0.6rem 1.2rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      background: 'white',
+                      cursor: 'pointer',
+                      borderRadius: '8px',
+                      fontSize: '0.875rem',
+                      fontWeight: '500',
+                      color: '#374151',
+                      transition: 'background 0.2s ease-in-out'
+                    }}
+                    onMouseOver={(e) => e.target.style.background = '#F3F4F6'}
+                    onMouseOut={(e) => e.target.style.background = 'white'}
+                    onClick={toggleFilter}
+                  >
+                    <Filter style={{ width: '1.2rem', height: '1.2rem', marginRight: '0.5rem' }} /> Filter
+                  </button>
+                  {filterOpen && (
+                    <div style={{
+                      position: 'absolute',
+                      top: '100%',
+                      right: '0',
+                      backgroundColor: 'white',
+                      border: '1px solid #D1D5DB',
+                      borderRadius: '0.5rem',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                      zIndex: 10,
+                      minWidth: '160px'
+                    }}>
+                      <button
+                        style={{
+                          display: 'block',
+                          width: '100%',
+                          padding: '0.75rem 1rem',
+                          textAlign: 'left',
+                          border: 'none',
+                          backgroundColor: 'transparent',
+                          cursor: 'pointer',
+                          fontSize: '0.875rem',
+                          color: '#374151',
+                          transition: 'background 0.2s ease-in-out',
+                          ':hover': {
+                            backgroundColor: '#F3F4F6'
+                          },
+                          display: 'flex',  // Add this
+                          alignItems: 'center' // And this
+                        }}
+                        onClick={() => applyFilter('all')}
+                      >
+                        {isFilterSelected('all') && <Check style={{ width: '1rem', height: '1rem', marginRight: '0.5rem' }} />}
+                        All
+                      </button>
+                      <button
+                        style={{
+                          display: 'block',
+                          width: '100%',
+                          padding: '0.75rem 1rem',
+                          textAlign: 'left',
+                          border: 'none',
+                          backgroundColor: 'transparent',
+                          cursor: 'pointer',
+                          fontSize: '0.875rem',
+                          color: '#374151',
+                          transition: 'background 0.2s ease-in-out',
+                          ':hover': {
+                            backgroundColor: '#F3F4F6'
+                          },
+                          display: 'flex',  // Add this
+                          alignItems: 'center' // And this
+                        }}
+                        onClick={() => applyFilter('info')}
+                      >
+                        {isFilterSelected('info') && <Check style={{ width: '1rem', height: '1rem', marginRight: '0.5rem' }} />}
+                        Info
+                      </button>
+                      <button
+                        style={{
+                          display: 'block',
+                          width: '100%',
+                          padding: '0.75rem 1rem',
+                          textAlign: 'left',
+                          border: 'none',
+                          backgroundColor: 'transparent',
+                          cursor: 'pointer',
+                          fontSize: '0.875rem',
+                          color: '#374151',
+                          transition: 'background 0.2s ease-in-out',
+                          ':hover': {
+                            backgroundColor: '#F3F4F6'
+                          },
+                          display: 'flex',  // Add this
+                          alignItems: 'center' // And this
+                        }}
+                        onClick={() => applyFilter('success')}
+                      >
+                        {isFilterSelected('success') && <Check style={{ width: '1rem', height: '1rem', marginRight: '0.5rem' }} />}
+                        Success
+                      </button>
+                      <button
+                        style={{
+                          display: 'block',
+                          width: '100%',
+                          padding: '0.75rem 1rem',
+                          textAlign: 'left',
+                          border: 'none',
+                          backgroundColor: 'transparent',
+                          cursor: 'pointer',
+                          fontSize: '0.875rem',
+                          color: '#374151',
+                          transition: 'background 0.2s ease-in-out',
+                          ':hover': {
+                            backgroundColor: '#F3F4F6'
+                          },
+                          display: 'flex',  // Add this
+                          alignItems: 'center' // And this
+                        }}
+                        onClick={() => applyFilter('warning')}
+                      >
+                        {isFilterSelected('warning') && <Check style={{ width: '1rem', height: '1rem', marginRight: '0.5rem' }} />}
+                        Warning
+                      </button>
+                      <button
+                        style={{
+                          display: 'block',
+                          width: '100%',
+                          padding: '0.75rem 1rem',
+                          textAlign: 'left',
+                          border: 'none',
+                          backgroundColor: 'transparent',
+                          cursor: 'pointer',
+                          fontSize: '0.875rem',
+                          color: '#374151',
+                          transition: 'background 0.2s ease-in-out',
+                          ':hover': {
+                            backgroundColor: '#F3F4F6'
+                          },
+                          display: 'flex',  // Add this
+                          alignItems: 'center' // And this
+                        }}
+                        onClick={() => applyFilter('error')}
+                      >
+                        {isFilterSelected('error') && <Check style={{ width: '1rem', height: '1rem', marginRight: '0.5rem' }} />}
+                        Error
+                      </button>
+                      <hr style={{ border: 'none', borderBottom: '1px solid #D1D5DB', margin: '0.5rem 0' }} />
+                      <button
+                        style={{
+                          display: 'block',
+                          width: '100%',
+                          padding: '0.75rem 1rem',
+                          textAlign: 'left',
+                          border: 'none',
+                          backgroundColor: 'transparent',
+                          cursor: 'pointer',
+                          fontSize: '0.875rem',
+                          color: '#374151',
+                          transition: 'background 0.2s ease-in-out',
+                          ':hover': {
+                            backgroundColor: '#F3F4F6'
+                          },
+                          display: 'flex',  // Add this
+                          alignItems: 'center' // And this
+                        }}
+                        onClick={() => applyFilter('unread')}
+                      >
+                        {isFilterSelected('unread') && <Check style={{ width: '1rem', height: '1rem', marginRight: '0.5rem' }} />}
+                        Unread Only
+                      </button>
+                    </div>
+                  )}
+                </div>
 
-             <div className="notification-list">
-                 {filteredNotifications.length > 0 ? (
-                     filteredNotifications.map((notif, index) => (
-                         <div
-                             key={notif.id}
-                             className="notification-item"
-                             style={{
-                                 backgroundColor: "#fff",
-                                 border: "1px solid #eee",
-                                 boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-                                 borderRadius: "5px",
-                                 padding: "1rem", 
-                                 marginBottom: "0.75rem", 
-                                 display: "flex",
-                                 alignItems: "center",
-                                 cursor: "pointer",
-                                 width: "100%", 
-                                 justifyContent: "space-between", 
-                             }}
-                         >
-                             <div style={{ display: 'flex', alignItems: 'center' }}> 
-                                 <img
-                                     src={index % 2 === 0 ? labImg1 : labImg2}
-                                     alt="Notification"
-                                     style={{
-                                         width: "45px", 
-                                         height: "45px",
-                                         borderRadius: "50%",
-                                         marginRight: "1rem", 
-                                         objectFit: 'cover', 
-                                     }}
-                                 />
-                                 <div>
-                                     <div style={{ fontSize: "1rem", fontWeight: "bold", color: "#444" }}>{notif.message}</div>
-                                     <div style={{ fontSize: "0.8rem", color: "#777" }}>{new Date(notif.sessionStartTime).toLocaleString()}</div>
-                                 </div>
-                             </div>
-                             <div> 
-                                    <button onClick={() => deleteNotification(notif.id)} style={{
-                                     marginLeft: '0.5rem',
-                                     cursor: 'pointer',
-                                     padding: '0.25rem 0.5rem',
-                                     borderRadius: '4px',
-                                     border: '1px solid #ccc',
-                                     backgroundColor: '#fdd',   
-                                     color: '#900',            
-                                     fontWeight: 'bold',      
-                                 }}>Delete</button>
-                             </div>
-                         </div>
-                     ))
-                 ) : (
-                     <p style={{ fontSize: "0.9rem", color: "#777" }}>No new notifications.</p>
-                 )}
-             </div>
-         </div>
+
+                <button
+                  style={{
+                    border: '1px solid #9CA3AF',
+                    padding: '0.6rem 1.2rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    background: 'white',
+                    cursor: 'pointer',
+                    borderRadius: '8px',
+                    fontSize: '0.875rem',
+                    fontWeight: '500',
+                    color: '#374151',
+                    transition: 'background 0.2s ease-in-out'
+                  }}
+                  onMouseOver={(e) => e.target.style.background = '#F3F4F6'}
+                  onMouseOut={(e) => e.target.style.background = 'white'}
+                  onClick={() => markAllAsRead()}
+                >
+                  <Check style={{ width: '1.2rem', height: '1.2rem', marginRight: '0.5rem' }} /> Mark all as read
+                </button>
+
+                <button
+                  style={{
+                    border: '1px solid #D97706',
+                    padding: '0.6rem 1.2rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    background: '#EF4444',
+                    color: 'white',
+                    cursor: 'pointer',
+                    borderRadius: '8px',
+                    fontSize: '0.875rem',
+                    fontWeight: '500',
+                    transition: 'background 0.2s ease-in-out'
+                  }}
+                  onMouseOver={(e) => e.target.style.background = '#DC2626'}
+                  onMouseOut={(e) => e.target.style.background = '#EF4444'}
+                  onClick={() => deleteAllNotifications()}
+                >
+                  <Trash style={{ width: '1.2rem', height: '1.2rem', marginRight: '0.5rem' }} /> Delete all
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          {filteredNotifications().length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '2rem', border: '1px solid #D1D5DB', borderRadius: '0.5rem' }}>
+              <BellRing style={{ width: '3rem', height: '3rem', color: '#9CA3AF', marginBottom: '0.5rem' }} />
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#374151' }}>No notifications</h3>
+              <p style={{ color: '#6B7280' }}>You don't have any notifications that match your current filters.</p>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {filteredNotifications().map((notification) => (
+                <div key={notification.id} style={{ position: 'relative', padding: '1rem', border: '1px solid #D1D5DB', borderRadius: '0.5rem', backgroundColor: notification.isRead ? '#FEFEFE' : '#E5E7EB' }}>
+                  <div style={{ display: 'flex', alignItems: 'start', gap: '1rem' }}>
+                    {notification.type === "success" && <CheckCircle style={{ color: '#10B981', width: '1.5rem', height: '1.5rem' }} />}
+                    {notification.type === "info" && <Info style={{ color: '#3B82F6', width: '1.5rem', height: '1.5rem' }} />}
+                    {notification.type === "error" && <XCircle style={{ color: '#EF4444', width: '1.5rem', height: '1.5rem' }} />}
+                    {notification.type === "warning" && <TriangleAlert style={{ color: '#F5ED00', width: '1.5rem', height: '1.5rem' }} />}
+                    <div>
+                      <span style={{ fontSize: '1.125rem', fontWeight: '600' }}>{notification.title}</span>
+                      <p style={{ color: '#374151' }}>{notification.message}</p>
+                      <span style={{ fontSize: '0.875rem', color: '#6B7280' }}>
+                        {new Date(notification.timestamp).toLocaleString('en-US', {
+                          month: 'long',
+                          day: 'numeric',
+                          year: 'numeric',
+                          hour: 'numeric',
+                          minute: '2-digit',
+                          hour12: true
+                        }).replace(',', '')}
+                      </span>
+                      <span style={{ marginLeft: '0.5rem', padding: '0.25rem 0.5rem', fontSize: '0.8rem', backgroundColor: '#FEEEEF', borderRadius: '0.25rem' }}>{notification.category}</span>
+                    </div>
+                    {!notification.isRead ? (
+                      <Check
+                        style={{ position: 'absolute', top: '2.7rem', right: '1.5rem', color: '#6B7280', background: 'none', border: 'none', cursor: 'pointer' }}
+                        onClick={() => markNAsRead(notification.id)}
+                      />
+                    ) : (
+                      <Trash
+                        style={{ position: 'absolute', top: '2.7rem', right: '1.5rem', color: '#6B7280', background: 'none', border: 'none', cursor: 'pointer' }}
+                        onClick={() => deleteNotification(notification.id)}
+                      />
+                    )}
+
+
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+
+
+
+
       )}
+
       {pageState === "Approve" && <ApproveSession />}
     </>
   );
