@@ -3,7 +3,10 @@ import Notification from "../Schema/Notification.js";
 export const getNotifications = async (req, res) => {
   try {
     const notifications = await Notification.findAll({
-      order: [["createdAt", "DESC"]],
+      order: [
+        ["isRead", "ASC"], 
+        ["timestamp", "DESC"], 
+      ],
     });
     res.status(200).json(notifications);
   } catch (error) {
@@ -11,19 +14,29 @@ export const getNotifications = async (req, res) => {
   }
 };
 
+
 export const createNotification = async (req, res) => {
   try {
-    const { message } = req.body;
-    if (!message) {
-      return res.status(400).json({ error: "Message is required" });
+    const { type, title, message, timestamp, category } = req.body;
+
+    if (!type || !title || !message || !timestamp || !category) {
+      return res.status(400).json({ error: "All fields are required" });
     }
 
-    const newNotification = await Notification.create({ message });
+    const newNotification = await Notification.create({
+      type,
+      title,
+      message,
+      timestamp,
+      category,
+    });
+
     res.status(201).json(newNotification);
   } catch (error) {
     res.status(500).json({ error: "Failed to create notification" });
   }
 };
+
 
 export const markAsRead = async (req, res) => {
   try {
@@ -34,14 +47,32 @@ export const markAsRead = async (req, res) => {
       return res.status(404).json({ error: "Notification not found" });
     }
 
-    notification.isRead = true;
-    await notification.save();
+    await notification.update({ isRead: true });
 
-    res.status(200).json({ message: "Notification marked as read" });
+    const updatedNotification = await Notification.findByPk(id);
+
+    res.status(200).json(updatedNotification);
   } catch (error) {
+    console.error("Error updating notification:", error);
     res.status(500).json({ error: "Failed to update notification" });
   }
 };
+
+export const markAllAsRead = async (req, res) => {
+  try {
+    const updatedCount = await Notification.update(
+      { isRead: true },
+      { where: { isRead: false } } 
+    );
+
+    res.status(200).json({ message: "All notifications marked as read", updatedCount });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to mark all notifications as read" });
+  }
+};
+
+
+
 
 export const deleteNotification = async (req, res) => {
   try {

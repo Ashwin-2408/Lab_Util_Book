@@ -19,19 +19,16 @@ app.use(express.json());
 app.use(Router);
 app.use("/", notificationsRouter);
 
-sequelize.sync({ alter: true }).then(() => {
-  console.log("Database & tables synced!");
-});
 sequelize
-  .sync({ force: false })
+  .sync({ alter: true }) 
   .then(() => {
-    console.log("All tables have been initialized successfully.");
+    console.log("Database & tables synced!");
   })
   .catch((err) => {
     console.error("Error initializing tables:", err);
   });
 
-// Schedule job to check for upcoming sessions every minute
+
 cron.schedule("* * * * *", async () => {
   const now = new Date();
   const fiveMinutesLater = new Date(now.getTime() + 5 * 60000);
@@ -39,11 +36,11 @@ cron.schedule("* * * * *", async () => {
   try {
     const upcomingSessions = await Notification.findAll({
       where: {
-        sessionStartTime: {
+        timestamp: {
           [Op.between]: [now, fiveMinutesLater],
         },
-        isRead: false,
-      },
+        isRead: False,
+      },      
     });
 
     if (upcomingSessions.length > 0) {
