@@ -1,5 +1,6 @@
 from django.shortcuts import render
 # from django.http import JsonResponse
+from django.db import transaction
 from rest_framework.decorators import api_view
 from lab_app.models import Schedules, User, Laboratory, Daily, Week, Month, Admin, ScheduleRequest
 from rest_framework import generics
@@ -11,8 +12,12 @@ from rest_framework import status
 import qrcode
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+import requests
 
 RESET_DATE = '2025-02-13'
+SCHEDULE_STATUS = False
+SCHEDULE_REQUEST_STATUS = False
+
 def calculate_day():
     cur_date = datetime.now().date()
     sessions = Schedules.objects.filter(schedule_date=cur_date).order_by('lab_id','schedule_from')
@@ -164,9 +169,12 @@ class ScheduleCreateAPIView(APIView):
             }
             serializer = ScheduleSerializer(data=schedule_record)
             if serializer.is_valid():
-                serializer.save()
-                return Response({"message": "Successfully Created Session"}, status=status.HTTP_201_CREATED)
-
+                schedule_from = serializer.validated_data['schedule_from']
+                schedule_to = serializer.validated_data['schedule_to']
+                lab_id = serializer.validated_data['lab_id'].lab_id
+                if schedule_processor.add_session((schedule_from, schedule_to), lab_id):
+                    serializer.save()
+                    return Response({"message": "Successfully Created Session"}, status=status.HTTP_201_CREATED)
             return Response({"message": "Validation Error", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
         except ScheduleRequest.DoesNotExist:
@@ -318,13 +326,35 @@ class ScheduleRequestUpdateView(APIView):
     def patch(self, request, id):
         try:
             schedule_request = ScheduleRequest.objects.get(id=id)
-            schedule_request.status = request.data.get("status", schedule_request.status)
-            schedule_request.approved_by_id = request.data.get("approved_by", schedule_request.approved_by_id)
-            print("Request Record", schedule_request)
-            schedule_request.save()
+            
+            with transaction.atomic():
+                schedule_request.status = request.data.get("status", schedule_request.status)
+                schedule_request.approved_by_id = request.data.get("approved_by", schedule_request.approved_by_id)
+                
+                if schedule_request.status == 'approved':
+                    schedule_data = {
+                        "username": schedule_request.username.username,
+                        "lab_id": schedule_request.lab_id.lab_id,
+                        "schedule_date": schedule_request.schedule_date,
+                        "schedule_from": schedule_request.schedule_from,
+                        "schedule_to": schedule_request.schedule_to,
+                    }
+                    schedule_serializer = ScheduleSerializer(data=schedule_data)
+                    
+                    if schedule_serializer.is_valid():
+                        schedule_serializer.save()
+                    else:
+                        return Response({"error": schedule_serializer.errors}, status=400)
+
+                schedule_request.save()  # Save schedule request within the transaction
+
             return Response({"message": "Schedule updated successfully"}, status=200)
+
         except ScheduleRequest.DoesNotExist:
             return Response({"error": "Schedule request not found"}, status=404)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
 
 schedule_request_update_view = ScheduleRequestUpdateView.as_view()
 
