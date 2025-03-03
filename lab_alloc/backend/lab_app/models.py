@@ -23,7 +23,7 @@ class Admin(models.Model):
 class Schedules(models.Model):
     id = models.AutoField(primary_key=True)
     username = models.ForeignKey(User, on_delete=models.CASCADE)
-    lab_id = models.ForeignKey(Laboratory, on_delete=models.CASCADE, null=True)
+    lab_id = models.ForeignKey(Laboratory, on_delete=models.CASCADE)
     schedule_date = models.DateField()
     schedule_from = models.TimeField()
     schedule_to = models.TimeField()
@@ -79,7 +79,7 @@ class ScheduleRequest(models.Model):
     schedule_to = models.TimeField()
     status = models.CharField(max_length=30, default="pending")
     approved_by = models.ForeignKey(Admin, on_delete=models.CASCADE, null=True, blank=True)
-    decision_date = models.DateField()
+    decision_date = models.DateField(null=True, blank=True)
 
     class Meta:
         constraints = [

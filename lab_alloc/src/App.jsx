@@ -1,19 +1,19 @@
 import Calendar from "./components/calender.jsx";
 import CustomSelect from "./components/custom_select.jsx";
 import NavBar from "./components/navbar.jsx";
-import { FaPlus } from "react-icons/fa6";
 import Button from "@mui/material/Button";
 import CustTimeLine from "./components/timeline.jsx";
-import NewSession from "./components/new_session.jsx";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Stats from "./components/stats_table.jsx";
 import axios from "axios";
-import ApproveSession from "./components/approve_sess.jsx";
 import { Trash, BellRing, CheckCircle, Info, XCircle, Filter, Check, TriangleAlert } from "lucide-react";
+import labImg1 from "./assets/lab_img1.jpg";
+import labImg2 from "./assets/lab_img2.jpg";
+import Dashboard from "./components/comp_v/Dashboard.jsx";
 
 function App() {
-  const [pageState, setPageState] = useState("LabAlloc");
+  const [pageState, setPageState] = useState("Dashboard");
   const [schedule, setSchedule] = useState([]);
   const currentDate = new Date();
   const [curDate, setCurDate] = useState(currentDate);
@@ -123,7 +123,9 @@ function App() {
   };
 
   const deleteAllNotifications = async () => {
-    const confirmed = window.confirm("Are you sure you want to delete all notifications?");
+    const confirmed = window.confirm(
+      "Are you sure you want to delete all notifications?"
+    );
     if (confirmed) {
       try {
         await axios.delete(`http://127.0.0.1:3001/notifications`);
@@ -173,12 +175,16 @@ function App() {
   return (
     <>
       <NavBar setPageState={setPageState} />
-      <Routes>
-        <Route path="/book" element={<NewSession />} />
-      </Routes>
-
+      {pageState === "Dashboard" && <Dashboard />}
       {pageState === "LabAlloc" && (
-        <div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            height: "100vh",
+            justifyContent: "center",
+          }}
+        >
           <Button
             variant="contained"
             style={{
@@ -191,6 +197,7 @@ function App() {
               fontFamily: "Roboto",
               fontSize: "0.75rem",
               textTransform: "none",
+              width: "fit-content",
             }}
             onClick={handleNewSession}
           >
@@ -201,7 +208,7 @@ function App() {
               <h2 style={{ fontFamily: "Roboto", padding: "0px 6px" }}>
                 Lab Utilization
               </h2>
-              <nav className="lab-nav">
+              <div className="lab-nav">
                 <button onClick={() => handleChangeDashboard("overview")}>
                   Overview
                 </button>
@@ -214,7 +221,7 @@ function App() {
                 <button onClick={() => handleChangeDashboard("headmap")}>
                   Heatmap
                 </button>
-              </nav>
+              </div>
               <div className="canvas-comp">
                 <div
                   style={{ display: "flex", gap: "1rem", alignItems: "center" }}
@@ -550,14 +557,7 @@ function App() {
             </div>
           )}
         </div>
-
-
-
-
-
       )}
-
-      {pageState === "Approve" && <ApproveSession />}
     </>
   );
 }
