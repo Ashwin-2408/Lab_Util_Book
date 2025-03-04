@@ -1,4 +1,3 @@
-import { DomainVerification } from "@mui/icons-material";
 import { DiAtom } from "react-icons/di";
 export default function Card(props) {
   return (

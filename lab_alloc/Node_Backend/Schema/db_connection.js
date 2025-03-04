@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import { Sequelize } from "sequelize";
 import dotenv from "dotenv";
 
@@ -27,4 +26,4 @@ export const check_connection = async () => {
 
 check_connection();
 
-export { sequelize };
+export default sequelize;
