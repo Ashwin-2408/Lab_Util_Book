@@ -15,4 +15,6 @@ urlpatterns = [
     path('checkin/<str:user_name>',views.handleQR, name="scan_qr"),
     path('schedule_req/<int:id>/',views.schedule_request_update_view),
     path('admin',views.admin_list_view),
+    path('user/<str:username>',views.user_detail_api_view),
+    path('cur_schedules',views.schedule_req_mod_view)
 ]

@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from datetime import date, datetime, timedelta
 from rest_framework import status
+from django.db.models import Q
 import qrcode
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
@@ -158,8 +159,9 @@ schedule_processor.process_labs()
 class ScheduleCreateAPIView(APIView):
     def post(self, request):
         try:
-            session_id = request.data.get('data')
+            session_id= request.data.get('data')
             session_record = ScheduleRequest.objects.get(id=session_id)
+
             schedule_record = {
                 "username": session_record.username.username,
                 "lab_id": session_record.lab_id.lab_id,
@@ -167,6 +169,7 @@ class ScheduleCreateAPIView(APIView):
                 "schedule_from": session_record.schedule_from,
                 "schedule_to": session_record.schedule_to,
             }
+
             serializer = ScheduleSerializer(data=schedule_record)
             if serializer.is_valid():
                 schedule_from = serializer.validated_data['schedule_from']
@@ -255,7 +258,7 @@ class DailyListDetailAPIView(generics.ListAPIView):
         try:
             date = self.kwargs.get('date')
             date = datetime.strptime(date, "%Y-%m-%d").date()
-            records = self.queryset.filter(date__gte = date, date__lte = date + timedelta(days=5)).order_by('lab_id', 'date')
+            records = self.queryset.filter(date__gte = date, date__lte = date + timedelta(days=4)).order_by('lab_id', 'date')
             return records
         except Exception as e:
             Response({"Message" : "Error While Fetching Date"}, status=404)
@@ -381,3 +384,31 @@ def handleQR(request, user_name):
         return JsonResponse(data, status=200, safe=False)
     else:
         return JsonResponse({"Message": "No Schedule Found"}, status=404)
+
+
+class UserScheduleDetailAPIView(APIView):
+    def get(self, request, username):
+        if not username:
+            return JsonResponse({"Error": "Username is required"}, status=400)
+        cur_date = datetime.now().date()
+        cur_time = datetime.now().time()
+
+        records = Schedules.objects.filter(username=username, schedule_date=cur_date, schedule_to__gte=cur_time)
+
+        lab_records = Laboratory.objects.values("lab_id", "lab_name")
+        final_records = records.filter(lab_id__in=lab_records.values_list("lab_id", flat=True))
+        data = list(final_records.values())
+        return JsonResponse(data, status=200, safe=False)
+    
+user_detail_api_view = UserScheduleDetailAPIView.as_view()
+
+class ScheduleRequestModifiedView(generics.ListAPIView):
+    serializer_class = ScheduleRequestSerializer
+    def get_queryset(self):    
+        cur_date = datetime.now().date()
+        cur_time = datetime.now().time()
+        return ScheduleRequest.objects.filter(
+            Q(schedule_date__gt = cur_date) | 
+            Q(schedule_date = cur_date, schedule_to__gte = cur_time))
+
+schedule_req_mod_view = ScheduleRequestModifiedView.as_view()
