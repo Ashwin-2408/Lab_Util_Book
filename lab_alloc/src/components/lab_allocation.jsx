@@ -1,4 +1,3 @@
-import { GiBubblingFlask } from "react-icons/gi";
 import { DiAtom } from "react-icons/di";
 import { MdOutlineArrowCircleUp } from "react-icons/md";
 export default function LabAlloc() {

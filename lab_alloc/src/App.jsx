@@ -3,7 +3,7 @@ import CustomSelect from "./components/custom_select.jsx";
 import NavBar from "./components/navbar.jsx";
 import Button from "@mui/material/Button";
 import CustTimeLine from "./components/timeline.jsx";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Stats from "./components/stats_table.jsx";
 import axios from "axios";
@@ -11,8 +11,9 @@ import labImg1 from "./assets/lab_img1.jpg";
 import labImg2 from "./assets/lab_img2.jpg";
 import Dashboard from "./components/comp_v/Dashboard.jsx";
 
-function App() {
-  const [pageState, setPageState] = useState("Dashboard");
+function App({ pageState, setPageState }) {
+  // const [pageState, setPageState] = useState("Dashboard");
+  const [totalLabs, setTotalLabs] = useState(0);
   const [schedule, setSchedule] = useState([]);
   const currentDate = new Date();
   const [curDate, setCurDate] = useState(currentDate);
@@ -21,7 +22,7 @@ function App() {
   const [notifications, setNotifications] = useState([]);
   const navigate = useNavigate();
   const [filterCategory, setFilterCategory] = useState("All");
-  const [curDashBoard, setDashBoard] = useState("overview");
+  const [curDashBoard, setDashBoard] = useState("timeline");
 
   function handleNewSession() {
     navigate("/book");
@@ -45,6 +46,7 @@ function App() {
       .get("http://127.0.0.1:8000/api/laboratory")
       .then((response) => {
         setCustomSelect([{ lab_name: "--All--" }, ...response.data]);
+        setTotalLabs(response.data.length);
       })
       .catch((error) => console.error("Error fetching Laboratories:", error));
   }, []);
@@ -67,7 +69,6 @@ function App() {
 
   const checkForAlerts = (notifications) => {
     const now = new Date();
-    2;
     const fiveMinutesLater = new Date(now.getTime() + 5 * 60000);
     const upcomingAlerts = notifications.filter(
       (notif) =>
@@ -141,7 +142,9 @@ function App() {
   return (
     <>
       <NavBar setPageState={setPageState} />
-      {pageState === "Dashboard" && <Dashboard />}
+      {pageState === "Dashboard" && (
+        <Dashboard totalLabs={totalLabs} setPageState={setPageState} />
+      )}
       {pageState === "LabAlloc" && (
         <div
           style={{
@@ -178,7 +181,7 @@ function App() {
                 <button onClick={() => handleChangeDashboard("overview")}>
                   Overview
                 </button>
-                <button onClick={() => handleChangeDashboard("calendar")}>
+                <button onClick={() => handleChangeDashboard("timeline")}>
                   Timeline
                 </button>
                 <button onClick={() => handleChangeDashboard("labstats")}>
@@ -204,42 +207,39 @@ function App() {
                 </div>
               </div>
             </div>
-            <div className="canvas-right-div">
-              {curDashBoard === "calendar" && (
-                <>
-                  <h2>Calendar</h2>
-                  {schedule && <CustTimeLine data={schedule} />}
-                </>
-              )}
-              {curDashBoard === "notdecided" && (
-                <>
-                  <div
-                    style={{
-                      position: "relative",
-                      display: "flex",
-                      flexDirection: "column",
-                      flex: "wrap",
-                      gap: "1rem",
-                      marginTop: "1rem",
-                      marginBottom: "2rem",
-                    }}
-                  >
-                    <h2
-                      style={{
-                        fontFamily: "Roboto",
-                        padding: "0rem",
-                        margin: "0rem",
-                      }}
-                    >
-                      Lab Statistics
-                    </h2>
-                    <Stats labs={customSelect} />
-                  </div>
-                </>
-              )}
-            </div>
+            {curDashBoard === "timeline" && (
+              <div className="canvas-right-div">
+                <h2>Timeline</h2>
+                {schedule && <CustTimeLine data={schedule} />}
+              </div>
+            )}
           </div>
         </div>
+      )}
+      {curDashBoard === "labstats" && (
+        <>
+          <div
+            style={{
+              position: "relative",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              gap: "1rem",
+              margin: "2rem",
+            }}
+          >
+            <h2
+              style={{
+                fontFamily: "Roboto",
+                padding: "0rem",
+                margin: "0rem",
+              }}
+            >
+              Lab Statistics
+            </h2>
+            <Stats labs={customSelect} />
+          </div>
+        </>
       )}
 
       {pageState === "Notification" && (

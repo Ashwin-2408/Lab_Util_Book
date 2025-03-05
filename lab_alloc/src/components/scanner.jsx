@@ -15,13 +15,13 @@ const QRCodeScanner = () => {
         scanner = new Html5QrcodeScanner("qr-video", { fps: 10, qrbox: 250 });
         scanner.render((qrCodeMessage) => {
           setScanData(qrCodeMessage);
-          scanner.clear(); // Stop scanning once a QR code is detected
+          scanner.clear();
         });
       };
 
-      startScanner(); // Start the scanner
+      startScanner();
 
-      return () => scanner?.clear(); // Cleanup when the component unmounts
+      return () => scanner?.clear();
     }
   }, [showCheckIn]);
 
@@ -45,10 +45,9 @@ const QRCodeScanner = () => {
           setShowCheckIn(true);
         });
 
-      // Hide the check-in status and restart scanning after 3 seconds
       setTimeout(() => {
         setShowCheckIn(false);
-        setScanData(null); // Reset scanData to restart scanner
+        setScanData(null);
       }, 3000);
     }
   }, [scanData]);

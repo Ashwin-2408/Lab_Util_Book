@@ -5,12 +5,20 @@ import ResourceAllocationInterface from "./components/Resource_Allocation_Interf
 import Scanner from "./components/scanner.jsx";
 import CancelLab from "./components/CancelLab.jsx";
 import BookLabForm from "./components/comp_v/BookLabForms.jsx";
+import { useState } from "react";
 function MainApp() {
+  const [pageState, setPageState] = useState("Dashboard");
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/book" element={<BookLabForm />} />
+        <Route
+          path="/"
+          element={<App pageState={pageState} setPageState={setPageState} />}
+        />
+        <Route
+          path="/book"
+          element={<BookLabForm setPageState={setPageState} />}
+        />
         <Route
           path="/resource"
           element={<ResourceAllocationInterface></ResourceAllocationInterface>}

@@ -1,8 +1,5 @@
 import { useState } from "react";
 import Menu from "./menu.jsx";
-import { CiCircleQuestion } from "react-icons/ci";
-import { IoNotificationsOutline } from "react-icons/io5";
-import { SiGooglegemini } from "react-icons/si";
 import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -19,6 +16,7 @@ export default function NavBar(props) {
   function handlePageChange(page) {
     props.setPageState((prevState) => page);
     console.log("Changed State : ", page);
+    props.handleNavigate();
   }
 
   return (

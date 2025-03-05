@@ -88,7 +88,6 @@ nav {
   color: black;
   transform: none;
 }
-}
 
 .logo-container {
   display: flex;
@@ -132,6 +131,10 @@ nav {
 
 /* General Container Styling */
 .cancel-lab-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   padding: 2rem;
   font-family: "Roboto", sans-serif;
   max-width: 800px;
@@ -335,11 +338,9 @@ nav {
 .canvas {
   position: relative;
   display: flex;
-  justify-content: left;
   font-family: "Roboto";
   margin-left: 2rem;
   gap: 1rem;
-  width: 100;
 }
 
 .canvas-right-div::-webkit-scrollbar {
@@ -348,7 +349,7 @@ nav {
 
 .canvas-right-div {
   width: 100%;
-  overflow-x: auto; /* Add horizontal scrolling */
+  overflow-x: auto;
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;

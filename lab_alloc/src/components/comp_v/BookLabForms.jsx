@@ -4,7 +4,7 @@ import Button from "@mui/material/Button";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../navbar";
-export default function BookLabForm() {
+export default function BookLabForm({ setPageState }) {
   const navigate = useNavigate();
   const [scheduleRequests, setScheduleRequests] = useState([]);
   const [refresh, setRefresh] = useState(true);
@@ -28,23 +28,6 @@ export default function BookLabForm() {
           approved_by: "admin1",
         }
       );
-      console.log(response.data);
-      if (response.status === 200 && acceptance === "approved") {
-        try {
-          const createResponse = await axios.post(
-            "http://127.0.0.1:8000/api/schedule/create",
-            {
-              data: session_id,
-            }
-          );
-          console.log(createResponse.data);
-        } catch (error) {
-          console.error(
-            "Error while creating session:",
-            error.response?.data || error.message
-          );
-        }
-      }
       setRefresh((prevState) => !prevState);
     } catch (error) {
       console.error(
@@ -56,7 +39,7 @@ export default function BookLabForm() {
 
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:8000/api/schedule_req")
+      .get("http://127.0.0.1:8000/api/cur_schedules")
       .then((response) => {
         setScheduleRequests(response.data);
         console.log("Data : ", response.data);
@@ -83,7 +66,6 @@ export default function BookLabForm() {
 
   async function handleSubmit(event) {
     event.preventDefault();
-
     if (
       !formData.lab_name ||
       !formData.schedule_date ||
@@ -105,12 +87,18 @@ export default function BookLabForm() {
       "http://127.0.0.1:8000/api/schedule_req/create",
       data
     );
+    
     console.log(response.data);
     navigate("/");
   }
+
+  function handleNavigate() {
+    navigate("/");
+  }
+
   return (
     <div>
-      <Navbar />
+      <Navbar setPageState={setPageState} handleNavigate={handleNavigate} />
       <div
         style={{
           display: "flex",

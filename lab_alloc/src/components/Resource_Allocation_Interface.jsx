@@ -9,7 +9,6 @@ const ResourceAllocationInterface = () => {
       <NavBar></NavBar>
       <LabResourceRequest></LabResourceRequest>
       <UserRequests></UserRequests>
-     
     </div>
   );
 };
