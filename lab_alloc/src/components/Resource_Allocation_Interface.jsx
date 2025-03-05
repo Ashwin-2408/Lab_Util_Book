@@ -1,14 +1,12 @@
 import NavBar from "./navbar";
 import React, { useState } from "react";
-import LabResourceRequest from "./resource_search";
-import UserRequests from "./User_Requests";
+import ResourceAllocation from "./Resource_allocation";
 
 const ResourceAllocationInterface = () => {
   return (
     <div>
-      <NavBar></NavBar>
-      <LabResourceRequest></LabResourceRequest>
-      <UserRequests></UserRequests>
+      {/* <NavBar></NavBar> */}
+      <ResourceAllocation></ResourceAllocation>
     </div>
   );
 };
