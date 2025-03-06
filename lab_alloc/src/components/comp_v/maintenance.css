@@ -1,0 +1,32 @@
+.maintenance-btn {
+  display: flex;
+  gap: 0.4rem;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  padding: 0.5rem 0.75rem;
+  color: rgb(108, 110, 116);
+  transition: 0.5 ease;
+  border-radius: 0.5rem;
+}
+
+.maintenance-btn:hover {
+  cursor: pointer;
+}
+
+.maintenance-select {
+  padding: 0.3rem;
+  margin: 1rem 0rem;
+  border-radius: 0.3rem;
+  width: fit-content;
+  display: flex;
+  gap: 1rem;
+  background-color: #f1f5f9;
+}
+
+.selected-btn {
+  background-color: white;
+  color: black;
+  box-shadow: 1px 1px 2px #bebebe, -1px -1px 2px #ffffff;
+  transition: 0.4s ease;
+}

@@ -8,6 +8,7 @@ import BookLabForm from "./components/comp_v/BookLabForms.jsx";
 import { useState } from "react";
 import ResourceAllocation from "./components/Resource_allocation.jsx";
 import AdminResourceAllocation from "./components/AdminResourceAllocation.jsx";
+import Maintenance from "./components/comp_v/Maintenance.jsx";
 function MainApp() {
   const [pageState, setPageState] = useState("Dashboard");
   return (
@@ -16,6 +17,10 @@ function MainApp() {
         <Route
           path="/"
           element={<App pageState={pageState} setPageState={setPageState} />}
+        />
+        <Route
+          path="/temp"
+          element={<Maintenance />}
         />
         <Route
           path="/book"
@@ -33,7 +38,7 @@ function MainApp() {
         <Route path="/scan" element={<Scanner />} />
         <Route path="/cancel-lab" element={<CancelLab />} />
         <Route path="/admin" element={<AdminInterface></AdminInterface>} />
-        <Route path='/login' element={<Login />} />
+        {/* <Route path='/login' element={<Login />} /> */}
       </Routes>
     </Router>
   );
