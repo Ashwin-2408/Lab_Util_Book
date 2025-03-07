@@ -8,7 +8,7 @@ import BookLabForm from "./components/comp_v/BookLabForms.jsx";
 import { useState } from "react";
 import ResourceAllocation from "./components/Resource_allocation.jsx";
 import AdminResourceAllocation from "./components/AdminResourceAllocation.jsx";
-import Maintenance from "./components/comp_v/Maintenance.jsx";
+import ScheduleMain from "./components/comp_v/ScheduleMain.jsx";
 function MainApp() {
   const [pageState, setPageState] = useState("Dashboard");
   return (
@@ -18,10 +18,7 @@ function MainApp() {
           path="/"
           element={<App pageState={pageState} setPageState={setPageState} />}
         />
-        <Route
-          path="/temp"
-          element={<Maintenance />}
-        />
+        <Route path="/temp" element={<ScheduleMain />} />
         <Route
           path="/book"
           element={<BookLabForm setPageState={setPageState} />}

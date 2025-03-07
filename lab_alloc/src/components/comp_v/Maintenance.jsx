@@ -6,7 +6,6 @@ import "./maintenance.css";
 import { useState } from "react";
 export default function Maintenance() {
   const [content, setContent] = useState(0);
-  const [contentDiv, setContentDiv] = useState("scheduleMain");
   const stats = [
     {
       label: "Total Scheduled",
@@ -253,9 +252,9 @@ export default function Maintenance() {
           borderRadius: "0.5rem",
         }}
       >
-        {contentDiv === "scheduleMain" && <ScheduleMain />}
-        {contentDiv === "calendarView" && <CalendarView />}
-        {contentDiv === "scheduleList" && <ScheduleList />}
+        {content === 0 && <ScheduleMain />}
+        {content === 1 && <CalendarView />}
+        {content === 2 && <ScheduleList />}
       </div>
     </div>
   );
