@@ -1,8 +1,71 @@
 import "./maintenance.css";
 import Button from "@mui/material/Button";
-export default function ScheduleMain() {
+import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import axios from "axios";
+
+export default function ScheduleMain(props) {
+  const [refresh, setRefresh] = useState(true);
+  const [formData, setFormData] = useState({
+    lab_name: null,
+    start_date: null,
+    start_time: null,
+    end_date: null,
+    end_time: null,
+    main_reason: "",
+  });
+
+  function handleChange(event) {
+    const { name, value } = event.target;
+    if (name != "--All--") {
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
+    }
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    if (
+      !formData.lab_name ||
+      !formData.start_date ||
+      !formData.start_time ||
+      !formData.end_date ||
+      !formData.end_time ||
+      !formData.main_reason
+    ) {
+      alert("Please fill all the fields");
+    }
+
+    let data = new FormData();
+    const username = "admin1";
+    data.append("username", username);
+    data.append("lab_name", formData.lab_name);
+    data.append("start_date", formData.start_date);
+    data.append("start_time", formData.start_time);
+    data.append("end_date", formData.end_date);
+    data.append("end_time", formData.end_time);
+    data.append("main_reason", formData.main_reason);
+
+    const response = await axios.post(
+      "http://127.0.0.1:8000/api/maintenance/create",
+      data
+    );
+    console.log("Response", response.data);
+    if (response.status === 200) {
+      setRefresh((prevState) => !prevState);
+    } else {
+      alert("Please Try Again");
+    }
+  }
+
+  useEffect(() => {}, [refresh]);
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.2, duration: 0.4 }}
       style={{
         fontFamily: "Roboto",
         display: "flex",
@@ -46,9 +109,14 @@ export default function ScheduleMain() {
             >
               Lab
             </label>
-            <select name="main-lab" id="select-main-lab">
-              <option value="Quantum Lab">Quantum Lab</option>
-              <option value="NeuroTech Lab">NeuroTech Lab</option>
+            <select
+              name="lab_name"
+              id="select-main-lab"
+              onChange={handleChange}
+            >
+              {props.customSelect.map((lab, index) => (
+                <option value={lab.lab_name}>{lab.lab_name}</option>
+              ))}
             </select>
             <div style={{ fontSize: "0.85rem", color: "rgb(130, 130, 130)" }}>
               Select the lab that requires maintenance
@@ -57,11 +125,21 @@ export default function ScheduleMain() {
           <div style={{ display: "flex", gap: "1rem", flex: "1" }}>
             <div className="main-form-div" style={{ flex: "1" }}>
               <label htmlFor="start-date">Start Date</label>
-              <input type="date" />
+              <input
+                type="date"
+                name="start_date"
+                value={formData.start_date}
+                onChange={handleChange}
+              />
             </div>
             <div className="main-form-div" style={{ flex: "1" }}>
               <label htmlFor="start-time">Start Time</label>
-              <input type="time" />
+              <input
+                type="time"
+                name="start_time"
+                value={formData.start_time}
+                onChange={handleChange}
+              />
             </div>
           </div>
         </div>
@@ -75,18 +153,30 @@ export default function ScheduleMain() {
             <div style={{ display: "flex", gap: "1rem" }}>
               <div className="main-form-div" style={{ flex: "1" }}>
                 <label htmlFor="end-date">End Date</label>
-                <input type="date" />
+                <input
+                  type="date"
+                  name="end_date"
+                  value={formData.end_date}
+                  onChange={handleChange}
+                />
               </div>
               <div className="main-form-div" style={{ flex: "1" }}>
                 <label htmlFor="end-time">End Time</label>
-                <input type="time" />
+                <input
+                  type="time"
+                  name="end_time"
+                  value={formData.end_time}
+                  onChange={handleChange}
+                />
               </div>
             </div>
           </div>
           <div className="main-form-div">
             <label htmlFor="main-reason">Maintenance Reason</label>
             <textarea
-              name=""
+              name="main_reason"
+              onChange={handleChange}
+              value={formData.main_reason}
               id="main-reason"
               placeholder="Enter detailed reason for maintenance"
             ></textarea>
@@ -105,11 +195,12 @@ export default function ScheduleMain() {
               textTransform: "none",
               padding: "0.5rem 0.8rem",
             }}
+            onClick={handleSubmit}
           >
             Scheduled Maintenance
           </Button>
         </div>
       </form>
-    </div>
+    </motion.div>
   );
 }

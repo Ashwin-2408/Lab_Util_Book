@@ -85,3 +85,12 @@ class ScheduleRequest(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['username', 'lab_id', 'schedule_date','schedule_from','schedule_to','status'], name='unique_schedule_request')
         ]
+
+class Maintenance(models.Model):
+    username = models.ForeignKey(Admin, on_delete=models.CASCADE)
+    lab_id = models.ForeignKey(Laboratory, on_delete=models.CASCADE)
+    start_date = models.DateField()
+    start_time = models.TimeField()
+    end_date = models.DateField()
+    end_time = models.TimeField()
+    main_reason = models.CharField(max_length=200)

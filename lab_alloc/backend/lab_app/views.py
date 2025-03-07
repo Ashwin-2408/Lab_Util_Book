@@ -2,9 +2,9 @@ from django.shortcuts import render
 # from django.http import JsonResponse
 from django.db import transaction
 from rest_framework.decorators import api_view
-from lab_app.models import Schedules, User, Laboratory, Daily, Week, Month, Admin, ScheduleRequest
+from lab_app.models import *
 from rest_framework import generics
-from lab_app.serializers import ScheduleSerializer, LaboratorySerializer, UserSerializer, DailySerializer, WeekSerializer, MonthSerializer, AdminSerializer, ScheduleRequestSerializer
+from lab_app.serializers import *
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from datetime import date, datetime, timedelta
@@ -412,3 +412,31 @@ class ScheduleRequestModifiedView(generics.ListAPIView):
             Q(schedule_date = cur_date, schedule_to__gte = cur_time))
 
 schedule_req_mod_view = ScheduleRequestModifiedView.as_view()
+
+class MaintenanceListAPIView(generics.ListAPIView):
+    serializer_class = MaintenanceSerializer
+    def get_queryset(self):
+        cur_date = datetime.now().date()
+        cur_time = datetime.now().time()
+        return Maintenance.objects.filter(
+            Q(end_date__gt = cur_date) |
+            Q(end_date = cur_date, end_time__gte = cur_time)
+        )
+
+main_list_view = MaintenanceListAPIView.as_view()
+
+class MaintenanceCreateAPIView(APIView):
+    def post(self, request):
+        data = request.data.copy()
+        lab_name = request.data.get('lab_name')
+        lab_id = Laboratory.objects.get(lab_name=lab_name).lab_id
+        data.pop('lab_name')
+        data['lab_id'] = lab_id
+        serializer = MaintenanceSerializer(data = data)
+        if(serializer.is_valid()):
+            serializer.save()
+            return Response({"Message" : "Created Maintenance Session"}, status=200)
+        else:
+            return Response({"Error" : "Unable to create an maintenance session"}, status=400)
+
+main_list_create = MaintenanceCreateAPIView.as_view()

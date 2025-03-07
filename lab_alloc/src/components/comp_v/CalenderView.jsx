@@ -1,9 +1,15 @@
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
+import { motion } from "framer-motion";
 
 export default function CalendarView() {
   return (
-    <div style={{ width: "100%", height: "100vh" }}>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.2, duration: 0.4 }}
+      style={{ width: "100%", height: "100vh" }}
+    >
       <FullCalendar
         plugins={[dayGridPlugin]}
         initialView="dayGridMonth"
@@ -19,6 +25,6 @@ export default function CalendarView() {
           </div>
         )}
       />
-    </div>
+    </motion.div>
   );
 }

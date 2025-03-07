@@ -4,7 +4,7 @@ import ScheduleMain from "./ScheduleMain";
 import CalendarView from "./CalenderView";
 import "./maintenance.css";
 import { useState } from "react";
-export default function Maintenance() {
+export default function Maintenance(props) {
   const [content, setContent] = useState(0);
   const stats = [
     {
@@ -252,7 +252,7 @@ export default function Maintenance() {
           borderRadius: "0.5rem",
         }}
       >
-        {content === 0 && <ScheduleMain />}
+        {content === 0 && <ScheduleMain customSelect={props.customSelect} />}
         {content === 1 && <CalendarView />}
         {content === 2 && <ScheduleList />}
       </div>

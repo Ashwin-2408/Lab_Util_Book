@@ -293,7 +293,9 @@ function App({ pageState, setPageState }) {
           </div>
         </>
       )}
-      {pageState === "Maintenance" && <Maintenance />}
+      {pageState === "Maintenance" && (
+        <Maintenance customSelect={customSelect} />
+      )}
       {pageState === "Notification" && (
         <div style={{ maxWidth: "72rem", margin: "0 auto", padding: "1.5rem" }}>
           <div

@@ -1,9 +1,64 @@
 import "./maintenance.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import axios from "axios";
+import { Clock } from "lucide-react";
 export default function ScheduleList() {
   const [mainData, setMainData] = useState([]);
+  function formatDate(date_elem) {
+    const dateObj = new Date(date_elem);
+    var dateString =
+      dateObj.toLocaleDateString("en-US", { month: "short" }) +
+      " " +
+      dateObj.getDay() +
+      ", " +
+      dateObj.getFullYear();
+    return dateString;
+  }
+
+  function formatTime(time24) {
+    let [hours, minutes] = time24.split(":").map(Number);
+    let suffix = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12 || 12;
+    return `${hours}:${minutes.toString().padStart(2, "0")} ${suffix}`;
+  }
+
+  function session_status(startDate, startTime) {
+    let currentDate = new Date();
+
+    let eventDate = new Date(`${startDate}T${startTime}`);
+
+    eventDate = new Date(
+      eventDate.getTime() - eventDate.getTimezoneOffset() * 60000
+    );
+
+    if (currentDate > eventDate) {
+      return "completed";
+    } else if (currentDate.toDateString() === eventDate.toDateString()) {
+      return currentDate.getTime() > eventDate.getTime()
+        ? "completed"
+        : "ongoing";
+    } else {
+      return "upcoming";
+    }
+  }
+
+  useEffect(() => {
+    axios
+      .get("http://127.0.0.1:8000/api/maintenance")
+      .then((response) => {
+        setMainData(response.data), console.log(response.data);
+      })
+      .catch((error) => console.log("Error while fetching maintenance"));
+  }, []);
+
   return (
-    <div style={{ margin: "0rem 0.5rem" }}>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.2, duration: 0.4 }}
+      style={{ margin: "0rem 0.5rem" }}
+    >
       <div
         style={{
           display: "flex",
@@ -57,61 +112,70 @@ export default function ScheduleList() {
           </thead>
           {mainData.map((elem, index) => (
             <tr>
-              <td style={{ fontWeight: "500" }}>
-                {formatDate(elem.schedule_date)}
-              </td>
               <td>{elem.lab_id}</td>
               <td>
-                {elem.schedule_from} - {elem.schedule_to}
-              </td>
-              <td>Purpose</td>
-              <td>
-                <span
-                  className={`span-status ${
-                    elem.status === "approved"
-                      ? "approved"
-                      : elem.status === "rejected"
-                      ? "rejected"
-                      : "pending"
-                  }`}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                  }}
                 >
-                  {elem.status}
+                  <div>{formatDate(elem.start_date)}</div>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "0.3rem",
+                      alignItems: "center",
+                      color: "rgb(138, 138, 138)",
+                    }}
+                  >
+                    <Clock style={{ width: "0.8rem" }} />
+                    <div style={{ fontSize: "0.8rem" }}>
+                      {formatTime(elem.start_time)}
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                  }}
+                >
+                  <div>{formatDate(elem.end_date)}</div>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "0.3rem",
+                      alignItems: "center",
+                      color: "rgb(138, 138, 138)",
+                    }}
+                  >
+                    <Clock style={{ width: "0.8rem" }} />
+                    <div style={{ fontSize: "0.8rem" }}>
+                      {formatTime(elem.end_time)}
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span className="span-status">
+                  {session_status(elem.start_date, elem.start_time)}
                 </span>
               </td>
               <td>
-                {elem.status === "pending" ? (
-                  <div style={{ display: "flex", flex: "1", gap: "1rem" }}>
-                    <Button
-                      variant="contained"
-                      style={{
-                        backgroundColor: "#dcfce7",
-                        color: "#3fb56a",
-                        textTransform: "none",
-                      }}
-                      onClick={() => handleDecision("approved", elem.id)}
-                    >
-                      Approve
-                    </Button>
-                    <Button
-                      variant="contained"
-                      style={{
-                        backgroundColor: "#fee2e2",
-                        color: "#ea7474",
-                        textTransform: "none",
-                      }}
-                      onClick={() => handleDecision("rejected", elem.id)}
-                    >
-                      Reject
-                    </Button>
-                  </div>
-                ) : (
-                  "No actions"
-                )}
+                <div>{elem.main_reason}</div>
+              </td>
+              <td>
+                <div></div>
               </td>
             </tr>
           ))}
         </table>
       </div>
-    </div>
+    </motion.div>
   );
 }

@@ -16,5 +16,7 @@ urlpatterns = [
     path('schedule_req/<int:id>/',views.schedule_request_update_view),
     path('admin',views.admin_list_view),
     path('user/<str:username>',views.user_detail_api_view),
-    path('cur_schedules',views.schedule_req_mod_view)
+    path('cur_schedules',views.schedule_req_mod_view),
+    path('maintenance', views.main_list_view),
+    path('maintenance/create',views.main_list_create)
 ]
