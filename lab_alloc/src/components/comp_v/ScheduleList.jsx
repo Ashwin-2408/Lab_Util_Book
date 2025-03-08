@@ -1,16 +1,13 @@
 import "./maintenance.css";
-import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import axios from "axios";
 import { Clock } from "lucide-react";
-export default function ScheduleList() {
-  const [mainData, setMainData] = useState([]);
+export default function ScheduleList({ customSelect, mainData }) {
   function formatDate(date_elem) {
     const dateObj = new Date(date_elem);
     var dateString =
       dateObj.toLocaleDateString("en-US", { month: "short" }) +
       " " +
-      dateObj.getDay() +
+      dateObj.getDate() +
       ", " +
       dateObj.getFullYear();
     return dateString;
@@ -25,13 +22,7 @@ export default function ScheduleList() {
 
   function session_status(startDate, startTime) {
     let currentDate = new Date();
-
     let eventDate = new Date(`${startDate}T${startTime}`);
-
-    eventDate = new Date(
-      eventDate.getTime() - eventDate.getTimezoneOffset() * 60000
-    );
-
     if (currentDate > eventDate) {
       return "completed";
     } else if (currentDate.toDateString() === eventDate.toDateString()) {
@@ -43,14 +34,9 @@ export default function ScheduleList() {
     }
   }
 
-  useEffect(() => {
-    axios
-      .get("http://127.0.0.1:8000/api/maintenance")
-      .then((response) => {
-        setMainData(response.data), console.log(response.data);
-      })
-      .catch((error) => console.log("Error while fetching maintenance"));
-  }, []);
+  function matchLabId(value) {
+    return customSelect[value].lab_name;
+  }
 
   return (
     <motion.div
@@ -112,16 +98,17 @@ export default function ScheduleList() {
           </thead>
           {mainData.map((elem, index) => (
             <tr>
-              <td>{elem.lab_id}</td>
+              <td style={{ fontWeight: "500" }}>{matchLabId(elem.lab_id)}</td>
               <td>
                 <div
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    gap: "0.5rem",
                   }}
                 >
-                  <div>{formatDate(elem.start_date)}</div>
+                  <div style={{ width: "40%" }}>
+                    {formatDate(elem.start_date)}
+                  </div>
                   <div
                     style={{
                       display: "flex",
@@ -142,10 +129,11 @@ export default function ScheduleList() {
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    gap: "0.5rem",
                   }}
                 >
-                  <div>{formatDate(elem.end_date)}</div>
+                  <div style={{ width: "40%"}}>
+                    {formatDate(elem.end_date)}
+                  </div>
                   <div
                     style={{
                       display: "flex",
@@ -162,7 +150,12 @@ export default function ScheduleList() {
                 </div>
               </td>
               <td>
-                <span className="span-status">
+                <span
+                  className={`main-span-status ${session_status(
+                    elem.start_date,
+                    elem.start_time
+                  )}`}
+                >
                   {session_status(elem.start_date, elem.start_time)}
                 </span>
               </td>
