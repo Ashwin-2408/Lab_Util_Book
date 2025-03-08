@@ -381,7 +381,18 @@ def handleQR(request, user_name):
     
     if record:
         data = ScheduleSerializer(record).data
-        return JsonResponse(data, status=200, safe=False)
+        if not data['status']:
+            data['status'] = "In Progress"
+        elif data['status'] == "In Progress":
+            data['status'] = "Completed"
+        elif data['status'] == "Blocked":
+            return JsonResponse({"Message" : "Session has been blocked / preempted"}, status=403)
+        serializer = ScheduleSerializer(record, data=data, partial=True)
+        
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(data['status'], status=200, safe=False)
+        return JsonResponse(serializer.errors, status=400)
     else:
         return JsonResponse({"Message": "No Schedule Found"}, status=404)
 

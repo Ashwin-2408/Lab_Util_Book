@@ -27,6 +27,7 @@ class Schedules(models.Model):
     schedule_date = models.DateField()
     schedule_from = models.TimeField()
     schedule_to = models.TimeField()
+    status = models.CharField(max_length=20, null=True)
     
     class Meta:
         constraints = [

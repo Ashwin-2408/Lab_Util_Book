@@ -10,6 +10,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
             'schedule_date',
             'schedule_from',
             'schedule_to',
+            'status'
         ]
 
 class LaboratorySerializer(serializers.ModelSerializer):
