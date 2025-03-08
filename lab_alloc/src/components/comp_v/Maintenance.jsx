@@ -3,25 +3,74 @@ import ScheduleList from "./ScheduleList";
 import ScheduleMain from "./ScheduleMain";
 import CalendarView from "./CalenderView";
 import "./maintenance.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 export default function Maintenance(props) {
   const [content, setContent] = useState(0);
+  const [mainData, setMainData] = useState([]);
+  const [completed, setCompleted] = useState(0);
+  const [inProgress, setInProgress] = useState(0);
+  const [upcoming, setUpcoming] = useState(0);
+
+  function session_status(startDate, startTime) {
+    let currentDate = new Date();
+    let eventDate = new Date(`${startDate}T${startTime}`);
+    if (currentDate > eventDate) {
+      return "completed";
+    } else if (currentDate.toDateString() === eventDate.toDateString()) {
+      return currentDate.getTime() > eventDate.getTime()
+        ? "completed"
+        : "ongoing";
+    } else {
+      return "upcoming";
+    }
+  }
+
+  useEffect(() => {
+    axios
+      .get("http://127.0.0.1:8000/api/maintenance")
+      .then((response) => {
+        setMainData(response.data);
+      })
+      .catch((error) => console.log("Error while fetching maintenance"));
+  }, []);
+
+  useEffect(() => {
+    let completed = 0;
+    let inprog = 0;
+    let upcoming = 0;
+    mainData.map((elem, _) => {
+      let status = session_status(elem.start_date, elem.start_time);
+      if (status === "completed") {
+        completed += 1;
+      } else if (status == "upcoming") {
+        upcoming += 1;
+      } else {
+        console.log("In Progress", elem.start_date);
+        inprog += 1;
+      }
+    });
+    setCompleted(completed);
+    setInProgress(inprog);
+    setUpcoming(upcoming);
+  }, [mainData]);
+
   const stats = [
     {
       label: "Total Scheduled",
-      value: 3,
+      value: mainData.length,
     },
     {
       label: "In Progress",
-      value: 0,
+      value: inProgress,
     },
     {
       label: "Upcoming",
-      value: 0,
+      value: upcoming,
     },
     {
       label: "Completed",
-      value: 0,
+      value: completed,
     },
   ];
 
@@ -186,9 +235,18 @@ export default function Maintenance(props) {
                     borderRadius: "1rem",
                     width: "100%",
                   }}
-                ></div>
+                >
+                  <div
+                    style={{
+                      backgroundColor: "rgb(0, 0, 0)",
+                      width: `${(completed / mainData.length) * 100}%`,
+                      height: "0.5rem",
+                      borderRadius: "1rem",
+                    }}
+                  ></div>
+                </div>
                 <div style={{ fontSize: "0.7rem", color: "rgb(50, 50, 50)" }}>
-                  0% Completion rate
+                  {(completed / mainData.length) * 100}% Completion
                 </div>
               </div>
             </div>
@@ -254,7 +312,9 @@ export default function Maintenance(props) {
       >
         {content === 0 && <ScheduleMain customSelect={props.customSelect} />}
         {content === 1 && <CalendarView />}
-        {content === 2 && <ScheduleList />}
+        {content === 2 && (
+          <ScheduleList customSelect={props.customSelect} mainData={mainData} />
+        )}
       </div>
     </div>
   );

@@ -13,7 +13,7 @@ export default function BookLabForm({ setPageState }) {
     var dateString =
       dateObj.toLocaleDateString("en-US", { month: "short" }) +
       " " +
-      dateObj.getDay() +
+      dateObj.getDate() +
       ", " +
       dateObj.getFullYear();
     return dateString;
@@ -87,7 +87,7 @@ export default function BookLabForm({ setPageState }) {
       "http://127.0.0.1:8000/api/schedule_req/create",
       data
     );
-    
+
     console.log(response.data);
     navigate("/");
   }

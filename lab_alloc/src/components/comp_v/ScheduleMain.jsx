@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-export default function ScheduleMain(props) {
+export default function ScheduleMain({ customSelect }) {
   const [refresh, setRefresh] = useState(true);
   const [formData, setFormData] = useState({
     lab_name: null,
@@ -52,7 +52,6 @@ export default function ScheduleMain(props) {
       "http://127.0.0.1:8000/api/maintenance/create",
       data
     );
-    console.log("Response", response.data);
     if (response.status === 200) {
       setRefresh((prevState) => !prevState);
     } else {
@@ -114,7 +113,7 @@ export default function ScheduleMain(props) {
               id="select-main-lab"
               onChange={handleChange}
             >
-              {props.customSelect.map((lab, index) => (
+              {customSelect.map((lab, index) => (
                 <option value={lab.lab_name}>{lab.lab_name}</option>
               ))}
             </select>

@@ -92,7 +92,7 @@ table {
 
 table thead th {
   font-family: "Roboto";
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 500;
   padding: 1rem;
   color: #6c757d;
@@ -105,5 +105,26 @@ table tr:hover {
 table tr td {
   padding: 1rem;
   font-family: "Roboto";
-  font-size: 0.9rem;
+}
+
+table tr td div {
+  font-size: 0.85rem;
+}
+
+.main-span-status {
+  border: 1px solid;
+  padding: 0.1rem 0.7rem;
+  align-items: center;
+  font-size: 0.8rem;
+  border-radius: 1rem;
+}
+
+.upcoming {
+  color: rgb(105, 105, 240);
+  border-color: rgb(105, 105, 240);
+}
+
+.completed {
+  color: green;
+  border-color: green;
 }
