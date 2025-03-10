@@ -29,13 +29,33 @@ const QRCodeScanner = () => {
     if (scanData) {
       console.log("Scanned Data: ", scanData);
       axios
-        .post(`http://127.0.0.1:8000/api/checkin/${scanData}`)
+        .patch(`http://127.0.0.1:8000/api/checkin/${scanData}`)
         .then((response) => {
-          setCheckInStatus({
-            success: true,
-            message: response.data.message || "Check-in successful!",
-          });
-          setShowCheckIn(true);
+          if (response.data.Message === "In Progress") {
+            setCheckInStatus({
+              success: true,
+              message: "Check-in successful!",
+            });
+            setShowCheckIn(true);
+          } else if (response.data.Message === "Completed") {
+            setCheckInStatus({
+              success: true,
+              message: "Check-out successful!",
+            });
+            setShowCheckIn(true);
+          } else if (response.data.Message === "Blocked") {
+            setCheckInStatus({
+              success: true,
+              message: "Session Blocked",
+            });
+            setShowCheckIn(true);
+          } else if (response.data.Message === "Already Completed") {
+            setCheckInStatus({
+              success: true,
+              message: "Session Already Finished",
+            });
+            setShowCheckIn(true);
+          }
         })
         .catch((error) => {
           setCheckInStatus({

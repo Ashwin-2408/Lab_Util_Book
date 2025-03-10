@@ -4,10 +4,8 @@ import ScheduleMain from "./ScheduleMain";
 import CalendarView from "./CalenderView";
 import "./maintenance.css";
 import { useState, useEffect } from "react";
-import axios from "axios";
-export default function Maintenance(props) {
+export default function Maintenance({customSelect, mainData}) {
   const [content, setContent] = useState(0);
-  const [mainData, setMainData] = useState([]);
   const [completed, setCompleted] = useState(0);
   const [inProgress, setInProgress] = useState(0);
   const [upcoming, setUpcoming] = useState(0);
@@ -27,15 +25,6 @@ export default function Maintenance(props) {
   }
 
   useEffect(() => {
-    axios
-      .get("http://127.0.0.1:8000/api/maintenance")
-      .then((response) => {
-        setMainData(response.data);
-      })
-      .catch((error) => console.log("Error while fetching maintenance"));
-  }, []);
-
-  useEffect(() => {
     let completed = 0;
     let inprog = 0;
     let upcoming = 0;
@@ -46,14 +35,13 @@ export default function Maintenance(props) {
       } else if (status == "upcoming") {
         upcoming += 1;
       } else {
-        console.log("In Progress", elem.start_date);
         inprog += 1;
       }
     });
     setCompleted(completed);
     setInProgress(inprog);
     setUpcoming(upcoming);
-  }, [mainData]);
+  }, []);
 
   const stats = [
     {
@@ -310,10 +298,13 @@ export default function Maintenance(props) {
           borderRadius: "0.5rem",
         }}
       >
-        {content === 0 && <ScheduleMain customSelect={props.customSelect} />}
+        {content === 0 && <ScheduleMain customSelect={customSelect} />}
         {content === 1 && <CalendarView />}
         {content === 2 && (
-          <ScheduleList customSelect={props.customSelect} mainData={mainData} />
+          <ScheduleList
+            customSelect={customSelect}
+            mainData={mainData}
+          />
         )}
       </div>
     </div>

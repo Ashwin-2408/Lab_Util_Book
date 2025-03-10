@@ -1,11 +1,14 @@
 import React from "react";
 import "./Timeline.css";
 import Card from "./card.jsx";
+import axios from "axios";
 import { useRef, useEffect, useState } from "react";
+import { PopoverPaper } from "@mui/material";
 
 export default function OverlappingTimeline(props) {
   const divRef = useRef(null);
   const [hourCellWidth, setHourCellWidth] = useState(null);
+  const [mainData, setMainData] = useState([]);
 
   useEffect(() => {
     if (divRef.current) {
@@ -13,6 +16,7 @@ export default function OverlappingTimeline(props) {
       setHourCellWidth((prevState) => width.width.toFixed(2));
     }
   }, []);
+
   const events = props.data;
   function return_hours(time) {
     const [hour, minutes, seconds] = time.split(":").map(Number);
@@ -75,8 +79,16 @@ export default function OverlappingTimeline(props) {
                 width: `${
                   (event.schedule_to - event.schedule_from) * hourCellWidth
                 }px`,
-                backgroundColor: "lightgreen",
               }}
+              classname={`${
+                event.status === null
+                  ? "upcoming"
+                  : event.status === "Completed"
+                  ? "completed"
+                  : event.status === "In Progress"
+                  ? "inprogress"
+                  : "blocked"
+              }`}
               username={event.username}
               schedule_from={return_time(event.schedule_from)}
               schedule_to={return_time(event.schedule_to)}
@@ -84,7 +96,20 @@ export default function OverlappingTimeline(props) {
           ))}
         </div>
       ))}
-
+      {props.mainData.map((event, _) => (
+        <div
+          className="mask"
+          style={{
+            left: `${return_hours(event.start_time) * hourCellWidth}px`,
+            width: `${
+              (return_hours(event.end_time) - return_hours(event.start_time)) *
+              hourCellWidth
+            }px`,
+          }}
+        >
+          Maintainence Period
+        </div>
+      ))}
       {/* <div className="events-row">
         {updatedEvents.map((event, index) => (
           <Card

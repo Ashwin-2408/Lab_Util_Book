@@ -35,6 +35,21 @@ function App({ pageState, setPageState }) {
   const [curDashBoard, setDashBoard] = useState("timeline");
   const [filterOpen, setFilterOpen] = useState(false);
   const [notificationFilters, setNotificationFilters] = useState([]);
+  const [mainData, setMainData] = useState([]);
+  const [timeMainData, setTimeMainData] = useState([]);
+
+  function formatDate(date) {
+    const dateObj = new Date(date);
+    return dateObj.toISOString().split("T")[0];
+  }
+  useEffect(() => {
+    axios
+      .get("http://127.0.0.1:8000/api/maintenance")
+      .then((response) => {
+        setMainData(response.data);
+      })
+      .catch((error) => console.log("Error while fetching maintenance"));
+  }, []);
 
   function handleNewSession() {
     navigate("/book");
@@ -48,8 +63,28 @@ function App({ pageState, setPageState }) {
     if (curLab !== "--All--") {
       axios
         .get(`http://127.0.0.1:8000/api/schedule/${curLab}/${curDate}`)
-        .then((response) => setSchedule(response.data))
+        .then((response) => {
+          setSchedule(response.data), console.log("Schedule", response.data);
+        })
         .catch((error) => console.error("Error fetching Schedule:", error));
+    }
+  }, [curDate, curLab]);
+
+  useEffect(() => {
+    if (curLab != "--All--") {
+      axios
+        .get(
+          `http://127.0.0.1:8000/api/maintenance/${formatDate(
+            curDate
+          )}/${curLab}`
+        )
+        .then((response) => {
+          setTimeMainData(response.data.data);
+          console.log("Maintenance", response.data);
+        })
+        .catch((error) => {
+          setTimeMainData([]), console.log("Error", error);
+        });
     }
   }, [curDate, curLab]);
 
@@ -262,7 +297,9 @@ function App({ pageState, setPageState }) {
             {curDashBoard === "timeline" && (
               <div className="canvas-right-div">
                 <h2>Timeline</h2>
-                {schedule && <CustTimeLine data={schedule} />}
+                {schedule && (
+                  <CustTimeLine data={schedule} mainData={timeMainData} />
+                )}
               </div>
             )}
           </div>
@@ -294,7 +331,7 @@ function App({ pageState, setPageState }) {
         </>
       )}
       {pageState === "Maintenance" && (
-        <Maintenance customSelect={customSelect} />
+        <Maintenance customSelect={customSelect} mainData={mainData} />
       )}
       {pageState === "Notification" && (
         <div style={{ maxWidth: "72rem", margin: "0 auto", padding: "1.5rem" }}>
