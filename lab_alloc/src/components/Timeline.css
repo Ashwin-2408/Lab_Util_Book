@@ -1,8 +1,8 @@
 .timeline-container {
   display: flex;
   flex-direction: column;
-  width: 100%; /* Prevents the timeline from overflowing */
-  overflow-x: auto; /* Horizontal scroll if needed */
+  width: 100%;
+  overflow-x: auto;
   height: 100%;
   border-left: 1px solid #ddd;
   border-right: 1px solid #ddd;
@@ -13,11 +13,11 @@
 
 .hours-row {
   display: flex;
-  flex-wrap: nowrap; /* Prevents cells from wrapping */
+  flex-wrap: nowrap;
 }
 
 .hour-cell {
-  flex-shrink: 0; /* Prevents shrinking */
+  flex-shrink: 0;
   text-align: center;
   padding: 5px;
   border: 1px solid #ddd;
