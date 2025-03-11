@@ -305,17 +305,28 @@ class WeekListAPIView(generics.ListAPIView):
 week_list_view = WeekListAPIView.as_view()
 
 class ScheduleRequestListAPIView(generics.ListAPIView):
-    queryset = ScheduleRequest.objects.all()
     serializer_class = ScheduleRequestSerializer
+    def get_queryset(self):
+        page_state = self.request.query_params.get('page_state')
+
+        queryset = ScheduleRequest.objects.all()
+        if page_state:
+            page_state = int(page_state)
+            if page_state + 10 > len(queryset):
+                queryset = queryset[page_state:]
+            else:
+                queryset = queryset[page_state:page_state + 10]
+        return queryset
 
 schedule_request_list_view = ScheduleRequestListAPIView.as_view()
 
 class ScheduleRequestCreateView(APIView):
     def post(self, request):
+        cur_date = datetime.now().date()
         data = request.data.copy()
         data['lab_id'] = Laboratory.objects.get(lab_name = data['lab_name']).lab_id
         data.pop('lab_name')
-
+        data['decision_date'] = cur_date
         serializer = ScheduleRequestSerializer(data=data)
         if serializer.is_valid():
             serializer.save()

@@ -19,5 +19,6 @@ urlpatterns = [
     path('cur_schedules',views.schedule_req_mod_view),
     path('maintenance', views.main_list_view),
     path('maintenance/create',views.main_list_create),
-    path('maintenance/<str:custom_date>/<str:custom_lab>',views.instance_api_view)
+    path('maintenance/<str:custom_date>/<str:custom_lab>',views.instance_api_view),
+    path('schedule_req/<int:page_state>', views.schedule_request_list_view)
 ]
