@@ -15,4 +15,10 @@ urlpatterns = [
     path('checkin/<str:user_name>',views.handleQR, name="scan_qr"),
     path('schedule_req/<int:id>/',views.schedule_request_update_view),
     path('admin',views.admin_list_view),
+    path('user/<str:username>',views.user_detail_api_view),
+    path('cur_schedules',views.schedule_req_mod_view),
+    path('maintenance', views.main_list_view),
+    path('maintenance/create',views.main_list_create),
+    path('maintenance/<str:custom_date>/<str:custom_lab>',views.instance_api_view),
+    path('schedule_req/<int:page_state>', views.schedule_request_list_view)
 ]

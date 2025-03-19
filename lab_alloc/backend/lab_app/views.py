@@ -2,17 +2,18 @@ from django.shortcuts import render
 # from django.http import JsonResponse
 from django.db import transaction
 from rest_framework.decorators import api_view
-from lab_app.models import Schedules, User, Laboratory, Daily, Week, Month, Admin, ScheduleRequest
+from django.shortcuts import get_object_or_404
+from lab_app.models import *
 from rest_framework import generics
-from lab_app.serializers import ScheduleSerializer, LaboratorySerializer, UserSerializer, DailySerializer, WeekSerializer, MonthSerializer, AdminSerializer, ScheduleRequestSerializer
+from lab_app.serializers import *
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from datetime import date, datetime, timedelta
 from rest_framework import status
+from django.db.models import Q
 import qrcode
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
-import requests
 
 RESET_DATE = '2025-02-13'
 SCHEDULE_STATUS = False
@@ -158,8 +159,9 @@ schedule_processor.process_labs()
 class ScheduleCreateAPIView(APIView):
     def post(self, request):
         try:
-            session_id = request.data.get('data')
+            session_id= request.data.get('data')
             session_record = ScheduleRequest.objects.get(id=session_id)
+
             schedule_record = {
                 "username": session_record.username.username,
                 "lab_id": session_record.lab_id.lab_id,
@@ -167,6 +169,7 @@ class ScheduleCreateAPIView(APIView):
                 "schedule_from": session_record.schedule_from,
                 "schedule_to": session_record.schedule_to,
             }
+
             serializer = ScheduleSerializer(data=schedule_record)
             if serializer.is_valid():
                 schedule_from = serializer.validated_data['schedule_from']
@@ -255,7 +258,7 @@ class DailyListDetailAPIView(generics.ListAPIView):
         try:
             date = self.kwargs.get('date')
             date = datetime.strptime(date, "%Y-%m-%d").date()
-            records = self.queryset.filter(date__gte = date, date__lte = date + timedelta(days=5)).order_by('lab_id', 'date')
+            records = self.queryset.filter(date__gte = date, date__lte = date + timedelta(days=4)).order_by('lab_id', 'date')
             return records
         except Exception as e:
             Response({"Message" : "Error While Fetching Date"}, status=404)
@@ -302,17 +305,28 @@ class WeekListAPIView(generics.ListAPIView):
 week_list_view = WeekListAPIView.as_view()
 
 class ScheduleRequestListAPIView(generics.ListAPIView):
-    queryset = ScheduleRequest.objects.all()
     serializer_class = ScheduleRequestSerializer
+    def get_queryset(self):
+        page_state = self.request.query_params.get('page_state')
+
+        queryset = ScheduleRequest.objects.all()
+        if page_state:
+            page_state = int(page_state)
+            if page_state + 10 > len(queryset):
+                queryset = queryset[page_state:]
+            else:
+                queryset = queryset[page_state:page_state + 10]
+        return queryset
 
 schedule_request_list_view = ScheduleRequestListAPIView.as_view()
 
 class ScheduleRequestCreateView(APIView):
     def post(self, request):
+        cur_date = datetime.now().date()
         data = request.data.copy()
         data['lab_id'] = Laboratory.objects.get(lab_name = data['lab_name']).lab_id
         data.pop('lab_name')
-
+        data['decision_date'] = cur_date
         serializer = ScheduleRequestSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
@@ -342,12 +356,11 @@ class ScheduleRequestUpdateView(APIView):
                     schedule_serializer = ScheduleSerializer(data=schedule_data)
                     
                     if schedule_serializer.is_valid():
-                        schedule_serializer.save()
+                        if schedule_processor.add_session((schedule_request.schedule_from, schedule_request.schedule_to), schedule_request.lab_id.lab_id):
+                            schedule_serializer.save()
                     else:
                         return Response({"error": schedule_serializer.errors}, status=400)
-
-                schedule_request.save()  # Save schedule request within the transaction
-
+                schedule_request.save()
             return Response({"message": "Schedule updated successfully"}, status=200)
 
         except ScheduleRequest.DoesNotExist:
@@ -378,6 +391,134 @@ def handleQR(request, user_name):
     
     if record:
         data = ScheduleSerializer(record).data
-        return JsonResponse(data, status=200, safe=False)
+        if record.status is None:
+            record.status = "In Progress"
+        elif record.status == "In Progress":
+            record.status = "Completed"
+        elif record.status == "Blocked":
+            return JsonResponse({"Message": "Blocked"}, status=403)
+        elif record.status == "Completed":
+            return JsonResponse({"Message": "Already Completed"}, status=403)
+
+        record.save(update_fields=["status"])
+        return JsonResponse({"Message": record.status}, status=200)
     else:
         return JsonResponse({"Message": "No Schedule Found"}, status=404)
+
+class UserScheduleDetailAPIView(APIView):
+    def get(self, request, username):
+        if not username:
+            return JsonResponse({"Error": "Username is required"}, status=400)
+        cur_date = datetime.now().date()
+        cur_time = datetime.now().time()
+
+        records = Schedules.objects.filter(username=username, schedule_date=cur_date, schedule_to__gte=cur_time)
+
+        lab_records = Laboratory.objects.values("lab_id", "lab_name")
+        final_records = records.filter(lab_id__in=lab_records.values_list("lab_id", flat=True))
+        data = list(final_records.values())
+        return JsonResponse(data, status=200, safe=False)
+    
+user_detail_api_view = UserScheduleDetailAPIView.as_view()
+
+class ScheduleRequestModifiedView(generics.ListAPIView):
+    serializer_class = ScheduleRequestSerializer
+    def get_queryset(self):    
+        cur_date = datetime.now().date()
+        cur_time = datetime.now().time()
+        return ScheduleRequest.objects.filter(
+            Q(schedule_date__gt = cur_date) | 
+            Q(schedule_date = cur_date, schedule_to__gte = cur_time))
+
+schedule_req_mod_view = ScheduleRequestModifiedView.as_view()
+
+class MaintenanceListAPIView(generics.ListAPIView):
+    serializer_class = MaintenanceSerializer
+    def get_queryset(self):
+        cur_date = datetime.now().date()
+        cur_time = datetime.now().time()
+        return Maintenance.objects.filter(
+            Q(end_date__gt = cur_date) |
+            Q(end_date = cur_date, end_time__gte = cur_time)
+        )
+
+main_list_view = MaintenanceListAPIView.as_view()
+
+class MaintenanceInstanceListAPIView(generics.ListAPIView):
+    serializer_class = MaintenanceSerializer
+
+    def get_queryset(self):
+        selected_date = self.kwargs.get('custom_date')
+        selected_lab = self.kwargs.get('custom_lab')
+
+        if not selected_date or not selected_lab:
+            raise ValidationError({"Message": "date or lab not sent"})
+        
+        lab = get_object_or_404(Laboratory, lab_name=selected_lab)
+
+        return Maintenance.objects.filter(
+            lab_id = lab.lab_id,
+            start_date__lte = selected_date,
+            end_date__gte = selected_date
+        ).order_by('start_date')
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+
+        if not queryset.exists():
+            return Response({"Message": "No Maintenance is Scheduled"}, status=404)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({"data": serializer.data}, status=200)
+
+instance_api_view = MaintenanceInstanceListAPIView.as_view()
+
+class MaintenanceCreateAPIView(APIView):
+    def post(self, request):
+        data = request.data.copy()
+        lab_name = data.get('lab_name')
+        
+        try:
+            lab_id = Laboratory.objects.get(lab_name=lab_name).lab_id
+        except Laboratory.DoesNotExist:
+            return Response({"Error": "Invalid Lab Name"}, status=400)
+
+        data.pop('lab_name')
+        data['lab_id'] = lab_id
+        serializer = MaintenanceSerializer(data=data)
+
+        with transaction.atomic():
+            if serializer.is_valid():
+                serializer.save()
+
+                schedule_request_queryset = ScheduleRequest.objects.filter(
+                    Q(schedule_date__range=(data['start_date'], data['end_date'])) |
+                    (Q(schedule_date=data['start_date']) & Q(schedule_from__range=(data['start_time'], data['end_time']))) |
+                    (Q(schedule_date=data['start_date']) & Q(schedule_to__range=(data['start_time'], data['end_time'])))
+                )
+
+                for instance in schedule_request_queryset:
+                    schedule_req_serializer = ScheduleRequestSerializer(
+                        instance, data={'status': 'blocked'}, partial=True
+                    )
+                    if schedule_req_serializer.is_valid():
+                        schedule_req_serializer.save()
+
+                schedule_queryset = Schedules.objects.filter(
+                    Q(schedule_date__range=(data['start_date'], data['end_date'])) |
+                    (Q(schedule_date=data['start_date']) & Q(schedule_from__range=(data['start_time'], data['end_time']))) |
+                    (Q(schedule_date=data['start_date']) & Q(schedule_to__range=(data['start_time'], data['end_time'])))
+                )
+
+                for instance in schedule_queryset:
+                    schedule_serializer = ScheduleSerializer(
+                        instance, data={'status': 'blocked'}, partial=True
+                    )
+                    if schedule_serializer.is_valid():
+                        schedule_serializer.save()
+
+                return Response({"Message": "Created Maintenance Session"}, status=201)
+            else:
+                return Response({"Error": serializer.errors}, status=400)
+
+main_list_create = MaintenanceCreateAPIView.as_view()

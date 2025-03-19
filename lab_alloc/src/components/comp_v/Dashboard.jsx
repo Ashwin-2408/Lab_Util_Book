@@ -2,16 +2,44 @@ import { motion } from "framer-motion";
 import Button from "@mui/material/Button";
 import Overview from "./Overview";
 import KeyFeatures from "./KeyFeatures";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-export default function Dashboard() {
+import axios from "axios";
+export default function Dashboard(props) {
   const navigate = useNavigate();
-
+  const [scheduleRequest, setScheduleRequest] = useState([]);
+  const [pending, setPending] = useState(0);
+  const [active, setActive] = useState(0);
   function handleNewSession() {
     navigate("/book");
   }
-  function redirectresources() {
-    navigate("/resource");
-  }
+
+  useEffect(() => {
+    axios
+      .get("http://127.0.0.1:8000/api/cur_schedules")
+      .then((response) => {
+        setScheduleRequest(response.data);
+        console.log(response.data);
+      })
+      .catch((error) => console.log("Error", error));
+  }, []);
+
+  useEffect(() => {
+    let pending_count = 0;
+    let active_count = 0;
+    scheduleRequest.map((elem, index) => {
+      if (elem.status === "pending") {
+        pending_count += 1;
+      }
+
+      if (elem.status === "approved") {
+        active_count += 1;
+      }
+    });
+
+    setActive(active_count);
+    setPending(pending_count);
+  }, [scheduleRequest]);
 
   return (
     <motion.div
@@ -123,12 +151,16 @@ export default function Dashboard() {
             Current status and statistics of the lab utilization system.
           </motion.div>
           <div>
-            <Overview />
+            <Overview
+              active={active}
+              pending={pending}
+              totalLabs={props.totalLabs}
+            />
           </div>
         </motion.div>
       </motion.div>
       <motion.div>
-        <KeyFeatures />
+        <KeyFeatures setPageState={props.setPageState} />
       </motion.div>
     </motion.div>
   );

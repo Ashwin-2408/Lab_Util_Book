@@ -1,7 +1,7 @@
 import { DiAtom } from "react-icons/di";
 export default function Card(props) {
   return (
-    <div className="event-card-outer" style={props.style}>
+    <div className={`event-card-outer ${props.classname}`} style={props.style}>
       <div className="event-card">
         <div>
           <DiAtom style={{ fontSize: "1.5rem" }} />

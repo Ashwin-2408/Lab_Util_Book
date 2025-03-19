@@ -66,7 +66,7 @@ export default function Stats(props) {
 
   useEffect(() => {
     const array = Array.from({ length: 5 }, (_, i) =>
-      Array.from({ length: 10 }, (_, j) => 0)
+      Array.from({ length: props.labs.length - 1 }, (_, j) => 0)
     );
 
     weekStatInfo.map((elem, index) => {
