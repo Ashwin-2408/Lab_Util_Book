@@ -17,4 +17,5 @@ router.patch("/notifications",markAllAsRead);
 router.delete("/notifications/:id", deleteNotification); 
 router.delete("/notifications", deleteAllNotifications);
 
+
 export default router;

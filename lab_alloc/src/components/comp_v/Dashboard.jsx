@@ -9,7 +9,10 @@ export default function Dashboard() {
   function handleNewSession() {
     navigate("/book");
   }
-  
+  function redirectresources() {
+    navigate("/resource");
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -73,6 +76,7 @@ export default function Dashboard() {
               color: "black",
               textTransform: "none",
             }}
+            onClick={redirectresources}
           >
             Request Resources
           </Button>

@@ -21,7 +21,7 @@ function MainApp() {
           path="/admin_resource"
           element={<AdminResourceAllocation></AdminResourceAllocation>}
         />
-        <Route path="/resourcealloc" element={<ResourceAllocation />} />
+
         <Route path="/scan" element={<Scanner />} />
         <Route path="/cancel-lab" element={<CancelLab />} />
         <Route path="/admin" element={<AdminInterface></AdminInterface>} />
