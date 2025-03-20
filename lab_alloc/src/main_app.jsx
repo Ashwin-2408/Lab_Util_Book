@@ -8,6 +8,8 @@ import BookLabForm from "./components/comp_v/BookLabForms.jsx";
 import { useState } from "react";
 import ResourceAllocation from "./components/Resource_allocation.jsx";
 import AdminResourceAllocation from "./components/AdminResourceAllocation.jsx";
+import AdminBookings from "./components/AdminBookings";
+import  AdminReports from "./components/AdminReports";
 import Audit from "./components/comp_v/Audit.jsx";
 function MainApp() {
   const [pageState, setPageState] = useState("Dashboard");
@@ -34,6 +36,8 @@ function MainApp() {
         <Route path="/resourcealloc" element={<ResourceAllocation />} />
         <Route path="/scan" element={<Scanner />} />
         <Route path="/cancel-lab" element={<CancelLab />} />
+        <Route path="/admin/bookings" element={<AdminBookings />} />
+        <Route path="/admin/reports-analytics" element={<AdminReports />} />
         <Route path="/admin" element={<AdminInterface></AdminInterface>} />
         {/* <Route path='/login' element={<Login />} /> */}
       </Routes>

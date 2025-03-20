@@ -9,11 +9,15 @@ import {
   KanbanSquare,
   Wrench,
   CalendarSearch,
+  ClipboardList,
+  BarChart,
+  Settings,
 } from "lucide-react";
 
 export default function NavBar(props) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [labShowDropDown, setLabShowDropDown] = useState(false);
+  const [adminDropdown, setAdminDropdown] = useState(false);
   const navigate = useNavigate();
 
   function handlePageChange(page) {
@@ -34,59 +38,43 @@ export default function NavBar(props) {
             onClick={() => handlePageChange("Dashboard")}
             className="nav-bar-btn"
           >
-            <div>
-              <LayoutDashboard strokeWidth={1.5} size={20} />
-            </div>
+            <LayoutDashboard strokeWidth={1.5} size={20} />
             <div>Dashboard</div>
           </button>
+
+          {/* Laboratory Dropdown */}
           <div
             className="dropdown-container"
             onMouseEnter={() => setLabShowDropDown(true)}
             onMouseLeave={() => setLabShowDropDown(false)}
           >
             <button className="nav-bar-btn">
-              <div>
-                <Beaker strokeWidth={1.5} size={20} />
-              </div>
+              <Beaker strokeWidth={1.5} size={20} />
               <div>Laboratory</div>
             </button>
             {labShowDropDown && (
               <div className="dropdown-menu">
-                <button
-                  onClick={() => handlePageChange("LabAlloc")}
-                  style={{
-                    display: "flex",
-                    gap: "0.5rem",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <div>
-                    <CalendarSearch strokeWidth={1.5} size={20} />
-                  </div>
-                  <div>Lab Allocation</div>
+                <button onClick={() => handlePageChange("LabAlloc")}>
+                  <CalendarSearch strokeWidth={1.5} size={20} />
+                  Lab Allocation
                 </button>
-                <button
-                  onClick={() => handlePageChange("Maintenance")}
-                  style={{ display: "flex", gap: "0.2rem" }}
-                >
-                  <div>
-                    <Wrench strokeWidth={1.5} size={20} />
-                  </div>
-                  <div>Lab Maintenance</div>
+                <button onClick={() => handlePageChange("Maintenance")}>
+                  <Wrench strokeWidth={1.5} size={20} />
+                  Lab Maintenance
                 </button>
               </div>
             )}
           </div>
+
+          {/* Resource Allocation */}
           <button
             onClick={() => handlePageChange("Resource")}
             className="nav-bar-btn"
           >
-            <div>
-              <PackageOpen strokeWidth={1.5} size={20} />
-            </div>
+            <PackageOpen strokeWidth={1.5} size={20} />
             <div>Resource Allocation</div>
           </button>
+
           {/* Manage Labs Dropdown */}
           <div
             className="dropdown-container"
@@ -94,9 +82,7 @@ export default function NavBar(props) {
             onMouseLeave={() => setShowDropdown(false)}
           >
             <button className="nav-bar-btn">
-              <div>
-                <KanbanSquare strokeWidth={1.5} size={20} />
-              </div>
+              <KanbanSquare strokeWidth={1.5} size={20} />
               <div>Manage Labs</div>
             </button>
             {showDropdown && (
@@ -109,21 +95,50 @@ export default function NavBar(props) {
                 </button>
                 <button onClick={() => navigate("/cancel-lab")}>
                   Cancel Lab
-                </button>{" "}
-                {/* Navigate to cancel lab page */}
+                </button>
               </div>
             )}
           </div>
+
+          {/* Notifications */}
           <button
             onClick={() => handlePageChange("Notification")}
             className="nav-bar-btn"
           >
-            <div>
-              <BellRing strokeWidth={1.5} size={20} />
-            </div>
+            <BellRing strokeWidth={1.5} size={20} />
             <div>Notifications</div>
           </button>
+
+          {/* Admin Dashboard Dropdown */}
+          <div
+            className="dropdown-container"
+            onMouseEnter={() => setAdminDropdown(true)}
+            onMouseLeave={() => setAdminDropdown(false)}
+          >
+            <button className="nav-bar-btn">
+              <LayoutDashboard strokeWidth={1.5} size={20} />
+              <div>Admin Dashboard</div>
+            </button>
+            {adminDropdown && (
+              <div className="dropdown-menu">
+                <button onClick={() => navigate("/admin/bookings")}>
+                  <ClipboardList strokeWidth={1.5} size={20} />
+                  Cancellation Management
+                </button>
+                <button onClick={() => navigate("/admin/reports-analytics")}>
+                  <BarChart strokeWidth={1.5} size={20} />
+                  Reports & Analytics
+                </button>
+                <button onClick={() => navigate("/admin/auto-cancellation-rules")}>
+                  <Settings strokeWidth={1.5} size={20} />
+                  Auto-Cancellation Rules
+                </button>
+              </div>
+            )}
+          </div>
         </div>
+
+        {/* Right Menu */}
         <div className="nav-right-div">
           <Menu />
         </div>
