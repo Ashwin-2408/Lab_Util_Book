@@ -72,3 +72,32 @@ export const rejectRequest = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+export const addResource = async (req, res) => {
+  try {
+    const { lab_id, type, status } = req.body;
+
+    if (!lab_id || !type) {
+      return res.status(400).json({ error: "Lab ID and type are required" });
+    }
+
+    if (!["i3", "i5", "i7"].includes(type)) {
+      return res
+        .status(400)
+        .json({ error: "Invalid type. Must be i3, i5, or i7" });
+    }
+
+    const newResource = await Resource.create({
+      lab_id,
+      type,
+      status: status || "Available", // Default status
+    });
+
+    res
+      .status(201)
+      .json({ message: "Resource added successfully", resource: newResource });
+  } catch (error) {
+    console.error("Error adding resource:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};

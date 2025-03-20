@@ -104,6 +104,7 @@ export default function Dashboard(props) {
               color: "black",
               textTransform: "none",
             }}
+            onClick={redirectresources}
           >
             Request Resources
           </Button>
