@@ -2,7 +2,14 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import { motion } from "framer-motion";
 
-export default function CalendarView() {
+export default function CalendarView({ customSelect, mainData }) {
+  const eventData = mainData.map((elem) => {
+    return {
+      title: customSelect[elem.id].lab_name,
+      start: elem.start_date,
+      end: elem.end_date,
+    };
+  });
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -13,10 +20,7 @@ export default function CalendarView() {
       <FullCalendar
         plugins={[dayGridPlugin]}
         initialView="dayGridMonth"
-        events={[
-          { title: "Maintenance", date: "2025-03-07" },
-          { title: "Checkup", date: "2025-03-09" },
-        ]}
+        events={eventData}
         height="100%"
         contentHeight={300}
         dayCellContent={(arg) => (

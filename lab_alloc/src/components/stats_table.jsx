@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { IoTodayOutline } from "react-icons/io5";
 import { BsCalendar4Week } from "react-icons/bs";
 import { BsCalendar2Month } from "react-icons/bs";
+import { ChevronRight, ChevronLeft } from "lucide-react";
+
 import axios from "axios";
 
 export default function Stats(props) {
@@ -19,10 +21,29 @@ export default function Stats(props) {
     setInterval((prevState) => value);
   }
 
+  function handleChangeWeek(value) {
+    if (interval === "Day") {
+      const cur_day = dayState + value;
+      if (cur_day > 0 && cur_day < 74) {
+        setDayState(cur_day);
+      }
+    } else if (interval === "Week") {
+      const cur_week = weekState + value;
+      if (cur_week > 0 && cur_week < 12) {
+        setWeekState(cur_week);
+      }
+    } else {
+      const cur_month = monthState + value;
+      if (cur_month > 0 && cur_month < 4) {
+        setMonthState(cur_month);
+      }
+    }
+  }
+
   useEffect(() => {
     if (interval === "Day") {
       axios
-        .get("http://127.0.0.1:8000/api/daily")
+        .get(`http://127.0.0.1:8000/api/daily/${dayState}`)
         .then((response) => {
           setStatInfo(response.data);
         })
@@ -53,7 +74,7 @@ export default function Stats(props) {
         .then((response) => {
           if (response.data && Object.keys(response.data).length > 0) {
             setWeekStatInfo(response.data);
-            console.log("Response Data:", response.data);
+            console.log("Response Week Data:", response.data);
           } else {
             console.log("No data found in the response.");
           }
@@ -62,7 +83,7 @@ export default function Stats(props) {
           console.error("Error while fetching Week:", error);
         });
     }
-  }, [interval]);
+  }, [interval, weekState]);
 
   useEffect(() => {
     const array = Array.from({ length: 5 }, (_, i) =>
@@ -98,6 +119,60 @@ export default function Stats(props) {
           </div>
           <div>Month</div>
         </button>
+        {interval === "Day" && (
+          <div style={{ display: "flex", gap: "1rem" }}>
+            <div>
+              <button className="interval" onClick={() => handleChangeWeek(-1)}>
+                <div className={dayState === 1 ? "gray-state" : "prev-next"}>
+                  <ChevronLeft />
+                </div>
+              </button>
+            </div>
+            <div>
+              <button className="interval" onClick={() => handleChangeWeek(1)}>
+                <div className={dayState === 11 ? "gray-state" : "prev-next"}>
+                  <ChevronRight />
+                </div>
+              </button>
+            </div>
+          </div>
+        )}
+        {interval === "Week" && (
+          <div style={{ display: "flex", gap: "1rem" }}>
+            <div>
+              <button className="interval" onClick={() => handleChangeWeek(-1)}>
+                <div className={weekState === 1 ? "gray-state" : "prev-next"}>
+                  <ChevronLeft />
+                </div>
+              </button>
+            </div>
+            <div>
+              <button className="interval" onClick={() => handleChangeWeek(1)}>
+                <div className={weekState === 11 ? "gray-state" : "prev-next"}>
+                  <ChevronRight />
+                </div>
+              </button>
+            </div>
+          </div>
+        )}
+        {interval === "Month" && (
+          <div style={{ display: "flex", gap: "1rem" }}>
+            <div>
+              <button className="interval" onClick={() => handleChangeWeek(-1)}>
+                <div className={monthState === 1 ? "gray-state" : "prev-next"}>
+                  <ChevronLeft />
+                </div>
+              </button>
+            </div>
+            <div>
+              <button className="interval" onClick={() => handleChangeWeek(1)}>
+                <div className={monthState === 11 ? "gray-state" : "prev-next"}>
+                  <ChevronRight />
+                </div>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
       <div className="stats-table">
         <div className="col-1">

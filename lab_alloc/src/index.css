@@ -718,6 +718,43 @@ input[type="time"]::-webkit-calendar-picker-indicator {
   background-color: white;
 }
 
+.prev-next {
+  background-color: orange;
+  padding: 4px;
+  color: white;
+  border: none;
+  width: 1.75rem;
+  height: 1.75rem;
+  font-size: 1.1rem;
+  border-radius: 1.75rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.5s ease;
+  border: 1px solid orange;
+}
+
+.prev-next:hover {
+  color: black;
+  background-color: white;
+}
+
+.gray-state {
+  background-color: gray;
+  padding: 4px;
+  color: white;
+  border: none;
+  width: 1.75rem;
+  height: 1.75rem;
+  font-size: 1.1rem;
+  border-radius: 1.75rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.5s ease;
+  border: 1px solid gray;
+}
+
 .interval-state {
   background-color: white;
 }
@@ -1109,7 +1146,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .audit-filter:hover {
   cursor: pointer;
-  background-color: rgb(237, 237, 237);
+  background-color: rgb(245, 245, 247);
 }
 
 .approved {
@@ -1139,5 +1176,31 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 
 .audit-records:hover {
   cursor: pointer;
-  background-color: rgb(237, 237, 237);
+  background-color: rgb(245, 245, 247);
+}
+
+.fil-btns div button {
+  border: none;
+  border: 1px solid gray;
+  border-radius: 0.2rem;
+  background-color: white;
+  padding: 0.25rem 0.5rem;
+  gap: 1rem;
+  transition: 0.5s ease;
+}
+
+.fil-btns div button:hover {
+  background-color: rgb(245, 245, 247);
+  cursor: pointer;
+}
+
+.filter-box {
+  position: absolute;
+  z-index: 1000;
+  background-color: white;
+  border: 1px solid gray;
+  padding: 1rem;
+  margin: 0.5rem 0rem;
+  border-radius: 0.5rem;
+  right: 1rem;
 }

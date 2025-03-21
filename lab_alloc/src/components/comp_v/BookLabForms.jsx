@@ -8,6 +8,7 @@ export default function BookLabForm({ setPageState }) {
   const navigate = useNavigate();
   const [scheduleRequests, setScheduleRequests] = useState([]);
   const [refresh, setRefresh] = useState(true);
+  const cur_date = new Date();
   function formatDate(date_elem) {
     const dateObj = new Date(date_elem);
     var dateString =
@@ -58,6 +59,18 @@ export default function BookLabForm({ setPageState }) {
 
   function handleOnChange(event) {
     const { name, value } = event.target;
+    if (
+      name === "schedule_to" &&
+      new Date(`1970-01-01T${value}`) <=
+        new Date(`1970-01-01T${formData.schedule_from}`)
+    ) {
+      alert("Not valid timing");
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: "",
+      }));
+      return;
+    }
     setFormData((prevState) => ({
       ...prevState,
       [name]: value,
@@ -170,6 +183,7 @@ export default function BookLabForm({ setPageState }) {
                   id="schedule_date-1"
                   name="schedule_date"
                   value={formData.schedule_date}
+                  min={new Date().toISOString().split("T")[0]}
                   onChange={handleOnChange}
                 />
               </div>

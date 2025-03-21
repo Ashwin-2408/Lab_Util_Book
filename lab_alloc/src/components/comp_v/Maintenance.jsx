@@ -4,11 +4,52 @@ import ScheduleMain from "./ScheduleMain";
 import CalendarView from "./CalenderView";
 import "./maintenance.css";
 import { useState, useEffect } from "react";
-export default function Maintenance({customSelect, mainData}) {
+export default function Maintenance({ customSelect, mainData }) {
   const [content, setContent] = useState(0);
   const [completed, setCompleted] = useState(0);
   const [inProgress, setInProgress] = useState(0);
   const [upcoming, setUpcoming] = useState(0);
+  const [upcomingSess, setUpcomingSess] = useState([]);
+  const cur_date = new Date().toISOString().split("T")[0];
+
+  function matchLabId(value) {
+    return customSelect[value].lab_name;
+  }
+
+  useEffect(() => {
+    let result = [];
+
+    const today = new Date();
+    today.setDate(today.getDate() + 7);
+    const future_date = today.toISOString().split("T")[0];
+
+    mainData.forEach((elem) => {
+      const dateObj = new Date(elem.start_date).toISOString().split("T")[0];
+
+      if (dateObj > cur_date && dateObj < future_date) {
+        result.push({
+          lab_name: matchLabId(elem.lab_id),
+          main_reason: elem.main_reason,
+        });
+      } else if (dateObj === cur_date) {
+        const currentTime = new Date().toTimeString().split(" ")[0];
+        const elemTime = elem.start_time;
+
+        if (currentTime > elemTime) {
+          result.push({
+            lab_name: matchLabId(elem.lab_id),
+            main_reason: elem.main_reason,
+          });
+        }
+      }
+    });
+
+    if (result.length > 0) {
+      setUpcomingSess(result);
+    }
+
+    console.log("Result", result);
+  }, []);
 
   function session_status(startDate, startTime) {
     let currentDate = new Date();
@@ -134,34 +175,36 @@ export default function Maintenance({customSelect, mainData}) {
               Upcoming maintenance work for the next 7 days
             </div>
           </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              marginTop: "1rem",
-              padding: "1rem 1rem",
-              border: "1px solid rgb(217, 217, 217)",
-              borderRadius: "0.5rem",
-            }}
-          >
-            <div style={{ display: "flex", gap: "0.5rem" }}>
-              <div>
-                <CircleAlert strokeWidth={2} size={16} />
+          {upcomingSess.length === 0 && (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                marginTop: "1rem",
+                padding: "1rem 1rem",
+                border: "1px solid rgb(217, 217, 217)",
+                borderRadius: "0.5rem",
+              }}
+            >
+              <div style={{ display: "flex", gap: "0.5rem" }}>
+                <div>
+                  <CircleAlert strokeWidth={2} size={16} />
+                </div>
+                <div
+                  style={{
+                    fontSize: "0.9rem",
+                    fontWeight: "500",
+                    color: "rgb(0, 0, 0)",
+                  }}
+                >
+                  No upcoming maintenance
+                </div>
               </div>
-              <div
-                style={{
-                  fontSize: "0.9rem",
-                  fontWeight: "500",
-                  color: "rgb(0, 0, 0)",
-                }}
-              >
-                No upcoming maintenance
+              <div style={{ fontSize: "0.9rem", padding: "0rem 1.5rem" }}>
+                There are no maintenance tasks scheduled for the next 7 days.
               </div>
             </div>
-            <div style={{ fontSize: "0.9rem", padding: "0rem 1.5rem" }}>
-              There are no maintenance tasks scheduled for the next 7 days.
-            </div>
-          </div>
+          )}
         </div>
         <div style={{ display: "flex", flexDirection: "column", width: "30%" }}>
           <div
@@ -299,12 +342,11 @@ export default function Maintenance({customSelect, mainData}) {
         }}
       >
         {content === 0 && <ScheduleMain customSelect={customSelect} />}
-        {content === 1 && <CalendarView />}
+        {content === 1 && (
+          <CalendarView customSelect={customSelect} mainData={mainData} />
+        )}
         {content === 2 && (
-          <ScheduleList
-            customSelect={customSelect}
-            mainData={mainData}
-          />
+          <ScheduleList customSelect={customSelect} mainData={mainData} />
         )}
       </div>
     </div>

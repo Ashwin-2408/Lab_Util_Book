@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import Stats from "./components/stats_table.jsx";
 import Maintenance from "./components/comp_v/Maintenance.jsx";
 import axios from "axios";
+import Audit from "./components/comp_v/Audit.jsx";
 import {
   Trash,
   BellRing,
@@ -305,7 +306,7 @@ function App({ pageState, setPageState }) {
           </div>
         </div>
       )}
-      {curDashBoard === "labstats" && (
+      {curDashBoard === "labstats" && pageState === "LabAlloc" && (
         <>
           <div
             style={{
@@ -333,6 +334,7 @@ function App({ pageState, setPageState }) {
       {pageState === "Maintenance" && (
         <Maintenance customSelect={customSelect} mainData={mainData} />
       )}
+      {pageState === "auditlog" && <Audit />}
       {pageState === "Notification" && (
         <div style={{ maxWidth: "72rem", margin: "0 auto", padding: "1.5rem" }}>
           <div

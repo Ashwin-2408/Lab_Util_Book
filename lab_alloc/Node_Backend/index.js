@@ -39,7 +39,7 @@ cron.schedule("* * * * *", async () => {
         timestamp: {
           [Op.between]: [now, fiveMinutesLater],
         },
-        isRead: False,
+        isRead: false,
       },      
     });
 

@@ -256,9 +256,11 @@ class DailyListDetailAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         try:
-            date = self.kwargs.get('date')
-            date = datetime.strptime(date, "%Y-%m-%d").date()
-            records = self.queryset.filter(date__gte = date, date__lte = date + timedelta(days=4)).order_by('lab_id', 'date')
+            date_count = self.kwargs.get('date')
+            start_date = datetime.strptime(RESET_DATE, "%Y-%m-%d").date()
+            start = start_date + timedelta(days=5*(date_count - 1))
+            end = start_date + timedelta(days=5*date_count)
+            records = self.queryset.filter(date__range=(start, end)).order_by('lab_id', 'date')
             return records
         except Exception as e:
             Response({"Message" : "Error While Fetching Date"}, status=404)
@@ -307,16 +309,18 @@ week_list_view = WeekListAPIView.as_view()
 class ScheduleRequestListAPIView(generics.ListAPIView):
     serializer_class = ScheduleRequestSerializer
     def get_queryset(self):
-        page_state = self.request.query_params.get('page_state')
+        return ScheduleRequest.objects.order_by('schedule_date')
 
-        queryset = ScheduleRequest.objects.all()
-        if page_state:
-            page_state = int(page_state)
-            if page_state + 10 > len(queryset):
-                queryset = queryset[page_state:]
-            else:
-                queryset = queryset[page_state:page_state + 10]
-        return queryset
+    def list(self, request, *args, **kwargs):
+        page_state = request.query_params.get('page_state', 0)
+        page_state = int(page_state) * 10
+        
+        queryset = self.get_queryset()
+        total_count = queryset.count()
+        paginated_queryset = queryset[page_state:page_state + 10]
+        serializer = self.get_serializer(paginated_queryset, many=True)
+        return Response({"data" : serializer.data, "total" : total_count})
+
 
 schedule_request_list_view = ScheduleRequestListAPIView.as_view()
 
@@ -330,7 +334,7 @@ class ScheduleRequestCreateView(APIView):
         serializer = ScheduleRequestSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response({"Message" : "Successfully Submitted the Form"}, status=200)
+            return Response({"Message" : "Successfully Submitted the Form"}, status=201)
         else:
             return Response({"Message" : "Error while submitting form"}, status=500)
 
@@ -367,7 +371,6 @@ class ScheduleRequestUpdateView(APIView):
             return Response({"error": "Schedule request not found"}, status=404)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
-
 
 schedule_request_update_view = ScheduleRequestUpdateView.as_view()
 
@@ -423,7 +426,7 @@ user_detail_api_view = UserScheduleDetailAPIView.as_view()
 
 class ScheduleRequestModifiedView(generics.ListAPIView):
     serializer_class = ScheduleRequestSerializer
-    def get_queryset(self):    
+    def get_queryset(self):
         cur_date = datetime.now().date()
         cur_time = datetime.now().time()
         return ScheduleRequest.objects.filter(
@@ -434,15 +437,22 @@ schedule_req_mod_view = ScheduleRequestModifiedView.as_view()
 
 class MaintenanceListAPIView(generics.ListAPIView):
     serializer_class = MaintenanceSerializer
-    def get_queryset(self):
-        cur_date = datetime.now().date()
-        cur_time = datetime.now().time()
-        return Maintenance.objects.filter(
-            Q(end_date__gt = cur_date) |
-            Q(end_date = cur_date, end_time__gte = cur_time)
-        )
+    queryset = Maintenance.objects.all()
+    # def get_queryset(self):
+    #     cur_date = datetime.now().date()
+    #     cur_time = datetime.now().time()
+    #     return Maintenance.objects.filter(
+    #         Q(end_date__gt = cur_date) |
+    #         Q(end_date = cur_date, end_time__gte = cur_time)
+    #     )
 
 main_list_view = MaintenanceListAPIView.as_view()
+
+class MaintenanceListAllAPIView(generics.ListAPIView):
+    serializer_class = MaintenanceSerializer
+    queryset = Maintenance.objects.all()
+
+main_list_all_view = MaintenanceListAllAPIView.as_view()
 
 class MaintenanceInstanceListAPIView(generics.ListAPIView):
     serializer_class = MaintenanceSerializer
