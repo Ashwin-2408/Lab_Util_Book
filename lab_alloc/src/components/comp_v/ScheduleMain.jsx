@@ -65,7 +65,8 @@ export default function ScheduleMain({ customSelect }) {
       "http://127.0.0.1:8000/api/maintenance/create",
       data
     );
-    if (response.status === 200) {
+    console.log("Maintenance Schedule Response : ", response);
+    if (response.status === 201) {
       setRefresh((prevState) => !prevState);
     } else {
       alert("Please Try Again");

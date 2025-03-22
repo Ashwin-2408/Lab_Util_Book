@@ -11,7 +11,6 @@ export default function Maintenance({ customSelect, mainData }) {
   const [upcoming, setUpcoming] = useState(0);
   const [upcomingSess, setUpcomingSess] = useState([]);
   const cur_date = new Date().toISOString().split("T")[0];
-
   function matchLabId(value) {
     return customSelect[value].lab_name;
   }
@@ -23,7 +22,7 @@ export default function Maintenance({ customSelect, mainData }) {
     today.setDate(today.getDate() + 7);
     const future_date = today.toISOString().split("T")[0];
 
-    mainData.forEach((elem) => {
+    mainData.forEach((elem, _) => {
       const dateObj = new Date(elem.start_date).toISOString().split("T")[0];
 
       if (dateObj > cur_date && dateObj < future_date) {

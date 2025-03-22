@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 export default function CalendarView({ customSelect, mainData }) {
   const eventData = mainData.map((elem) => {
     return {
-      title: customSelect[elem.id].lab_name,
+      title: customSelect[elem.lab_id].lab_name,
       start: elem.start_date,
       end: elem.end_date,
     };

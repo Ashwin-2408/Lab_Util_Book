@@ -19,8 +19,6 @@ import {
   Check,
   TriangleAlert,
 } from "lucide-react";
-import labImg1 from "./assets/lab_img1.jpg";
-import labImg2 from "./assets/lab_img2.jpg";
 import Dashboard from "./components/comp_v/Dashboard.jsx";
 
 function App({ pageState, setPageState }) {
@@ -43,11 +41,12 @@ function App({ pageState, setPageState }) {
     const dateObj = new Date(date);
     return dateObj.toISOString().split("T")[0];
   }
+
   useEffect(() => {
     axios
       .get("http://127.0.0.1:8000/api/maintenance")
       .then((response) => {
-        setMainData(response.data);
+        if (response.data) setMainData(response.data);
       })
       .catch((error) => console.log("Error while fetching maintenance"));
   }, []);

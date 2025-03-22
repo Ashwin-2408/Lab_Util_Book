@@ -14,6 +14,7 @@ from django.db.models import Q
 import qrcode
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+import requests
 
 RESET_DATE = '2025-02-13'
 SCHEDULE_STATUS = False
@@ -344,11 +345,10 @@ class ScheduleRequestUpdateView(APIView):
     def patch(self, request, id):
         try:
             schedule_request = ScheduleRequest.objects.get(id=id)
-            
+            lab_name = Laboratory.objects.get(lab_id = schedule_request.lab_id.lab_id)
             with transaction.atomic():
                 schedule_request.status = request.data.get("status", schedule_request.status)
                 schedule_request.approved_by_id = request.data.get("approved_by", schedule_request.approved_by_id)
-                
                 if schedule_request.status == 'approved':
                     schedule_data = {
                         "username": schedule_request.username.username,
@@ -365,6 +365,18 @@ class ScheduleRequestUpdateView(APIView):
                     else:
                         return Response({"error": schedule_serializer.errors}, status=400)
                 schedule_request.save()
+            notification_response = requests.post(
+                    "http://127.0.0.1:3001/notifications",
+                    json={
+                        "type": "success" if schedule_request.status == "approved" else "error",
+                        "title": f"Booking {schedule_request.status}",
+                        "message": f"Your booking for {lab_name} has been {schedule_request.status}",
+                        "timestamp": schedule_request.schedule_date.strftime("%Y-%m-%d %H:%M:%S"),
+                        "category": "Lab Booking"
+                    }
+                )
+
+            print("Notification Response : ", notification_response)
             return Response({"message": "Schedule updated successfully"}, status=200)
 
         except ScheduleRequest.DoesNotExist:

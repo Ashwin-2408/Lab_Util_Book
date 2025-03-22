@@ -96,7 +96,7 @@ export default function ScheduleList({ customSelect, mainData }) {
             <th>Reason</th>
             <th>Actions</th>
           </thead>
-          {mainData.map((elem, _) => (
+          {mainData.map((elem) => (
             <tr>
               <td style={{ fontWeight: "500" }}>{matchLabId(elem.lab_id)}</td>
               <td>
@@ -131,7 +131,7 @@ export default function ScheduleList({ customSelect, mainData }) {
                     alignItems: "center",
                   }}
                 >
-                  <div style={{ width: "40%"}}>
+                  <div style={{ width: "40%" }}>
                     {formatDate(elem.end_date)}
                   </div>
                   <div
