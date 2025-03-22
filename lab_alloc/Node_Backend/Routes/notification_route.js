@@ -10,11 +10,12 @@ import {
 
 const router = Router();
 
-router.get("/notifications", getNotifications);
-router.post("/notifications", createNotification);
-router.patch("/notifications/:id", markAsRead);
-router.patch("/notifications",markAllAsRead);
-router.delete("/notifications/:id", deleteNotification); 
-router.delete("/notifications", deleteAllNotifications);
+router.get("/", getNotifications);
+router.post("/", createNotification);
+router.patch("/:id", markAsRead);
+router.patch("/",markAllAsRead);
+router.delete("/:id", deleteNotification); 
+router.delete("/", deleteAllNotifications);
+
 
 export default router;

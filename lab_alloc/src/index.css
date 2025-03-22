@@ -89,6 +89,7 @@ nav {
   transform: none;
 }
 
+
 .logo-container {
   display: flex;
   align-items: center;
@@ -250,7 +251,7 @@ nav {
   transform: scale(1.05);
 }
 
-/* Confirmation Modal */
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -258,6 +259,7 @@ nav {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -281,9 +283,9 @@ nav {
   font-weight: bold;
 }
 
-/* Modal Buttons */
+
 .confirm-btn {
-  background: #28a745;
+  background: #e00303;
   color: white;
   padding: 10px 15px;
 }
@@ -298,11 +300,11 @@ nav {
 }
 
 .confirm-btn:hover {
-  background: #218838;
+  background: red;
 }
 
 .close-btn {
-  background: #6c757d;
+  background: #218838;
   color: white;
   padding: 10px 15px;
   border: none;
@@ -310,8 +312,16 @@ nav {
   border-radius: 5px;
 }
 
+
+
+.notification-item:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+
 .close-btn:hover {
-  background: #545b62;
+  background: #28a745;
 }
 
 .user-mag-div {
@@ -493,10 +503,7 @@ input[type="file"] {
   cursor: pointer;
 }
 
-/* input[type="date"]::-webkit-calendar-picker-indicator,
-input[type="time"]::-webkit-calendar-picker-indicator {
-  filter: invert(1) sepia(1) saturate(3) hue-rotate(0deg);
-} */
+
 
 .session-outer-div {
   display: flex;

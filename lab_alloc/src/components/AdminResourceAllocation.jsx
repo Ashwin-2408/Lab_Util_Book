@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./ResourceAllocation.css"; // Reusing the same CSS
+import "./Resource_Allocation1.css"; // Reusing the same CSS
 import axios from "axios";
 
 const AdminResourceAllocation = () => {
@@ -10,6 +10,10 @@ const AdminResourceAllocation = () => {
   const [processingRequestId, setProcessingRequestId] = useState(null);
   const [statusFilter, setStatusFilter] = useState("all");
 
+  // New State for Adding Resources
+  const [resourceType, setResourceType] = useState("");
+  const [resourceLab, setResourceLab] = useState("");
+
   // Fetch all resource requests
   const fetchAllRequests = async () => {
     setLoading(true);
@@ -17,8 +21,7 @@ const AdminResourceAllocation = () => {
       const response = await axios.get(
         "http://localhost:3001/resource/requests"
       );
-
-      console.log("Fetched all requests:", response.data);
+      console.log("Fetched all requests:", response.data); // Debugging
 
       // Transform the data to match component structure
       const formattedRequests = Array.isArray(response.data)
@@ -99,6 +102,7 @@ const AdminResourceAllocation = () => {
           resource: resourceName,
           quantity: 1,
           status: status.toLowerCase(),
+          createdAt: createdDate,
         };
       })
       .filter((item) => item !== null);
@@ -155,7 +159,7 @@ const AdminResourceAllocation = () => {
           "The resource has been allocated to the user.",
       });
 
-      // Update the request in the list
+      // Update the request in the list instead of refetching
       setAllRequests(
         allRequests.map((request) =>
           request.id === requestId
@@ -192,7 +196,7 @@ const AdminResourceAllocation = () => {
         details: response.data.message || "The request has been rejected.",
       });
 
-      // Update the request in the list
+      // Update the request in the list instead of refetching
       setAllRequests(
         allRequests.map((request) =>
           request.id === requestId
@@ -209,6 +213,54 @@ const AdminResourceAllocation = () => {
       });
     } finally {
       setProcessingRequestId(null);
+    }
+  };
+
+  // Handle Adding New Resource
+  const handleAddResource = async (e) => {
+    e.preventDefault();
+    console.log(resourceLab);
+    console.log(resourceType);
+    if (!resourceType || !resourceLab) {
+      setRequestStatus({
+        type: "error",
+        message: "All fields are required!",
+        details: "Please provide both resource type and lab name.",
+      });
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3001/resource/add_resource",
+        {
+          type: resourceType,
+          lab_id: resourceLab,
+          status: "Available",
+        }
+      );
+
+      setRequestStatus({
+        type: "success",
+        message: "Resource added successfully!",
+        details:
+          response.data?.message ||
+          "New resource has been added to the system.",
+      });
+      setResourceType("");
+      setResourceLab("");
+
+      // Refresh resource requests
+      fetchAllRequests();
+    } catch (err) {
+      console.error("Error adding resource:", err);
+      setRequestStatus({
+        type: "error",
+        message: "Failed to add resource.",
+        details:
+          err.response?.data?.message ||
+          "An error occurred while adding the resource.",
+      });
     }
   };
 
@@ -229,6 +281,8 @@ const AdminResourceAllocation = () => {
       ? allRequests
       : allRequests.filter((request) => request.status === statusFilter);
 
+  console.log("Filtered Requests:", filteredRequests); // Debugging
+
   return (
     <div className="resource-allocation">
       <div className="header">
@@ -243,7 +297,7 @@ const AdminResourceAllocation = () => {
       {requestStatus && (
         <div className={`notification ${requestStatus.type}`}>
           <strong>{requestStatus.message}</strong>
-          <p>{requestStatus.details}</p>
+          {requestStatus.details && <p>{requestStatus.details}</p>}
           <button
             className="close-notification"
             onClick={() => setRequestStatus(null)}
@@ -252,6 +306,28 @@ const AdminResourceAllocation = () => {
           </button>
         </div>
       )}
+
+      {/* Add Resource Form */}
+      <div className="add-resource-form">
+        <h2>Add New Resource</h2>
+        <form onSubmit={handleAddResource}>
+          <input
+            type="text"
+            placeholder="Resource Type (e.g., Laptop, Projector)"
+            value={resourceType}
+            onChange={(e) => setResourceType(e.target.value)}
+            required
+          />
+          <input
+            type="text"
+            placeholder="Lab Name"
+            value={resourceLab}
+            onChange={(e) => setResourceLab(e.target.value)}
+            required
+          />
+          <button type="submit">Add Resource</button>
+        </form>
+      </div>
 
       <div className="content">
         <div className="section">
@@ -288,21 +364,31 @@ const AdminResourceAllocation = () => {
           ) : filteredRequests.length > 0 ? (
             <div className="request-cards admin-request-cards">
               {filteredRequests.map((request) => (
-                <div className="request-card" key={request.request_id}>
+                <div
+                  className="request-card"
+                  key={request.request_id || request.id}
+                >
                   <div className="request-details">
-                    <h3>{request.title}</h3>
-                    <p>Requested: {request.dates}</p>
+                    <h3>
+                      {request.title || `Request from User ${request.userId}`}
+                    </h3>
+                    <p>
+                      Requested:{" "}
+                      {request.dates ||
+                        new Date(request.createdAt).toLocaleString()}
+                    </p>
                     <div className="user-tag">User ID: {request.userId}</div>
                     <div className="lab-tag">{request.lab}</div>
                     <div className="resource-tag">
-                      {request.resource} ({request.quantity})
+                      {request.resource}{" "}
+                      {request.quantity && `(x${request.quantity})`}
                       <span className={`status-badge ${request.status}`}>
                         {request.status}
                       </span>
                     </div>
                   </div>
 
-                  {request.status === "pending" && (
+                  {request.status.toLowerCase() === "pending" && (
                     <div className="action-buttons admin-actions">
                       <button
                         className="approve-button"
