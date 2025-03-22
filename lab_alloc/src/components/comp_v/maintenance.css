@@ -1,0 +1,130 @@
+.maintenance-btn {
+  display: flex;
+  gap: 0.4rem;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  padding: 0.5rem 0.75rem;
+  color: rgb(108, 110, 116);
+  transition: 0.5 ease;
+  border-radius: 0.5rem;
+}
+
+.maintenance-btn:hover {
+  cursor: pointer;
+}
+
+.maintenance-select {
+  padding: 0.3rem;
+  margin: 1rem 0rem;
+  border-radius: 0.3rem;
+  width: fit-content;
+  display: flex;
+  gap: 1rem;
+  background-color: #f1f5f9;
+}
+
+.selected-btn {
+  background-color: white;
+  color: black;
+  box-shadow: 1px 1px 2px #bebebe, -1px -1px 2px #ffffff;
+  transition: 0.4s ease;
+}
+
+#select-main-lab {
+  background-color: none;
+  padding: 0.5rem 0.3rem;
+  border: 1px solid rgb(217, 217, 217);
+  border-radius: 0.2rem;
+}
+
+#select-main-lab:focus {
+  outline: none;
+}
+
+.main-form-div {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 0.5rem;
+}
+
+.main-form-div input {
+  padding: 0rem 0.3rem;
+  height: 2rem;
+  border: 1px solid rgb(217, 217, 217);
+  border-radius: 0.2rem;
+}
+
+.main-form-div input:focus {
+  outline: none;
+}
+
+.main-form-div label {
+  font-size: 0.87rem;
+  font-weight: 400;
+}
+
+.main-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.main-form-div textarea {
+  height: 5rem;
+  border: 1px solid rgb(217, 217, 217);
+  border-radius: 0.2rem;
+  padding: 0.5rem 0.5rem;
+}
+
+.main-form-div textarea:focus {
+  outline: none;
+}
+
+table {
+  width: 100%;
+  text-align: left;
+  margin: 1rem;
+  border-collapse: collapse;
+  border: 1px solid rgb(217, 217, 217);
+}
+
+table thead th {
+  font-family: "Roboto";
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 1rem;
+  color: #6c757d;
+}
+
+table tr:hover {
+  background-color: rgb(249, 249, 249);
+}
+
+table tr td {
+  padding: 1rem;
+  font-family: "Roboto";
+}
+
+table tr td div {
+  font-size: 0.85rem;
+}
+
+.main-span-status {
+  border: 1px solid;
+  padding: 0.1rem 0.7rem;
+  align-items: center;
+  font-size: 0.8rem;
+  border-radius: 1rem;
+}
+
+.upcoming {
+  color: rgb(105, 105, 240);
+  border-color: rgb(105, 105, 240);
+}
+
+.completed {
+  color: green;
+  border-color: green;
+}

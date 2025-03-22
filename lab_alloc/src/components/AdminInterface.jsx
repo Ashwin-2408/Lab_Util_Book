@@ -1,11 +1,20 @@
-import AdminRequests from "./AdminRequests";
 import NavBar from "./navbar";
-
+import AdminResourceAllocation from "./AdminResourceAllocation";
 const AdminInterface = () => {
   return (
-    <div>
-      <NavBar></NavBar>
-      <AdminRequests></AdminRequests>
+    <div
+      style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
+    >
+      <NavBar style={{ position: "relative", zIndex: 10 }} />
+      <main
+        style={{
+          flex: 1,
+          marginTop: "60px", // Add space below the NavBar
+          position: "relative",
+        }}
+      >
+        <AdminResourceAllocation />
+      </main>
     </div>
   );
 };

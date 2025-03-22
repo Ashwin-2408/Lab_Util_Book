@@ -1,18 +1,26 @@
 import { Beaker, PackageOpen } from "lucide-react";
 import { motion } from "framer-motion";
 
-export default function OverviewSection() {
+export default function OverviewSection(props) {
   const data = [
-    { label: "Total Labs", value: 3, icon: <Beaker strokeWidth={1.5} /> },
+    {
+      label: "Total Labs",
+      value: props.totalLabs,
+      icon: <Beaker strokeWidth={1.5} />,
+    },
     {
       label: "Total Resources",
       value: 4,
       icon: <PackageOpen strokeWidth={1.5} />,
     },
-    { label: "Active Bookings", value: 2, icon: <Beaker strokeWidth={1.5} /> },
+    {
+      label: "Active Bookings",
+      value: props.active,
+      icon: <Beaker strokeWidth={1.5} />,
+    },
     {
       label: "Pending Requests",
-      value: 1,
+      value: props.pending,
       icon: <PackageOpen strokeWidth={1.5} />,
     },
   ];

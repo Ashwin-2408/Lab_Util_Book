@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Schedules, Laboratory, User, Daily, Month, Week, Admin, ScheduleRequest
+from .models import *
 
 class ScheduleSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,6 +10,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
             'schedule_date',
             'schedule_from',
             'schedule_to',
+            'status'
         ]
 
 class LaboratorySerializer(serializers.ModelSerializer):
@@ -66,4 +67,9 @@ class AdminSerializer(serializers.ModelSerializer):
 class ScheduleRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = ScheduleRequest
+        fields = '__all__'
+
+class MaintenanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Maintenance
         fields = '__all__'

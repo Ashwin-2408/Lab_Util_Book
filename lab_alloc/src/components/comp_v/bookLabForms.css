@@ -35,6 +35,7 @@ table {
   margin: 1rem;
   border-collapse: collapse;
 }
+
 table thead th {
   font-family: "Roboto";
   font-size: 0.9rem;
@@ -46,6 +47,7 @@ table thead th {
 table tr:hover {
   background-color: rgb(249, 249, 249);
 }
+
 table tr td {
   padding: 1rem;
   font-family: "Roboto";

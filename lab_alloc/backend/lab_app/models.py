@@ -1,6 +1,5 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-# Create your models here.
 class User(models.Model):
     username = models.CharField(max_length = 20, primary_key=True)
     email = models.EmailField()
@@ -27,6 +26,7 @@ class Schedules(models.Model):
     schedule_date = models.DateField()
     schedule_from = models.TimeField()
     schedule_to = models.TimeField()
+    status = models.CharField(max_length=20, null=True)
     
     class Meta:
         constraints = [
@@ -85,3 +85,12 @@ class ScheduleRequest(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['username', 'lab_id', 'schedule_date','schedule_from','schedule_to','status'], name='unique_schedule_request')
         ]
+
+class Maintenance(models.Model):
+    username = models.ForeignKey(Admin, on_delete=models.CASCADE)
+    lab_id = models.ForeignKey(Laboratory, on_delete=models.CASCADE)
+    start_date = models.DateField()
+    start_time = models.TimeField()
+    end_date = models.DateField()
+    end_time = models.TimeField()
+    main_reason = models.CharField(max_length=200)

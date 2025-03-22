@@ -15,13 +15,13 @@ const QRCodeScanner = () => {
         scanner = new Html5QrcodeScanner("qr-video", { fps: 10, qrbox: 250 });
         scanner.render((qrCodeMessage) => {
           setScanData(qrCodeMessage);
-          scanner.clear(); // Stop scanning once a QR code is detected
+          scanner.clear();
         });
       };
 
-      startScanner(); // Start the scanner
+      startScanner();
 
-      return () => scanner?.clear(); // Cleanup when the component unmounts
+      return () => scanner?.clear();
     }
   }, [showCheckIn]);
 
@@ -29,13 +29,33 @@ const QRCodeScanner = () => {
     if (scanData) {
       console.log("Scanned Data: ", scanData);
       axios
-        .post(`http://127.0.0.1:8000/api/checkin/${scanData}`)
+        .patch(`http://127.0.0.1:8000/api/checkin/${scanData}`)
         .then((response) => {
-          setCheckInStatus({
-            success: true,
-            message: response.data.message || "Check-in successful!",
-          });
-          setShowCheckIn(true);
+          if (response.data.Message === "In Progress") {
+            setCheckInStatus({
+              success: true,
+              message: "Check-in successful!",
+            });
+            setShowCheckIn(true);
+          } else if (response.data.Message === "Completed") {
+            setCheckInStatus({
+              success: true,
+              message: "Check-out successful!",
+            });
+            setShowCheckIn(true);
+          } else if (response.data.Message === "Blocked") {
+            setCheckInStatus({
+              success: true,
+              message: "Session Blocked",
+            });
+            setShowCheckIn(true);
+          } else if (response.data.Message === "Already Completed") {
+            setCheckInStatus({
+              success: true,
+              message: "Session Already Finished",
+            });
+            setShowCheckIn(true);
+          }
         })
         .catch((error) => {
           setCheckInStatus({
@@ -45,10 +65,9 @@ const QRCodeScanner = () => {
           setShowCheckIn(true);
         });
 
-      // Hide the check-in status and restart scanning after 3 seconds
       setTimeout(() => {
         setShowCheckIn(false);
-        setScanData(null); // Reset scanData to restart scanner
+        setScanData(null);
       }, 3000);
     }
   }, [scanData]);
