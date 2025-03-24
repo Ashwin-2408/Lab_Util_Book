@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+
 class User(models.Model):
     username = models.CharField(max_length = 20, primary_key=True)
     email = models.EmailField()
@@ -47,7 +48,7 @@ class Daily(models.Model):
 
 class Week(models.Model):
     id = models.AutoField(primary_key=True)
-    week_label = models.TextField(max_length=25)
+    week_label = models.CharField(max_length=25)
     week_num = models.IntegerField(blank=True, null=True)
     lab_id = models.ForeignKey(Laboratory, on_delete=models.CASCADE)
     total_hours = models.FloatField()
@@ -60,15 +61,10 @@ class Week(models.Model):
 
 class Month(models.Model):
     id = models.AutoField(primary_key = True)
-    month = models.TextField(max_length=25)
+    month = models.CharField(max_length = 25)
     lab_id = models.ForeignKey(Laboratory, models.CASCADE)
     total_hours = models.FloatField()
     num_bookings = models.IntegerField()
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields = ['month','lab_id'], name='monthly_unique')
-        ]
 
 class ScheduleRequest(models.Model):
     id = models.AutoField(primary_key=True)

@@ -4,7 +4,6 @@ import Lab from "../Schema/Lab.js";
 
 const router = Router();
 
-// Mount the resource routes
 router.use("/resource", Resource_Router);
 
 // GET all Labs using Sequelize

@@ -1,4 +1,4 @@
-import { Beaker, PackageOpen, Bell, User } from "lucide-react";
+import { Beaker, PackageOpen, Bell, NotepadText } from "lucide-react";
 
 const features = [
   {
@@ -18,14 +18,14 @@ const features = [
     icon: <Bell size={28} />,
   },
   {
-    title: "User Profile",
-    description: "Manage your account details and preferences.",
-    icon: <User size={28} />,
+    title: "Audit Log",
+    description: "Track approval and rejection decisions",
+    icon: <NotepadText size={28} />,
   },
 ];
 
 export default function KeyFeatures(props) {
-  const array = ["LabAlloc", "resourceAlloc", "notification", "userProfile"];
+  const array = ["LabAlloc", "resourceAlloc", "notification", "auditlog"];
   function handleRedirect(index) {
     props.setPageState(array[index]);
   }

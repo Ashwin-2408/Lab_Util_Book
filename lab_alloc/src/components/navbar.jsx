@@ -9,6 +9,7 @@ import {
   KanbanSquare,
   Wrench,
   CalendarSearch,
+  ClipboardList
 } from "lucide-react";
 
 export default function NavBar(props) {
@@ -87,7 +88,6 @@ export default function NavBar(props) {
             </div>
             <div>Resource Allocation</div>
           </button>
-          {/* Manage Labs Dropdown */}
           <div
             className="dropdown-container"
             onMouseEnter={() => setShowDropdown(true)}
@@ -114,6 +114,15 @@ export default function NavBar(props) {
               </div>
             )}
           </div>
+          <button
+            onClick={() => handlePageChange("WaitList")}
+            className="nav-bar-btn"
+          >
+            <div>
+              <ClipboardList strokeWidth={1.5} size={20} />
+            </div>
+            <div>WaitList</div>
+          </button>
           <button
             onClick={() => handlePageChange("Notification")}
             className="nav-bar-btn"

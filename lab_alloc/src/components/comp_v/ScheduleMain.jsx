@@ -23,6 +23,19 @@ export default function ScheduleMain({ customSelect }) {
         [name]: value,
       }));
     }
+    if (
+      name === "end_date" &&
+      formData.start_date === formData.end_date &&
+      new Date(`1970-01-01T${value}`) <=
+        new Date(`1970-01-01T${formData.start_time}`)
+    ) {
+      alert("Not valid timing");
+      setFormData((prevState) => ({
+        ...prevState,
+        [name]: "",
+      }));
+      return;
+    }
   }
 
   async function handleSubmit(event) {
@@ -52,7 +65,8 @@ export default function ScheduleMain({ customSelect }) {
       "http://127.0.0.1:8000/api/maintenance/create",
       data
     );
-    if (response.status === 200) {
+    console.log("Maintenance Schedule Response : ", response);
+    if (response.status === 201) {
       setRefresh((prevState) => !prevState);
     } else {
       alert("Please Try Again");
@@ -128,6 +142,7 @@ export default function ScheduleMain({ customSelect }) {
                 type="date"
                 name="start_date"
                 value={formData.start_date}
+                min={new Date().toISOString().split("T")[0]}
                 onChange={handleChange}
               />
             </div>
@@ -156,6 +171,7 @@ export default function ScheduleMain({ customSelect }) {
                   type="date"
                   name="end_date"
                   value={formData.end_date}
+                  min={formData.start_date}
                   onChange={handleChange}
                 />
               </div>
