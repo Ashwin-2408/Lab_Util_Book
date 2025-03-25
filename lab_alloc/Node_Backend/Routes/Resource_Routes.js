@@ -19,8 +19,8 @@ Resource_Router.post("/request", requestResource);
 Resource_Router.patch("/:requestId/release", releaseResource);
 Resource_Router.post("/requests/user", getUserRequests);
 
-Resource_Router.get("/requests", getPendingRequests); // 📌 View all pending requests
-Resource_Router.patch("/:requestId/approve", approveRequest); // ✅ Approve request
+Resource_Router.get("/requests", getPendingRequests); 
+Resource_Router.patch("/:requestId/approve", approveRequest); 
 Resource_Router.patch("/:requestId/reject", rejectRequest);
 Resource_Router.post("/add_resource", addResource);
 

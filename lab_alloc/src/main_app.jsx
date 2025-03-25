@@ -20,7 +20,6 @@ function MainApp() {
           path="/"
           element={<App pageState={pageState} setPageState={setPageState} />}
         />
-        <Route path="/temp" element={<Audit />} />
         <Route
           path="/book"
           element={<BookLabForm setPageState={setPageState} />}
