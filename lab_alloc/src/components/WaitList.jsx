@@ -9,7 +9,6 @@ export default function WaitList() {
     const [name, setName] = useState("");
     const [waitlist, setWaitlist] = useState([]);
 
-
     useEffect(() => {
         axios.get("http://127.0.0.1:3001/labs")
             .then((response) => setLabs(response.data))

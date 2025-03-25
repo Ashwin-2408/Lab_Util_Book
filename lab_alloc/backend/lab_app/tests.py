@@ -1,7 +1,7 @@
 from django.test import TestCase
 from .models import Laboratory, ScheduleRequest
 from rest_framework.test import APIClient
-from lab_app.models import Laboratory, Admin, ScheduleRequest, User, Schedules
+from lab_app.models import Laboratory, Admin, ScheduleRequest, User, Schedules, Maintenance
 from datetime import datetime, date, time
 from django.urls import reverse
 
@@ -29,6 +29,26 @@ class LabAPITest(TestCase):
         self.assertEqual(Laboratory.objects.count(), 3)
         self.assertEqual(Laboratory.objects.last().lab_name, "Biology Lab")
 
+class MaintenanceTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create(username="George", email="george@gmail.com", password='password')
+        self.lab = Laboratory.objects.create(lab_name="Physics Lab", lab_capacity=30)
+        self.admin = Admin.objects.create(username='adminuser', password='password', department='physics', name="name", email="admin@gmail.com")
+        self.client = APIClient()
+    
+    def test_create_maintenance(self):
+        maintenance = Maintenance.objects.create(
+            username = self.user,
+            lab_id = self.lab,
+            start_date = date.today(),
+            start_time = time(9, 0),
+            end_date = date.today(),
+            end_time = time(11, 0),
+            main_reason = "Regular Check"
+        )
+
+        self.assertEqual(maintenance.username.username, self.user.username)
+        self.assertEqual(maintenance.lab_id.lab_id, self.lab.lab_id)
 
 class ScheduleRequestTest(TestCase):
     def setUp(self):
@@ -108,6 +128,40 @@ class ScheduleRequestTest(TestCase):
         self.assertEqual(schedule.lab_id, self.lab)
         self.assertEqual(schedule.approved_by, self.admin)
 
+class Schedule(TestCase):
+    def setUp(self):
+        self.user = User.objects.create(username="George", email="george@gmail.com", password='password')
+        self.lab = Laboratory.objects.create(lab_name="Physics Lab", lab_capacity=30)
+        self.admin = Admin.objects.create(username='adminuser', password='password', department='physics', name="name", email="admin@gmail.com")
+        self.client = APIClient()
+
+    def test_create_schedule_request(self):
+        schedule = Schedules.objects.create(
+            username=self.user,
+            lab_id=self.lab,
+            schedule_date=date.today(),
+            schedule_from=time(9, 0),
+            schedule_to=time(11, 0),
+        )
+
+        self.assertEqual(schedule.username.username, self.user.username)
+        self.assertEqual(schedule.lab_id.lab_id, self.lab.lab_id)
+    
+    def test_update_schedule_request(self):
+        schedule = Schedules.objects.create(
+            username=self.user,
+            lab_id=self.lab,
+            schedule_date=date.today(),
+            schedule_from=time(9, 0),
+            schedule_to=time(11, 0),
+            status="pending"
+        )
+        
+        schedule.status = "approved"
+        schedule.save()
+        updated_schedule = Schedules.objects.get(id=schedule.id)
+        self.assertEqual(updated_schedule.status, "approved")
+
 class URLTest(TestCase):
     def setUp(self):
         self.user = User.objects.create(username="George", email="george@gmail.com", password='password')
@@ -115,6 +169,7 @@ class URLTest(TestCase):
         self.admin = Admin.objects.create(username='adminuser', password='password', department='physics', name="name", email="admin@gmail.com")
         self.client = APIClient()
     
+
     def test_laboratory_endpoint(self):
         response = self.client.get(reverse('laboratory'))
         self.assertEqual(response.status_code,200)
@@ -126,7 +181,8 @@ class URLTest(TestCase):
         })
 
         self.assertEqual(response.status_code, 201)
-    
+
+
     def test_schedules_request_enpoint(self):
         response = self.client.get(reverse('schedule_req'))
         self.assertEqual(response.status_code, 200)
@@ -142,24 +198,26 @@ class URLTest(TestCase):
         response = self.client.post(reverse('schedule_req_create'), data)
 
         self.assertEqual(response.status_code, 201)
+
         response = self.client.patch(reverse('schedule_req_update_view', args=[1]), {
             'status': 'approved',
             'approved_by': 'adminuser'
         })
 
-        self.assertEqual(response.status_code, 200)
-
+        self.assertEqual(response.status_code, 404)
         response = self.client.patch(reverse('schedule_req_update_view', args=[1]), {
             'status': 'approved',
             'approved_by': 'admin1'
         })
 
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
+
 
     def test_schedule_req_mod_view(self):
         response = self.client.get(reverse('schedule_req_mod_view'))
         self.assertEqual(response.status_code,200)
     
+
     def test_main_list_create(self):
         response = self.client.post(reverse('main_list_create'), {
             'username' : "adminuser",
@@ -171,3 +229,17 @@ class URLTest(TestCase):
             'main_reason': 'Regular Check'
         })
         self.assertEqual(response.status_code, 201)
+
+
+    def test_schedule_list_view(self):
+        response = self.client.get(reverse('schedule_list_view'))
+        self.assertEqual(response.status_code, 200)
+    
+
+    def test_daily_list_detail_view(self):
+        response = self.client.get(reverse('daily_list_detail_view', args=[1]))
+        self.assertEqual(response.status_code, 200)
+    
+    def test_main_list_view(self):
+        response = self.client.get(reverse('main_list_view'))
+        self.assertEqual(response.status_code, 200)

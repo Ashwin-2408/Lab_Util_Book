@@ -137,6 +137,39 @@ class ScheduleProcessor:
 schedule_processor = ScheduleProcessor()
 schedule_processor.process_labs()
 
+def check_validity(date, new_session, lab_id):
+    updated_levels = []
+    capacity = Laboratory.objects.get(lab_id=lab_id).lab_capacity
+    sessions = list(Schedules.objects.filter(schedule_date=date, lab_id=lab_id).order_by('schedule_from').values_list('schedule_from', 'schedule_to'))
+
+    new_session = (
+        datetime.strptime(new_session[0], "%H:%M").time(),
+        datetime.strptime(new_session[1], "%H:%M").time()
+    )
+
+    inserted = False
+    for i in range(len(sessions)):
+        if new_session[0] < sessions[i][0]:
+            sessions.insert(i, new_session)
+            inserted = True
+            break
+    
+    if not inserted:
+        sessions.append(new_session)
+    
+    updated_levels.append([sessions[0]])
+    for session in sessions[1:]:
+        flag = True
+        for index, level in enumerate(updated_levels):
+            if session[0] >= level[-1][1]:
+                updated_levels[index].append(session)
+                flag = False
+                break
+        if flag:
+            updated_levels.append([session])
+    if len(updated_levels) > capacity - 20:
+        return False
+    return True
 
 # class ScheduleCreateAPIView(APIView):
 #     def post(self, request):
@@ -332,10 +365,23 @@ class ScheduleRequestCreateView(APIView):
         data['lab_id'] = Laboratory.objects.get(lab_name = data['lab_name']).lab_id
         data.pop('lab_name')
         data['decision_date'] = cur_date
-        serializer = ScheduleRequestSerializer(data=data)
+        serializer = ScheduleRequestSerializer(data = data)
         if serializer.is_valid():
-            serializer.save()
-            return Response({"Message" : "Successfully Submitted the Form"}, status=201)
+            check_status = check_validity(data['schedule_date'], (data['schedule_from'], data['schedule_to']), data['lab_id'])
+            print("Check Status",check_status)
+            if(check_status):
+                serializer.save()
+                return Response({"Message" : "Successfully Submitted the Form"}, status=201)
+            else:
+                try:
+                    response = requests.post("http://127.0.0.1:3001/waitlist", json={
+                        "username" : data['username'],
+                        "lab_id" : data['lab_id'],
+                    })
+                    print("Response", response)
+                except Exception as e:
+                    print("Error while sending request", e)
+                return Response({"Message" : "Capacity Reached"}, status=400)
         else:
             return Response({"Message" : "Error while submitting form"}, status=500)
 
@@ -365,6 +411,7 @@ class ScheduleRequestUpdateView(APIView):
                     else:
                         return Response({"error": schedule_serializer.errors}, status=400)
                 schedule_request.save()
+
             notification_response = requests.post(
                     "http://127.0.0.1:3001/notifications",
                     json={

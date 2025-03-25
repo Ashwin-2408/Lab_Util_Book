@@ -133,8 +133,6 @@ function App({ pageState, setPageState }) {
       });
     }
   };
-  
-
   const markNAsRead = async (id) => {
     console.log("Marking as read:", id);
 
