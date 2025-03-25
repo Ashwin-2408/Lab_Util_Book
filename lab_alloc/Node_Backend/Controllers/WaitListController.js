@@ -15,7 +15,7 @@ export const getWaitlist = async (req, res) => {
           model: Lab,
           attributes: ["lab_name", "location"], 
         },
-        order: [["position", "ASC"]],
+        order: [["id", "ASC"]],
       });
       res.status(200).json(waitlist);
     } catch (error) {
@@ -31,16 +31,15 @@ export const addToWaitlist = async (req, res) => {
 
     const lastEntry = await Waitlist.findOne({
       where: { lab_id },
-      order: [["position", "DESC"]],
+      order: [["id", "DESC"]],
     });
 
-    const newPosition = lastEntry ? lastEntry.position + 1 : 1;
+    const newPosition = lastEntry ? lastEntry.id + 1 : 1;
     const estimatedWaitTime = `${newPosition * 10} mins`; 
 
     const newEntry = await Waitlist.create({
       user_name,
       lab_id,
-      position: newPosition,
       estimated_wait_time: estimatedWaitTime,
       notified: false,
     });
@@ -60,8 +59,8 @@ export const removeFromWaitlist = async (req, res) => {
   
       await entry.destroy();
   
-      await Waitlist.decrement("position", {
-        where: { lab_id, position: { [Op.gt]: entry.position } },
+      await Waitlist.decrement("id", {
+        where: { lab_id, id: { [Op.gt]: entry.id } },
       });
   
       res.status(200).json({ message: "User removed from waitlist" });

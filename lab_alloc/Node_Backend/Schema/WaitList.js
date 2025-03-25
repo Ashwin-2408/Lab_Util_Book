@@ -24,10 +24,6 @@ const Waitlist = sequelize.define(
       onUpdate: "CASCADE",
       onDelete: "CASCADE",
     },
-    position: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
     estimated_wait_time: {
       type: DataTypes.STRING, 
       allowNull: false,
