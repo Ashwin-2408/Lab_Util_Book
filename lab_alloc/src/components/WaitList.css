@@ -1,22 +1,25 @@
-/* General */
+
 body {
   font-family: 'Poppins', sans-serif;
-  
   margin: 0;
   padding: 0;
+  background-color: #f9fafb;
 }
 
 .waitlist-container {
   background-color: #fff;
-  padding: 1rem;
+  padding: 1.5rem;
   width: 90%;
   max-width: 1200px;
-  margin: 5rem;
+  margin: 3rem auto;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .waitlist-title {
   font-size: 2rem;
   color: #2d3748;
+  font-weight: 600;
   margin-bottom: 0.5rem;
 }
 
@@ -26,7 +29,7 @@ body {
   margin-bottom: 2rem;
 }
 
-/* Back button */
+
 .back-button {
   background: none;
   border: none;
@@ -37,11 +40,13 @@ body {
   padding: 0.5rem 0;
   margin-bottom: 1rem;
   font-weight: 500;
+  transition: color 0.2s ease-in-out;
 }
 
 .back-button:hover {
   color: #2d3748;
 }
+
 
 .lab-details-container {
   display: flex;
@@ -50,21 +55,22 @@ body {
   margin-bottom: 20px;
 }
 
-.lab-info-section {
-  background-color: #f7fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 1.5rem;
-  flex: 2;
-}
-
+.lab-info-section,
 .join-waitlist-section {
   background-color: #f7fafc;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   padding: 1.5rem;
+}
+
+.lab-info-section {
+  flex: 2;
+}
+
+.join-waitlist-section {
   flex: 1;
 }
+
 
 .lab-header {
   display: flex;
@@ -76,6 +82,7 @@ body {
 .lab-name {
   font-size: 1.5rem;
   color: #2d3748;
+  font-weight: 600;
   margin: 0;
 }
 
@@ -91,7 +98,7 @@ body {
   color: #fff;
 }
 
-/* Utilization Bar */
+
 .lab-utilization {
   margin-bottom: 1rem;
 }
@@ -106,14 +113,18 @@ body {
 .progress-bar {
   background-color: #edf2f7;
   border-radius: 9999px;
-  height: 0.5rem;
+  height: 8px;
+  width: 100%;  
   overflow: hidden;
+  position: relative;
 }
 
 .progress {
   background-color: #e53e3e;
   height: 100%;
   border-radius: 9999px;
+  min-width: 5px; 
+  transition: width 0.5s ease-in-out;
 }
 
 .utilization-text {
@@ -121,7 +132,7 @@ body {
   color: #4a5568;
   margin-top: 0.25rem;
   display: block;
-  text-align: right;
+  text-align: left;
 }
 
 
@@ -142,7 +153,6 @@ body {
   color: #718096;
 }
 
-
 .join-waitlist-section h3 {
   font-size: 1.125rem;
   color: #2d3748;
@@ -157,7 +167,7 @@ body {
   margin-bottom: 1rem;
 }
 
-.join-waitlist-section .join-button {
+.join-button {
   background-color: #000;
   color: #fff;
   padding: 0.75rem 1.5rem;
@@ -169,12 +179,17 @@ body {
   align-items: center;
   justify-content: center;
   width: 100%;
+  transition: background 0.3s ease-in-out;
+}
+
+.join-button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
 }
 
 .join-button .icon {
   margin-right: 0.5rem;
 }
-
 
 .lab-waitlist-section {
   background-color: #f7fafc;
@@ -196,30 +211,14 @@ body {
   margin: 0;
 }
 
-.lab-waitlist-section .refresh-icon {
+.refresh-icon {
   color: #4a5568;
   cursor: pointer;
+  transition: color 0.3s ease-in-out;
 }
 
-.lab-waitlist-section .waitlist-tabs {
-  display: flex;
-  margin-bottom: 1rem;
-}
-
-.lab-waitlist-section .tab {
-  background-color: transparent;
-  border: none;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  color: #4a5568;
-  border-radius: 0.375rem;
-  margin-right: 0.5rem;
-}
-
-.lab-waitlist-section .tab.active {
-  background-color: #edf2f7;
-  color: #2d3748;
-  font-weight: 500;
+.refresh-icon:hover {
+  color: #007bff;
 }
 
 
@@ -238,14 +237,20 @@ body {
   justify-content: space-between;
   align-items: center;
   background-color: #fff;
+  transition: box-shadow 0.3s ease-in-out;
 }
 
-.waitlist-item .user-info {
+.waitlist-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+.user-info {
   display: flex;
   align-items: center;
 }
 
-.waitlist-item .user-icon-circle {
+.user-icon-circle {
   background-color: #000;
   color: #fff;
   width: 32px;
@@ -257,19 +262,19 @@ body {
   margin-right: 0.75rem;
 }
 
-.waitlist-item .user-details {
+.user-details {
   display: flex;
   flex-direction: column;
 }
 
-.waitlist-item .user-name {
+.user-name {
   font-size: 1rem;
   color: #2d3748;
   font-weight: 500;
   margin-bottom: 0.25rem;
 }
 
-.waitlist-item .user-status-pill {
+.user-status-pill {
   font-size: 0.75rem;
   background-color: #000;
   color: #fff;
@@ -278,29 +283,51 @@ body {
   display: inline-block;
 }
 
-.waitlist-item .remove-icon {
+.remove-icon {
   color: #a0aec0;
   cursor: pointer;
+  transition: color 0.3s ease-in-out;
 }
 
-.waitlist-item .remove-icon:hover {
+.remove-icon:hover {
   color: #e53e3e;
 }
 
-
 .labs-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1.5rem;
 }
 
-/* Lab Card */
+.remove-button {
+  background-color: #e53e3e; 
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.remove-button .icon {
+  margin-right: 0.5rem;
+}
+
+.remove-button:hover {
+  background-color: #c53030; 
+}
+
+
 .lab-card {
   padding: 1.5rem;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.3s ease-in-out;
   background: #f7fafc;
 }
 
@@ -309,4 +336,61 @@ body {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+.join-waitlist-button {
+  background: linear-gradient(90deg, #007bff 0%, #0056b3 100%);
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 4px 10px rgba(0, 91, 187, 0.3);
+}
+
+.join-waitlist-button:hover {
+  background: linear-gradient(90deg, #0056b3 0%, #003f7f 100%);
+  transform: scale(1.05);
+}
+
+.join-waitlist-button:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.leave-waitlist-button {
+  background: linear-gradient(90deg, #e53e3e 0%, #b91c1c 100%);
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 4px 10px rgba(185, 28, 28, 0.3);
+}
+
+.leave-waitlist-button:hover {
+  background: linear-gradient(90deg, #b91c1c 0%, #7f1d1d 100%);
+  transform: scale(1.05);
+}
+
+.leave-waitlist-button:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  box-shadow: none;
+}
 
