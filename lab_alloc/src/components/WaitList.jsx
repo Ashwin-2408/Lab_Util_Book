@@ -25,6 +25,11 @@ export default function WaitList() {
     }, [selectedLab]);
 
     const fetchWaitlist = () => {
+        if (!selectedLab || !selectedLab.lab_id) {
+            console.warn("fetchWaitlist called without a selectedLab"); // Debugging log
+            return;
+        }
+    
         axios.get(`http://127.0.0.1:3001/waitlist/${selectedLab.lab_id}`)
             .then((response) => {
                 setWaitlist(response.data);
@@ -32,6 +37,8 @@ export default function WaitList() {
             })
             .catch((error) => console.error("Error fetching waitlist:", error));
     };
+    
+    
 
     const handleWaitlistToggle = () => {
         if (isInWaitlist) {
@@ -121,7 +128,7 @@ export default function WaitList() {
                     <div className="lab-waitlist-section">
                         <div className="waitlist-header">
                             <h3>Lab Waitlist</h3>
-                            <RotateCw className="refresh-icon" size={16} onClick={fetchWaitlist} />
+                            <RotateCw data-testid="refresh-button" className="refresh-icon" size={16} onClick={fetchWaitlist} />
                         </div>
 
                         <ul className="waitlist-list">
