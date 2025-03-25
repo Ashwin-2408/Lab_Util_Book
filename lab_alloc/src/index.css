@@ -130,126 +130,149 @@ nav {
   cursor: pointer;
 }
 
-/* General Container Styling */
+/* General Container */
 .cancel-lab-container {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 2rem;
-  font-family: "Roboto", sans-serif;
   max-width: 800px;
   margin: 0 auto;
+  padding: 20px;
+  font-family: "Arial", sans-serif;
+  margin-top: 80px; /* Adjust this based on navbar height */
 }
 
-/* Policy Section */
+
+/* Cancellation Policy */
 .policy-container {
-  background: #fff3cd;
+  background: #f8f9fa;
   padding: 15px;
+  border-left: 5px solid #dc3545;
   border-radius: 8px;
-  margin-bottom: 20px;
-  border-left: 5px solid #ffc107;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
 .policy-title {
-  margin: 0 0 10px;
-  color: #856404;
+  font-size: 18px;
+  margin-bottom: 10px;
+  font-weight: bold;
 }
 
 .policy-list {
-  list-style-type: none;
-  padding: 0;
+  list-style: none;
+  padding-left: 0;
 }
 
 .policy-item {
-  padding: 5px;
-  font-size: 0.9rem;
+  font-size: 14px;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
 }
 
-.close-policy-btn {
-  background-color: #ffc107;
-  color: #fff;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 5px;
-  cursor: pointer;
+.policy-item i {
+  margin-right: 8px;
+  font-size: 16px;
 }
 
-.close-policy-btn:hover {
-  background-color: #e0a800;
-}
-
-/* Review Policy Button */
-.review-policy-btn {
+/* Buttons */
+.close-policy-btn, .review-policy-btn {
   background-color: #007bff;
   color: white;
   border: none;
-  padding: 12px 18px;
-  font-size: 1rem;
-  border-radius: 5px;
+  padding: 8px 12px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  display: inline-block;
+  border-radius: 6px;
+  margin-top: 10px;
+  transition: 0.3s;
 }
 
-.review-policy-btn:hover {
+/* Adjusted spacing */
+.review-policy-btn {
+  margin-bottom: 20px;  /* Added space below button */
+}
+
+.close-policy-btn:hover, .review-policy-btn:hover {
   background-color: #0056b3;
   transform: scale(1.05);
 }
 
 /* Search Bar */
 .search-container {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   display: flex;
+  align-items: center;
   justify-content: center;
+  margin-top: 10px; /* Added space above search bar */
 }
 
 .search-bar {
-  width: 90%;
-  max-width: 600px;
+  width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 1rem;
+  border-radius: 6px;
+  transition: 0.3s;
+}
+
+.search-bar:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
 }
 
 /* Lab List */
 .lab-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px;
 }
 
+/* Individual Lab Item */
 .lab-item {
-  background: #fff;
+  background: white;
   padding: 15px;
-  border-radius: 5px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.lab-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Time Slot Row */
+.time-slot {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border: 1px solid #ddd;
-  transition: box-shadow 0.3s ease-in-out;
-}
-
-.lab-item:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: #f8f9fa;
+  padding: 12px;
+  border-radius: 6px;
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: 500;
 }
 
 /* Cancel Button */
 .cancel-btn {
   background-color: #dc3545;
   color: white;
-  padding: 8px 12px;
-  font-size: 0.9rem;
   border: none;
-  border-radius: 5px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: all 0.3s ease-in-out;
 }
 
 .cancel-btn:hover {
   background-color: #b02a37;
-  transform: scale(1.05);
+  transform: scale(1.08);
 }
+
+
+/* Modal */
+
 
 
 .modal-overlay {
@@ -261,55 +284,69 @@ nav {
   background: rgba(0, 0, 0, 0.5);
   z-index: 1000;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
 }
 
 .modal-content {
   background: white;
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
   text-align: center;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .modal-title {
-  font-size: 1.2rem;
-  margin-bottom: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
 }
 
 .warning {
-  color: red;
+  color: #dc3545;
+  font-size: 14px;
   font-weight: bold;
 }
+
+
+.confirm-btn, .close-btn {
+  border: none;
 
 
 .confirm-btn {
   background: #e00303;
   color: white;
+
   padding: 10px 15px;
+  margin: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.3s;
 }
 
-.confirm-btn,
-.close-btn {
-  padding: 10px;
-  margin: 5px;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
+.confirm-btn {
+  background-color: #dc3545;
+  color: white;
 }
 
 .confirm-btn:hover {
+
+  background-color: #b02a37;
+}
+
+.close-btn {
+  background-color: #6c757d;
+
   background: red;
 }
 
 .close-btn {
   background: #218838;
+
   color: white;
-  padding: 10px 15px;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
 }
 
 
@@ -321,8 +358,13 @@ nav {
 
 
 .close-btn:hover {
+
+  background-color: #495057;
+
   background: #28a745;
+
 }
+
 
 .user-mag-div {
   display: flex;
