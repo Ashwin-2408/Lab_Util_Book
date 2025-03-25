@@ -14,8 +14,6 @@ import {
   BarChart,
   Settings,
 
-  ClipboardList
-
 } from "lucide-react";
 
 export default function NavBar(props) {

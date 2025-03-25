@@ -2,11 +2,10 @@ import { useState } from "react";
 import styled from "styled-components";
 import NavBar from "./navbar.jsx";
 import { Bar, Pie } from "react-chartjs-2";
-import "chart.js/auto"; // Chart.js for visualization
-import { jsPDF } from "jspdf"; // ✅ Import jsPDF for PDF export
-import Papa from "papaparse"; // ✅ Import papaparse for CSV export
+import "chart.js/auto"; 
+import { jsPDF } from "jspdf"; 
+import Papa from "papaparse"; 
 
-// Styled Components
 const ReportsContainer = styled.div`
   padding: 20px;
   max-width: 1000px;
