@@ -12,6 +12,9 @@ const sequelize = new Sequelize(
   {
     host: process.env.host,
     dialect: process.env.dialect || "mysql",
+    dialectOptions: {
+      charset: "utf8mb4", // Change 'cesu8' to 'utf8mb4'
+    },
   }
 );
 

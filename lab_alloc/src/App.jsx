@@ -8,9 +8,8 @@ import { useEffect, useState } from "react";
 import Stats from "./components/stats_table.jsx";
 import Maintenance from "./components/comp_v/Maintenance.jsx";
 import axios from "axios";
+import Audit from "./components/comp_v/Audit.jsx";
 import { Trash, BellRing, CheckCircle, Info, XCircle, Filter, Check, TriangleAlert, Scale, Bell, RefreshCcw} from "lucide-react";
-import labImg1 from "./assets/lab_img1.jpg";
-import labImg2 from "./assets/lab_img2.jpg";
 import Dashboard from "./components/comp_v/Dashboard.jsx";
 import WaitList from "./components/WaitList.jsx";
 import { color } from "framer-motion";
@@ -37,11 +36,12 @@ function App({ pageState, setPageState }) {
     const dateObj = new Date(date);
     return dateObj.toISOString().split("T")[0];
   }
+
   useEffect(() => {
     axios
       .get("http://127.0.0.1:8000/api/maintenance")
       .then((response) => {
-        setMainData(response.data);
+        if (response.data) setMainData(response.data);
       })
       .catch((error) => console.log("Error while fetching maintenance"));
   }, []);
@@ -335,7 +335,7 @@ function App({ pageState, setPageState }) {
           </div>
         </div>
       )}
-      {curDashBoard === "labstats" && (
+      {curDashBoard === "labstats" && pageState === "LabAlloc" && (
         <>
           <div
             style={{
@@ -363,6 +363,7 @@ function App({ pageState, setPageState }) {
       {pageState === "Maintenance" && (
         <Maintenance customSelect={customSelect} mainData={mainData} />
       )}
+      {pageState === "auditlog" && <Audit />}
       {pageState === "Notification" && (
         <div style={{ maxWidth: '72rem', margin: '2.5rem auto', padding: '1.5rem',fontFamily:'Poppins' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', width: '100%' }}>
