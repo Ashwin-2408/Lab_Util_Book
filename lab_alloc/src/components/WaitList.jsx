@@ -26,7 +26,7 @@ export default function WaitList() {
 
     const fetchWaitlist = () => {
         if (!selectedLab || !selectedLab.lab_id) {
-            console.warn("fetchWaitlist called without a selectedLab"); // Debugging log
+            console.warn("fetchWaitlist called without a selectedLab"); 
             return;
         }
     
