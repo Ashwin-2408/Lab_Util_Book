@@ -18,14 +18,19 @@ const ResetPassword = () => {
         }
 
         try {
-            await axios.post('http://localhost:3001/auth/reset-password', {
-                token,
+            // Log the data being sent
+            console.log('Token:', token);
+            console.log('New Password:', password);
+
+            const response = await axios.post('http://localhost:3001/auth/reset-password', {
+                token: token,  // Make sure token is from useParams
                 newPassword: password
             });
 
             setMessage({ text: 'Password reset successful!', type: 'success' });
             setTimeout(() => navigate('/login'), 2000);
         } catch (error) {
+            console.error('Reset error:', error.response?.data);  // Log the error response
             setMessage({ 
                 text: error.response?.data?.message || 'Password reset failed!', 
                 type: 'error' 

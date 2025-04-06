@@ -157,7 +157,7 @@ const forgotPassword = async (req, res) => {
         });
 
         // Reset password URL
-        const resetUrl = `http://localhost:5174/reset-password/${resetToken}`;
+        const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
 
         // Send email
         await transporter.sendMail({
@@ -181,24 +181,37 @@ const resetPassword = async (req, res) => {
     try {
         const { token, newPassword } = req.body;
 
-        // Find user with valid reset token
+        // Validate inputs
+        if (!token || !newPassword) {
+            return res.status(400).json({ 
+                message: 'Missing required fields',
+                token: !!token,
+                password: !!newPassword
+            });
+        }
+
+        // Log the received data (remove in production)
+        console.log('Received token:', token);
+        console.log('Password length:', newPassword.length);
+
         const auth = await Auth.findOne({
             where: {
                 token: token,
                 token_expiry: { [Op.gt]: new Date() }
-            },
-            include: [User]  // Include User model to get user details
+            }
         });
 
         if (!auth) {
-            return res.status(400).json({ message: 'Invalid or expired reset token' });
+            return res.status(400).json({ 
+                message: 'Invalid or expired reset token',
+                tokenFound: false
+            });
         }
 
-        // Hash new password
+        // Hash and update password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-        // Update password and clear reset token
         await Auth.update({
             password: hashedPassword,
             token: null,
@@ -207,12 +220,9 @@ const resetPassword = async (req, res) => {
             where: { auth_id: auth.auth_id }
         });
 
-        res.json({ 
-            message: 'Password reset successful',
-            userId: auth.User.user_id
-        });
+        res.json({ message: 'Password reset successful' });
     } catch (error) {
-        console.error('Reset password error:', error);  // Add error logging
+        console.error('Reset password error:', error);
         res.status(500).json({ 
             message: 'Error resetting password', 
             error: error.message 
