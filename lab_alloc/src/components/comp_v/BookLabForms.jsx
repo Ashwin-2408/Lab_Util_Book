@@ -79,6 +79,10 @@ export default function BookLabForm({ setPageState }) {
 
   async function handleSubmit(event) {
     event.preventDefault();
+    const res = await axios.get(
+      `http://127.0.0.1:8000/api/cal_events/${formData.schedule_date}`
+    );
+    const event_list = res.data.events;
     if (
       !formData.lab_name ||
       !formData.schedule_date ||

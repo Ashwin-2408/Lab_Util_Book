@@ -9,12 +9,25 @@ import Stats from "./components/stats_table.jsx";
 import Maintenance from "./components/comp_v/Maintenance.jsx";
 import axios from "axios";
 import Audit from "./components/comp_v/Audit.jsx";
-import { Trash, BellRing, CheckCircle, Info, XCircle, Filter, Check, TriangleAlert, Scale, Bell, RefreshCcw} from "lucide-react";
+import Switch from "@mui/material/Switch";
+import {
+  Trash,
+  BellRing,
+  CheckCircle,
+  Info,
+  XCircle,
+  Filter,
+  Check,
+  TriangleAlert,
+  Scale,
+  Bell,
+  RefreshCcw,
+} from "lucide-react";
 import Dashboard from "./components/comp_v/Dashboard.jsx";
 import WaitList from "./components/WaitList.jsx";
 import { color } from "framer-motion";
 import bellSound from "./assets/bell.mp3";
-import moment from 'moment';
+import moment from "moment";
 
 function App({ pageState, setPageState }) {
   // const [pageState, setPageState] = useState("Dashboard");
@@ -31,6 +44,8 @@ function App({ pageState, setPageState }) {
   const [notificationFilters, setNotificationFilters] = useState([]);
   const [mainData, setMainData] = useState([]);
   const [timeMainData, setTimeMainData] = useState([]);
+  const [calendarEvents, setCalendarEvents] = useState([]);
+  const [toggleState, setToggleState] = useState(false);
 
   function formatDate(date) {
     const dateObj = new Date(date);
@@ -45,9 +60,9 @@ function App({ pageState, setPageState }) {
       })
       .catch((error) => console.log("Error while fetching maintenance"));
   }, []);
-  const [showModal,setShowModal] = useState(false);
-  const [showSessionAlert,setShowSessionAlert] = useState(false);
-  const [showNotif,setShowNotif] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [showSessionAlert, setShowSessionAlert] = useState(false);
+  const [showNotif, setShowNotif] = useState(null);
 
   function handleNewSession() {
     navigate("/book");
@@ -84,6 +99,14 @@ function App({ pageState, setPageState }) {
           setTimeMainData([]), console.log("Error", error);
         });
     }
+    const modCurDate = new Date(curDate).toISOString().split("T")[0];
+    axios
+      .get(`http://127.0.0.1:8000/api/cal_events/${modCurDate}`)
+      .then((response) => {
+        console.log(response.data.events);
+        setCalendarEvents(response.data.events);
+      })
+      .catch((error) => console.log(error));
   }, [curDate, curLab]);
 
   useEffect(() => {
@@ -106,7 +129,7 @@ function App({ pageState, setPageState }) {
     if (showSessionAlert) {
       playBellSound();
     }
-  }, [showSessionAlert]);  
+  }, [showSessionAlert]);
 
   const fetchNotifications = () => {
     axios
@@ -174,15 +197,15 @@ function App({ pageState, setPageState }) {
   const handleDeleteAll = () => {
     deleteAllNotifications();
     setShowModal(false);
-  }
+  };
 
   const deleteAllNotifications = async () => {
-      try {
-        await axios.delete(`http://127.0.0.1:3001/notifications`);
-        setNotifications([]);
-      } catch (error) {
-        console.error("Error deleting all notifications:", error);
-      }
+    try {
+      await axios.delete(`http://127.0.0.1:3001/notifications`);
+      setNotifications([]);
+    } catch (error) {
+      console.error("Error deleting all notifications:", error);
+    }
   };
 
   const toggleFilter = () => {
@@ -237,12 +260,10 @@ function App({ pageState, setPageState }) {
   const openNotification = (notificationId) => {
     setShowNotif(notificationId);
   };
-  
+
   const closeNotification = () => {
     setShowNotif(null);
   };
-  
-
 
   return (
     <>
@@ -252,7 +273,12 @@ function App({ pageState, setPageState }) {
           <div className="modal-content">
             <h3 className="modal-title">🔔IMPORTANT MESSAGE</h3>
             <p>You have an UpComing Session,Please Check Your Notifications</p>
-            <button className="close-btn" onClick={() => setShowSessionAlert(false)}>OK</button>
+            <button
+              className="close-btn"
+              onClick={() => setShowSessionAlert(false)}
+            >
+              OK
+            </button>
           </div>
         </div>
       )}
@@ -266,6 +292,7 @@ function App({ pageState, setPageState }) {
             display: "flex",
             flexDirection: "column",
             height: "100vh",
+            marginTop: "1rem",
             justifyContent: "center",
           }}
         >
@@ -324,9 +351,23 @@ function App({ pageState, setPageState }) {
             </div>
             {curDashBoard === "timeline" && (
               <div className="canvas-right-div">
-                <h2>Timeline</h2>
+                <div
+                  style={{ display: "flex", gap: "1rem", alignItems: "center" }}
+                >
+                  <h2>Timeline</h2>
+                  <div>
+                    <Switch
+                      onClick={() => setToggleState((prevState) => !prevState)}
+                    />
+                  </div>
+                </div>
                 {schedule && (
-                  <CustTimeLine data={schedule} mainData={timeMainData} />
+                  <CustTimeLine
+                    data={schedule}
+                    mainData={timeMainData}
+                    calendarEvents={calendarEvents}
+                    toggleState={toggleState}
+                  />
                 )}
               </div>
             )}
@@ -363,11 +404,43 @@ function App({ pageState, setPageState }) {
       )}
       {pageState === "auditlog" && <Audit />}
       {pageState === "Notification" && (
-        <div style={{ maxWidth: '72rem', margin: '2.5rem auto', padding: '1.5rem',fontFamily:'Poppins' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', width: '100%' }}>
+        <div
+          style={{
+            maxWidth: "72rem",
+            margin: "2.5rem auto",
+            padding: "1.5rem",
+            fontFamily: "Poppins",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "1rem",
+              width: "100%",
+            }}
+          >
             <div>
-              <h2 style={{ fontSize: '1.875rem', fontWeight: 'bold', marginRight: 'auto' }}>Notifications</h2>
-              <p style={{ fontSize: '1rem', color: '#6B7280', marginBottom: '1rem' }}>Stay updated on your bookings, resource requests, and system announcements.</p>
+              <h2
+                style={{
+                  fontSize: "1.875rem",
+                  fontWeight: "bold",
+                  marginRight: "auto",
+                }}
+              >
+                Notifications
+              </h2>
+              <p
+                style={{
+                  fontSize: "1rem",
+                  color: "#6B7280",
+                  marginBottom: "1rem",
+                }}
+              >
+                Stay updated on your bookings, resource requests, and system
+                announcements.
+              </p>
             </div>
             <div style={{ display: "flex", gap: "0.5rem", marginLeft: "auto" }}>
               <div
@@ -388,8 +461,8 @@ function App({ pageState, setPageState }) {
                       color: "#374151",
                       transition: "background 0.2s ease-in-out",
                     }}
-                    onMouseOver={(e) => e.target.style.background = '#E5E7EB'}
-                    onMouseOut={(e) => e.target.style.background = 'white'}
+                    onMouseOver={(e) => (e.target.style.background = "#E5E7EB")}
+                    onMouseOut={(e) => (e.target.style.background = "white")}
                     onClick={toggleFilter}
                   >
                     <Filter
@@ -417,20 +490,20 @@ function App({ pageState, setPageState }) {
                     >
                       <button
                         style={{
-                          width: '100%',
-                          padding: '0.75rem 1rem',
-                          textAlign: 'left',
-                          border: 'none',
-                          backgroundColor: 'transparent',
-                          cursor: 'pointer',
-                          fontSize: '0.875rem',
-                          color: '#374151',
-                          transition: 'background 0.2s ease-in-out',
-                          ':hover': {
-                            backgroundColor: '#F3F4F6'
+                          width: "100%",
+                          padding: "0.75rem 1rem",
+                          textAlign: "left",
+                          border: "none",
+                          backgroundColor: "transparent",
+                          cursor: "pointer",
+                          fontSize: "0.875rem",
+                          color: "#374151",
+                          transition: "background 0.2s ease-in-out",
+                          ":hover": {
+                            backgroundColor: "#F3F4F6",
                           },
-                          display: 'flex', 
-                          alignItems: 'center' 
+                          display: "flex",
+                          alignItems: "center",
                         }}
                         onClick={() => applyFilter("all")}
                       >
@@ -445,23 +518,30 @@ function App({ pageState, setPageState }) {
                         )}
                         All
                       </button>
-                      <hr style={{ border: 'none', borderBottom: '1.5px solid #D1D5DB', margin: '0 auto',width: '90%' }} />
+                      <hr
+                        style={{
+                          border: "none",
+                          borderBottom: "1.5px solid #D1D5DB",
+                          margin: "0 auto",
+                          width: "90%",
+                        }}
+                      />
                       <button
                         style={{
-                          width: '100%',
-                          padding: '0.75rem 1rem',
-                          textAlign: 'left',
-                          border: 'none',
-                          backgroundColor: 'transparent',
-                          cursor: 'pointer',
-                          fontSize: '0.875rem',
-                          color: '#374151',
-                          transition: 'background 0.2s ease-in-out',
-                          ':hover': {
-                            backgroundColor: '#F3F4F6'
+                          width: "100%",
+                          padding: "0.75rem 1rem",
+                          textAlign: "left",
+                          border: "none",
+                          backgroundColor: "transparent",
+                          cursor: "pointer",
+                          fontSize: "0.875rem",
+                          color: "#374151",
+                          transition: "background 0.2s ease-in-out",
+                          ":hover": {
+                            backgroundColor: "#F3F4F6",
                           },
-                          display: 'flex',  
-                          alignItems: 'center' 
+                          display: "flex",
+                          alignItems: "center",
                         }}
                         onClick={() => applyFilter("info")}
                       >
@@ -478,20 +558,20 @@ function App({ pageState, setPageState }) {
                       </button>
                       <button
                         style={{
-                          width: '100%',
-                          padding: '0.75rem 1rem',
-                          textAlign: 'left',
-                          border: 'none',
-                          backgroundColor: 'transparent',
-                          cursor: 'pointer',
-                          fontSize: '0.875rem',
-                          color: '#374151',
-                          transition: 'background 0.2s ease-in-out',
-                          ':hover': {
-                            backgroundColor: '#F3F4F6'
+                          width: "100%",
+                          padding: "0.75rem 1rem",
+                          textAlign: "left",
+                          border: "none",
+                          backgroundColor: "transparent",
+                          cursor: "pointer",
+                          fontSize: "0.875rem",
+                          color: "#374151",
+                          transition: "background 0.2s ease-in-out",
+                          ":hover": {
+                            backgroundColor: "#F3F4F6",
                           },
-                          display: 'flex',  
-                          alignItems: 'center' 
+                          display: "flex",
+                          alignItems: "center",
                         }}
                         onClick={() => applyFilter("success")}
                       >
@@ -508,20 +588,20 @@ function App({ pageState, setPageState }) {
                       </button>
                       <button
                         style={{
-                          width: '100%',
-                          padding: '0.75rem 1rem',
-                          textAlign: 'left',
-                          border: 'none',
-                          backgroundColor: 'transparent',
-                          cursor: 'pointer',
-                          fontSize: '0.875rem',
-                          color: '#374151',
-                          transition: 'background 0.2s ease-in-out',
-                          ':hover': {
-                            backgroundColor: '#F3F4F6'
+                          width: "100%",
+                          padding: "0.75rem 1rem",
+                          textAlign: "left",
+                          border: "none",
+                          backgroundColor: "transparent",
+                          cursor: "pointer",
+                          fontSize: "0.875rem",
+                          color: "#374151",
+                          transition: "background 0.2s ease-in-out",
+                          ":hover": {
+                            backgroundColor: "#F3F4F6",
                           },
-                          display: 'flex',  
-                          alignItems: 'center' 
+                          display: "flex",
+                          alignItems: "center",
                         }}
                         onClick={() => applyFilter("warning")}
                       >
@@ -538,20 +618,20 @@ function App({ pageState, setPageState }) {
                       </button>
                       <button
                         style={{
-                          width: '100%',
-                          padding: '0.75rem 1rem',
-                          textAlign: 'left',
-                          border: 'none',
-                          backgroundColor: 'transparent',
-                          cursor: 'pointer',
-                          fontSize: '0.875rem',
-                          color: '#374151',
-                          transition: 'background 0.2s ease-in-out',
-                          ':hover': {
-                            backgroundColor: '#F3F4F6'
+                          width: "100%",
+                          padding: "0.75rem 1rem",
+                          textAlign: "left",
+                          border: "none",
+                          backgroundColor: "transparent",
+                          cursor: "pointer",
+                          fontSize: "0.875rem",
+                          color: "#374151",
+                          transition: "background 0.2s ease-in-out",
+                          ":hover": {
+                            backgroundColor: "#F3F4F6",
                           },
-                          display: 'flex',  
-                          alignItems: 'center' 
+                          display: "flex",
+                          alignItems: "center",
                         }}
                         onClick={() => applyFilter("error")}
                       >
@@ -566,23 +646,30 @@ function App({ pageState, setPageState }) {
                         )}
                         Error
                       </button>
-                      <hr style={{ border: 'none', borderBottom: '1.5px solid #D1D5DB', margin: '0 auto',width: '90%' }} />
+                      <hr
+                        style={{
+                          border: "none",
+                          borderBottom: "1.5px solid #D1D5DB",
+                          margin: "0 auto",
+                          width: "90%",
+                        }}
+                      />
                       <button
                         style={{
-                          width: '100%',
-                          padding: '0.75rem 1rem',
-                          textAlign: 'left',
-                          border: 'none',
-                          backgroundColor: 'transparent',
-                          cursor: 'pointer',
-                          fontSize: '0.875rem',
-                          color: '#374151',
-                          transition: 'background 0.2s ease-in-out',
-                          ':hover': {
-                            backgroundColor: '#F3F4F6'
+                          width: "100%",
+                          padding: "0.75rem 1rem",
+                          textAlign: "left",
+                          border: "none",
+                          backgroundColor: "transparent",
+                          cursor: "pointer",
+                          fontSize: "0.875rem",
+                          color: "#374151",
+                          transition: "background 0.2s ease-in-out",
+                          ":hover": {
+                            backgroundColor: "#F3F4F6",
                           },
-                          display: 'flex',  
-                          alignItems: 'center' 
+                          display: "flex",
+                          alignItems: "center",
                         }}
                         onClick={() => applyFilter("unread")}
                       >
@@ -615,8 +702,8 @@ function App({ pageState, setPageState }) {
                     color: "#374151",
                     transition: "background 0.2s ease-in-out",
                   }}
-                  onMouseOver={(e) => e.target.style.background = '#E5E7EB'}
-                  onMouseOut={(e) => e.target.style.background = 'white'}
+                  onMouseOver={(e) => (e.target.style.background = "#E5E7EB")}
+                  onMouseOut={(e) => (e.target.style.background = "white")}
                   onClick={() => markAllAsRead()}
                 >
                   <Check
@@ -643,8 +730,8 @@ function App({ pageState, setPageState }) {
                     fontWeight: "500",
                     transition: "background 0.2s ease-in-out",
                   }}
-                  onMouseOver={(e) => e.target.style.background = '#DC2626'}
-                  onMouseOut={(e) => e.target.style.background = '#EF4444'}
+                  onMouseOver={(e) => (e.target.style.background = "#DC2626")}
+                  onMouseOut={(e) => (e.target.style.background = "#EF4444")}
                   onClick={() => setShowModal(true)}
                 >
                   <Trash
@@ -659,11 +746,23 @@ function App({ pageState, setPageState }) {
                 {showModal && (
                   <div className="modal-overlay">
                     <div className="modal-content">
-                      <h3 className="modal-title">Are you sure you want to Delete?</h3>
+                      <h3 className="modal-title">
+                        Are you sure you want to Delete?
+                      </h3>
                       <p>This will delete all your notifications</p>
                       <p className="warning">⚠ This action cannot be undone.</p>
-                      <button className="confirm-btn" onClick={() => handleDeleteAll()}>Yes, Delete</button>
-                      <button className="close-btn" onClick={() => setShowModal(false)}>No, Keep It</button>
+                      <button
+                        className="confirm-btn"
+                        onClick={() => handleDeleteAll()}
+                      >
+                        Yes, Delete
+                      </button>
+                      <button
+                        className="close-btn"
+                        onClick={() => setShowModal(false)}
+                      >
+                        No, Keep It
+                      </button>
                     </div>
                   </div>
                 )}
@@ -671,101 +770,142 @@ function App({ pageState, setPageState }) {
             </div>
           </div>
 
-          {filteredNotifications().map((notification) => (
-        showNotif === notification.id && (  
-        <div key={notification.id} className="modal-overlay" style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          backgroundColor: 'rgba(0, 0, 0, 0.4)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000,
-          backdropFilter: 'blur(8px)',
-          animation: 'fadeIn 0.3s ease-in-out'
-        }}>
-          <div className="modal-content" style={{
-            background: 'rgba(255, 255, 255, 0.9)',
-            padding: '2rem',
-            borderRadius: '14px',
-            maxWidth: '480px',
-            width: '90%',
-            boxShadow: '0px 10px 25px rgba(0, 0, 0, 0.2)',
-            textAlign: 'center',
-            fontFamily: "'Poppins', sans-serif",
-            position: 'relative',
-            animation: 'scaleIn 0.3s ease-in-out'
-          }}>
-            <button 
-              onClick={closeNotification}
-              style={{
-                position: 'absolute',
-                top: '12px',
-                right: '12px',
-                background: 'none',
-                border: 'none',
-                fontSize: '1.2rem',
-                color: '#777',
-                cursor: 'pointer',
-                transition: 'color 0.3s'
-          }}
-          onMouseOver={(e) => e.target.style.color = '#222'}
-          onMouseOut={(e) => e.target.style.color = '#777'}
-        >
-          ✖
-        </button>
+          {filteredNotifications().map(
+            (notification) =>
+              showNotif === notification.id && (
+                <div
+                  key={notification.id}
+                  className="modal-overlay"
+                  style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "rgba(0, 0, 0, 0.4)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    zIndex: 1000,
+                    backdropFilter: "blur(8px)",
+                    animation: "fadeIn 0.3s ease-in-out",
+                  }}
+                >
+                  <div
+                    className="modal-content"
+                    style={{
+                      background: "rgba(255, 255, 255, 0.9)",
+                      padding: "2rem",
+                      borderRadius: "14px",
+                      maxWidth: "480px",
+                      width: "90%",
+                      boxShadow: "0px 10px 25px rgba(0, 0, 0, 0.2)",
+                      textAlign: "center",
+                      fontFamily: "'Poppins', sans-serif",
+                      position: "relative",
+                      animation: "scaleIn 0.3s ease-in-out",
+                    }}
+                  >
+                    <button
+                      onClick={closeNotification}
+                      style={{
+                        position: "absolute",
+                        top: "12px",
+                        right: "12px",
+                        background: "none",
+                        border: "none",
+                        fontSize: "1.2rem",
+                        color: "#777",
+                        cursor: "pointer",
+                        transition: "color 0.3s",
+                      }}
+                      onMouseOver={(e) => (e.target.style.color = "#222")}
+                      onMouseOut={(e) => (e.target.style.color = "#777")}
+                    >
+                      ✖
+                    </button>
 
-        <h3 className="modal-title" style={{
-          fontSize: '1.5rem',
-          fontWeight: 'bold',
-          marginBottom: '1rem',
-          color: '#333'
-        }}>
-          📢 {notification.category} Notification
-        </h3>
+                    <h3
+                      className="modal-title"
+                      style={{
+                        fontSize: "1.5rem",
+                        fontWeight: "bold",
+                        marginBottom: "1rem",
+                        color: "#333",
+                      }}
+                    >
+                      📢 {notification.category} Notification
+                    </h3>
 
-        <p style={{ fontSize: '1.1rem', marginBottom: '0.8rem', fontWeight: '500' }}>
-          <strong>Title:</strong> <span style={{ color: '#222' }}>{notification.title}</span>
-        </p>
-        
-        <p style={{ fontSize: '1rem', marginBottom: '0.8rem', color: '#444', lineHeight: '1.5' }}>
-          <strong>Message:</strong> {notification.message}
-        </p>
-        
-        <p className="timestamp" style={{ fontSize: '0.95rem', color: '#555', marginBottom: '1.5rem' }}>
-          <strong>Time:</strong> {new Date(notification.timestamp).toLocaleString()}
-        </p>
-        
-        <button 
-          className="close-btn"
-          onClick={closeNotification}
-          style={{
-            background: 'linear-gradient(135deg, #16A34A, #15803D)',
-            color: '#fff',
-            border: 'none',
-            padding: '12px 24px',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontSize: '1rem',
-            transition: 'transform 0.2s, background 0.3s',
-            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)'
-          }}
-          onMouseOver={(e) => e.target.style.background = 'linear-gradient(135deg, #15803D, #166534)'}
-          onMouseOut={(e) => e.target.style.background = 'linear-gradient(135deg, #16A34A, #15803D)'}
-          onMouseDown={(e) => e.target.style.transform = 'scale(0.95)'}
-          onMouseUp={(e) => e.target.style.transform = 'scale(1)'}
-        >
-          Close
-        </button>
-      </div>
-    </div>
-  )
-))}
+                    <p
+                      style={{
+                        fontSize: "1.1rem",
+                        marginBottom: "0.8rem",
+                        fontWeight: "500",
+                      }}
+                    >
+                      <strong>Title:</strong>{" "}
+                      <span style={{ color: "#222" }}>
+                        {notification.title}
+                      </span>
+                    </p>
 
+                    <p
+                      style={{
+                        fontSize: "1rem",
+                        marginBottom: "0.8rem",
+                        color: "#444",
+                        lineHeight: "1.5",
+                      }}
+                    >
+                      <strong>Message:</strong> {notification.message}
+                    </p>
 
+                    <p
+                      className="timestamp"
+                      style={{
+                        fontSize: "0.95rem",
+                        color: "#555",
+                        marginBottom: "1.5rem",
+                      }}
+                    >
+                      <strong>Time:</strong>{" "}
+                      {new Date(notification.timestamp).toLocaleString()}
+                    </p>
+
+                    <button
+                      className="close-btn"
+                      onClick={closeNotification}
+                      style={{
+                        background: "linear-gradient(135deg, #16A34A, #15803D)",
+                        color: "#fff",
+                        border: "none",
+                        padding: "12px 24px",
+                        borderRadius: "8px",
+                        cursor: "pointer",
+                        fontSize: "1rem",
+                        transition: "transform 0.2s, background 0.3s",
+                        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
+                      }}
+                      onMouseOver={(e) =>
+                        (e.target.style.background =
+                          "linear-gradient(135deg, #15803D, #166534)")
+                      }
+                      onMouseOut={(e) =>
+                        (e.target.style.background =
+                          "linear-gradient(135deg, #16A34A, #15803D)")
+                      }
+                      onMouseDown={(e) =>
+                        (e.target.style.transform = "scale(0.95)")
+                      }
+                      onMouseUp={(e) => (e.target.style.transform = "scale(1)")}
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              )
+          )}
 
           {filteredNotifications().length === 0 ? (
             <div
@@ -799,51 +939,170 @@ function App({ pageState, setPageState }) {
               </p>
             </div>
           ) : (
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem',width: '98%',cursor: 'pointer' }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "1rem",
+                width: "98%",
+                cursor: "pointer",
+              }}
+            >
               {filteredNotifications().map((notification) => (
-                
-                <div className="notification-item" key={notification.id} style={{ position: 'relative', padding: '1rem', fontWeight: notification.isRead ? '300' : '500' , border: '1px solid #D1D5DB', borderRadius: '0.6rem', backgroundColor: notification.isRead ? '#FEFEFE' : '#EEEEEE', borderLeft: notification.isRead ? '4px solid #EEEEEE' : '4px solid #4A90E2', 
-                  transition: 'all 0.3s ease-in-out', boxShadow: notification.isRead ? 'none' : '0px 2px 6px rgba(0, 0, 0, 0.1)' }}
-                  onClick={() => openNotification(notification.id)}>
-                  <div style={{ display: 'flex', alignItems: 'start', gap: '1rem' }}>
-                    {notification.type === "success" && <CheckCircle style={{ color: '#10B981', width: '1.2rem', height: '1.2rem' }} />}
-                    {notification.type === "info" && <Info style={{ color: '#3B82F6', width: '1.2rem', height: '1.2rem' }} />}
-                    {notification.type === "error" && <XCircle style={{ color: '#EF4444', width: '1.2rem', height: '1.2rem' }} />}
-                    {notification.type === "warning" && <TriangleAlert style={{ color: '#F5ED00', width: '1.2rem', height: '1.2rem' }} />}
+                <div
+                  className="notification-item"
+                  key={notification.id}
+                  style={{
+                    position: "relative",
+                    padding: "1rem",
+                    fontWeight: notification.isRead ? "300" : "500",
+                    border: "1px solid #D1D5DB",
+                    borderRadius: "0.6rem",
+                    backgroundColor: notification.isRead
+                      ? "#FEFEFE"
+                      : "#EEEEEE",
+                    borderLeft: notification.isRead
+                      ? "4px solid #EEEEEE"
+                      : "4px solid #4A90E2",
+                    transition: "all 0.3s ease-in-out",
+                    boxShadow: notification.isRead
+                      ? "none"
+                      : "0px 2px 6px rgba(0, 0, 0, 0.1)",
+                  }}
+                  onClick={() => openNotification(notification.id)}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "start",
+                      gap: "1rem",
+                    }}
+                  >
+                    {notification.type === "success" && (
+                      <CheckCircle
+                        style={{
+                          color: "#10B981",
+                          width: "1.2rem",
+                          height: "1.2rem",
+                        }}
+                      />
+                    )}
+                    {notification.type === "info" && (
+                      <Info
+                        style={{
+                          color: "#3B82F6",
+                          width: "1.2rem",
+                          height: "1.2rem",
+                        }}
+                      />
+                    )}
+                    {notification.type === "error" && (
+                      <XCircle
+                        style={{
+                          color: "#EF4444",
+                          width: "1.2rem",
+                          height: "1.2rem",
+                        }}
+                      />
+                    )}
+                    {notification.type === "warning" && (
+                      <TriangleAlert
+                        style={{
+                          color: "#F5ED00",
+                          width: "1.2rem",
+                          height: "1.2rem",
+                        }}
+                      />
+                    )}
                     <div>
-                      <span style={{ fontSize: '0.95rem', fontWeight: '600',fontFamily: 'Poppins',margin: '2px'}}>{notification.title}</span>
+                      <span
+                        style={{
+                          fontSize: "0.95rem",
+                          fontWeight: "600",
+                          fontFamily: "Poppins",
+                          margin: "2px",
+                        }}
+                      >
+                        {notification.title}
+                      </span>
                       {!notification.isRead && (
-                          <span style={{ margin: '0.5rem', padding: '0.25rem 0.5rem', fontSize: '0.8rem', backgroundColor: '#4A90E2', borderRadius: '0.25rem' }}>New</span>
+                        <span
+                          style={{
+                            margin: "0.5rem",
+                            padding: "0.25rem 0.5rem",
+                            fontSize: "0.8rem",
+                            backgroundColor: "#4A90E2",
+                            borderRadius: "0.25rem",
+                          }}
+                        >
+                          New
+                        </span>
                       )}
-                      <span style={{ fontSize: '0.85rem', color: '#444444', fontWeight: '400' , margin: '2px'}}>
+                      <span
+                        style={{
+                          fontSize: "0.85rem",
+                          color: "#444444",
+                          fontWeight: "400",
+                          margin: "2px",
+                        }}
+                      >
                         {moment(notification.timestamp).fromNow()}
                       </span>
                     </div>
                     {!notification.isRead ? (
                       <>
-                      <Check
-                        style={{ position: 'absolute', top: '1rem', right: '4rem', color: '#6B7280', background: 'none', border: 'none', cursor: 'pointer',':hover': {color: '#000'} }}
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          markNAsRead(notification.id)}}  
-                      />
+                        <Check
+                          style={{
+                            position: "absolute",
+                            top: "1rem",
+                            right: "4rem",
+                            color: "#6B7280",
+                            background: "none",
+                            border: "none",
+                            cursor: "pointer",
+                            ":hover": { color: "#000" },
+                          }}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            markNAsRead(notification.id);
+                          }}
+                        />
 
-                      <Trash
-                        style={{ position: 'absolute', top: '1rem', right: '1.5rem', color: '#6B7280', background: 'none', border: 'none', cursor: 'pointer' , height: '22px' , weight: '22px'}}
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          deleteNotification(notification.id)
-                        }}
-                      />
+                        <Trash
+                          style={{
+                            position: "absolute",
+                            top: "1rem",
+                            right: "1.5rem",
+                            color: "#6B7280",
+                            background: "none",
+                            border: "none",
+                            cursor: "pointer",
+                            height: "22px",
+                            weight: "22px",
+                          }}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            deleteNotification(notification.id);
+                          }}
+                        />
                       </>
-                      
                     ) : (
                       <Trash
-                        style={{ position: 'absolute', top: '1rem', right: '1.5rem', color: '#6B7280', background: 'none', border: 'none', cursor: 'pointer' , height: '22px' , weight: '22px'}}
+                        style={{
+                          position: "absolute",
+                          top: "1rem",
+                          right: "1.5rem",
+                          color: "#6B7280",
+                          background: "none",
+                          border: "none",
+                          cursor: "pointer",
+                          height: "22px",
+                          weight: "22px",
+                        }}
                         onClick={(event) => {
                           event.stopPropagation();
-                          deleteNotification(notification.id)}}
+                          deleteNotification(notification.id);
+                        }}
                       />
                     )}
                   </div>

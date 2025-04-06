@@ -89,7 +89,6 @@ nav {
   transform: none;
 }
 
-
 .logo-container {
   display: flex;
   align-items: center;
@@ -139,7 +138,6 @@ nav {
   margin-top: 80px; /* Adjust this based on navbar height */
 }
 
-
 /* Cancellation Policy */
 .policy-container {
   background: #f8f9fa;
@@ -174,7 +172,8 @@ nav {
 }
 
 /* Buttons */
-.close-policy-btn, .review-policy-btn {
+.close-policy-btn,
+.review-policy-btn {
   background-color: #007bff;
   color: white;
   border: none;
@@ -187,10 +186,11 @@ nav {
 
 /* Adjusted spacing */
 .review-policy-btn {
-  margin-bottom: 20px;  /* Added space below button */
+  margin-bottom: 20px; /* Added space below button */
 }
 
-.close-policy-btn:hover, .review-policy-btn:hover {
+.close-policy-btn:hover,
+.review-policy-btn:hover {
   background-color: #0056b3;
   transform: scale(1.05);
 }
@@ -270,10 +270,7 @@ nav {
   transform: scale(1.08);
 }
 
-
 /* Modal */
-
-
 
 .modal-overlay {
   position: fixed;
@@ -310,10 +307,9 @@ nav {
   font-weight: bold;
 }
 
-
-.confirm-btn, .close-btn {
+.confirm-btn,
+.close-btn {
   border: none;
-
 }
 .confirm-btn {
   background: #e00303;
@@ -333,7 +329,6 @@ nav {
 }
 
 .confirm-btn:hover {
-
   background-color: #b02a37;
 }
 
@@ -349,22 +344,16 @@ nav {
   color: white;
 }
 
-
-
 .notification-item:hover {
   transform: scale(1.03);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-
 .close-btn:hover {
-
   background-color: #495057;
 
   background: #28a745;
-
 }
-
 
 .user-mag-div {
   display: flex;
@@ -544,8 +533,6 @@ input[type="file"] {
 .session-input-button:hover {
   cursor: pointer;
 }
-
-
 
 .session-outer-div {
   display: flex;

@@ -1,6 +1,7 @@
 from django.shortcuts import render
 # from django.http import JsonResponse
 from django.db import transaction
+from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
 from lab_app.models import *
@@ -8,13 +9,14 @@ from rest_framework import generics
 from lab_app.serializers import *
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 from rest_framework import status
 from django.db.models import Q
-import qrcode
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import requests
+from utils.google_calendar import get_events_on_date
+import json
 
 RESET_DATE = '2025-02-13'
 SCHEDULE_STATUS = False
@@ -167,7 +169,7 @@ def check_validity(date, new_session, lab_id):
                 break
         if flag:
             updated_levels.append([session])
-    if len(updated_levels) > capacity - 20:
+    if len(updated_levels) > capacity:
         return False
     return True
 
@@ -187,8 +189,17 @@ def check_validity(date, new_session, lab_id):
 #                 return Response({"Message": "Successfully created a session"})
 #             else:
 #                 return Response({"Message" : "Cannot create a session"})
-
 # schedule_create_view = ScheduleCreateAPIView.as_view()
+
+def get_calendar_schedules(request, req_date):
+    if not req_date:
+        return JsonResponse({"error": "Missing 'req_date' parameter"}, status=400)
+    try:
+        events_list = get_events_on_date(req_date)
+        return JsonResponse({"events" : events_list})
+    except Exception as e:
+        print("Error while retriving events from calendar", e)
+        return JsonResponse({"error":e})
 
 class ScheduleCreateAPIView(APIView):
     def post(self, request):
@@ -358,6 +369,46 @@ class ScheduleRequestListAPIView(generics.ListAPIView):
 
 schedule_request_list_view = ScheduleRequestListAPIView.as_view()
 
+def book_lab_session(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        lab = data.get('lab')
+        date = data.get('date')
+        start_time = data.get('startTime')
+        end_time = data.get('endTime')
+
+        event = dict()
+        event['schedule_from'] = start_time
+        event['schedule_to'] = end_time
+        event['schedule_date'] = date
+        event['decision_date'] = datetime.now().date() 
+
+        if "Lab".lower() in lab:
+            event['lab_id'] = Laboratory.objects.get(lab_name = lab).lab_id
+        else:
+            event['lab_id'] = Laboratory.objects.get(lab_name = lab + "Lab").lab_id
+        
+        serializer = ScheduleRequestSerializer(data=event)
+        if serializer.is_valid():
+            check_status = check_validity(event['schedule_date'], (event['schedule_from'], event['schedule_to']), event['lab_id'])
+            print("Check Status",check_status)
+            if(check_status):
+                serializer.save()
+                return Response({"Message" : "Successfully Submitted the Form"}, status=201)
+            else:
+                try:
+                    response = requests.post("http://127.0.0.1:3001/waitlist", json={
+                        "user_name" : data['username'],
+                        "lab_id" : data['lab_id'],
+                    })
+                    print("Response", response)
+                except Exception as e:
+                    print("Error while sending request", e)
+                return Response({"Message" : "Capacity Reached"}, status=400)
+        else:
+            return Response({"Message" : "Error while submitting form"}, status=500)
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
 class ScheduleRequestCreateView(APIView):
     def post(self, request):
         cur_date = datetime.now().date()
@@ -366,6 +417,7 @@ class ScheduleRequestCreateView(APIView):
         data.pop('lab_name')
         data['decision_date'] = cur_date
         serializer = ScheduleRequestSerializer(data = data)
+
         if serializer.is_valid():
             check_status = check_validity(data['schedule_date'], (data['schedule_from'], data['schedule_to']), data['lab_id'])
             print("Check Status",check_status)
@@ -375,7 +427,7 @@ class ScheduleRequestCreateView(APIView):
             else:
                 try:
                     response = requests.post("http://127.0.0.1:3001/waitlist", json={
-                        "username" : data['username'],
+                        "user_name" : data['username'],
                         "lab_id" : data['lab_id'],
                     })
                     print("Response", response)
@@ -404,7 +456,7 @@ class ScheduleRequestUpdateView(APIView):
                         "schedule_to": schedule_request.schedule_to,
                     }
                     schedule_serializer = ScheduleSerializer(data=schedule_data)
-                    
+
                     if schedule_serializer.is_valid():
                         if schedule_processor.add_session((schedule_request.schedule_from, schedule_request.schedule_to), schedule_request.lab_id.lab_id):
                             schedule_serializer.save()

@@ -101,6 +101,12 @@
   color: rgb(82, 82, 82);
 }
 
+.toggle-true {
+  background-color: rgba(141, 148, 159, 0.3);
+  border: 1px solid #d1d5db;
+  color: #6b7280;
+}
+
 /* .event-cell {
   position: absolute;
   height: 30px;

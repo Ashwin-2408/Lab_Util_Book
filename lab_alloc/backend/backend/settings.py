@@ -22,11 +22,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure--)=5uu@+*oh=o6g%tsdj*$q5$9&(y7oy4o-20(51ui=8qzwk9)'
 
+# CALENDER_CLIENT = 41726529023-r5bs8lhacgai25s3ipuo2uh3rk1i9dvb.apps.googleusercontent.com
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+CELERY_TASK_ALWAYS_EAGER = False
+CELERY_BROKER_TRANSPORT_OPTIONS = {"visibility_timeout": 3600}
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -144,7 +149,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 

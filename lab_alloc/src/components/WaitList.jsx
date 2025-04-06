@@ -38,8 +38,6 @@ export default function WaitList() {
             .catch((error) => console.error("Error fetching waitlist:", error));
     };
     
-    
-
     const handleWaitlistToggle = () => {
         if (isInWaitlist) {
             axios.delete(`http://127.0.0.1:3001/waitlist/${selectedLab.lab_id}/${name}`)

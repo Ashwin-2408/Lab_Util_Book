@@ -1,14 +1,11 @@
 import React from "react";
 import "./Timeline.css";
 import Card from "./card.jsx";
-import axios from "axios";
 import { useRef, useEffect, useState } from "react";
-import { PopoverPaper } from "@mui/material";
 
 export default function OverlappingTimeline(props) {
   const divRef = useRef(null);
   const [hourCellWidth, setHourCellWidth] = useState(null);
-  const [mainData, setMainData] = useState([]);
 
   useEffect(() => {
     if (divRef.current) {
@@ -23,10 +20,34 @@ export default function OverlappingTimeline(props) {
     return parseInt(hour) + minutes / 60;
   }
 
+  function format_cal(event_time) {
+    const options = {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+      timeZone: "Asia/Kolkata",
+    };
+    const formatter = new Intl.DateTimeFormat("en-IN", options);
+    return formatter.format(new Date(event_time));
+  }
+
   function return_time(hour) {
     let hour_comp = parseInt(hour);
     let min_comp = parseInt((hour - hour_comp) * 60);
     return `${hour_comp}:${min_comp}`;
+  }
+
+  function format_cal_return(event_time) {
+    const onlyTime = format_cal(event_time);
+    const hours = return_hours(onlyTime + ":00");
+    return hours;
+  }
+
+  function getStatusClass(status) {
+    if (status === null) return "upcoming";
+    if (status === "Completed") return "completed";
+    if (status === "In Progress") return "inprogress";
+    return "blocked";
   }
 
   const updatedEvents = events.map((event) => {
@@ -80,15 +101,9 @@ export default function OverlappingTimeline(props) {
                   (event.schedule_to - event.schedule_from) * hourCellWidth
                 }px`,
               }}
-              classname={`${
-                event.status === null
-                  ? "upcoming"
-                  : event.status === "Completed"
-                  ? "completed"
-                  : event.status === "In Progress"
-                  ? "inprogress"
-                  : "blocked"
-              }`}
+              classname={
+                props.toggleState ? "toggle-true" : getStatusClass(event.status)
+              }
               username={event.username}
               schedule_from={return_time(event.schedule_from)}
               schedule_to={return_time(event.schedule_to)}
@@ -110,6 +125,30 @@ export default function OverlappingTimeline(props) {
           Maintainence Period
         </div>
       ))}
+      {props.toggleState && (
+        <div className="events-row">
+          {props.calendarEvents.map((elem) => (
+            <Card
+              style={{
+                left: `${
+                  format_cal_return(elem.start.dateTime) * hourCellWidth
+                }px`,
+                width: `${
+                  (format_cal_return(elem.end.dateTime) -
+                    format_cal_return(elem.start.dateTime)) *
+                  hourCellWidth
+                }px`,
+                background: "rgb(224, 177, 162)",
+                color: "black",
+                borderLeft: "#FFF",
+              }}
+              username={elem.summary}
+              schedule_from={format_cal(elem.start.dateTime)}
+              schedule_to={format_cal(elem.end.dateTime)}
+            />
+          ))}
+        </div>
+      )}
       {/* <div className="events-row">
         {updatedEvents.map((event, index) => (
           <Card

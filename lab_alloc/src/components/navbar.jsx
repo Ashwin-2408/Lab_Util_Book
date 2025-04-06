@@ -9,11 +9,9 @@ import {
   KanbanSquare,
   Wrench,
   CalendarSearch,
-
   ClipboardList,
   BarChart,
   Settings,
-
 } from "lucide-react";
 
 export default function NavBar(props) {
@@ -23,6 +21,9 @@ export default function NavBar(props) {
   const navigate = useNavigate();
 
   function handlePageChange(page) {
+    if (page === "Resource") {
+      navigate("/resource");
+    }
     props.setPageState((prevState) => page);
     console.log("Changed State : ", page);
     props.handleNavigate();
@@ -77,9 +78,7 @@ export default function NavBar(props) {
             <div>Resource Allocation</div>
           </button>
 
-
           {/* Manage Labs Dropdown */}
-
 
           <div
             className="dropdown-container"
@@ -143,7 +142,9 @@ export default function NavBar(props) {
                   <BarChart strokeWidth={1.5} size={20} />
                   Reports & Analytics
                 </button>
-                <button onClick={() => navigate("/admin/auto-cancellation-rules")}>
+                <button
+                  onClick={() => navigate("/admin/auto-cancellation-rules")}
+                >
                   <Settings strokeWidth={1.5} size={20} />
                   Auto-Cancellation Rules
                 </button>
