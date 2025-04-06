@@ -1,8 +1,10 @@
 import express from "express";
 import cors from "cors";
+import dotenv from "dotenv";  // Add this import
 import Router from "./Routes/Main_route.js";
 import sequelize from "./Schema/db_connection.js";
 import Notification from "./Schema/Notification.js";
+
 import notificationsRouter from "./Routes/notification_route.js";
 import WaitListRouter from "./Routes/WaitList_Route.js";
 import cron from "node-cron";
@@ -12,18 +14,24 @@ import User from "./Schema/User.js";
 import Resource from "./Schema/Resource.js";
 import ResourceRequest from "./Schema/ResourceRequest.js";
 import Lab from "./Schema/Lab.js";
+import Auth from "./Schema/Auth.js";
 import setupAssociations from "./Schema/Associations.js";
+
+// Configure dotenv - Add this line before any code that uses env variables
+dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(Router);
 app.use("/notifications", notificationsRouter);
-app.use("/waitlist",WaitListRouter)
+app.use("/waitlist", WaitListRouter);
 
 setupAssociations();
+
+// Update the sync process to include force option for development
 sequelize
-  .sync({ alter: true }) 
+  .sync({ alter: true, force: true }) // force: true will drop and recreate tables
   .then(() => {
     console.log("Database & tables synced!");
   })

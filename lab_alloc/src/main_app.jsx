@@ -9,8 +9,11 @@ import { useState } from "react";
 import ResourceAllocation from "./components/Resource_allocation.jsx";
 import AdminResourceAllocation from "./components/AdminResourceAllocation.jsx";
 import AdminBookings from "./components/AdminBookings";
-import  AdminReports from "./components/AdminReports";
-import Audit from "./components/comp_v/Audit.jsx";
+import AdminReports from "./components/AdminReports";
+// import Audit from "./components/comp_v/Audit.jsx";
+import AuthPage from "./components/Authpage.jsx";
+import ResetPassword from "./components/ResetPassword.jsx";
+
 function MainApp() {
   const [pageState, setPageState] = useState("Dashboard");
   return (
@@ -20,6 +23,7 @@ function MainApp() {
           path="/"
           element={<App pageState={pageState} setPageState={setPageState} />}
         />
+        <Route path="/login" element={<AuthPage></AuthPage>}></Route>
         <Route
           path="/book"
           element={<BookLabForm setPageState={setPageState} />}
@@ -38,7 +42,8 @@ function MainApp() {
         <Route path="/admin/bookings" element={<AdminBookings />} />
         <Route path="/admin/reports-analytics" element={<AdminReports />} />
         <Route path="/admin" element={<AdminInterface></AdminInterface>} />
-        {/* <Route path='/login' element={<Login />} /> */}
+        
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
       </Routes>
     </Router>
   );
