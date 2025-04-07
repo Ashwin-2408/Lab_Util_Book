@@ -23,7 +23,8 @@ const AdminResourceAllocation = () => {
   
   // Keep only these functions:
   // Add this mock data near the top of your component, after the state declarations
-  const mockRequests = [
+  // Comment out mock data
+  /*const mockRequests = [
     {
       id: 1,
       request_id: 1,
@@ -48,91 +49,94 @@ const AdminResourceAllocation = () => {
       status: "pending",
       createdAt: "2024-01-21T14:00:00Z"
     }
-  ];
+  ];*/
   
-  // Modify your fetchAllRequests function to use mock data
+  // Update fetchAllRequests to use actual API
   const fetchAllRequests = async () => {
     setLoading(true);
     try {
-      // Comment out the actual API call for now
-      // const response = await axios.get("http://localhost:3001/bulk/requests");
+      const response = await axios.get("http://localhost:3001/bulk/requests");
       
-      // Use mock data instead
-      setTimeout(() => {
-        setAllRequests(mockRequests);
-        setLoading(false);
-      }, 1000); // Simulate network delay
+      console.log('Raw response:', response.data); // Debug log
       
+      const formattedRequests = response.data.requests.map(request => ({
+        id: request.request_id,
+        request_id: request.request_id,
+        userId: request.user_id,
+        title: `Bulk Request - ${request.resource_type}`,
+        dates: formatDate(request.createdAt),
+        lab: request.lab_name,
+        resource: request.resource_type,
+        quantity: request.requested_quantity,
+        status: request.status.toLowerCase(),
+        createdAt: request.createdAt
+      }));
+  
+      console.log('Formatted requests:', formattedRequests); // Debug log
+      setAllRequests(formattedRequests);
     } catch (err) {
       console.error("Error fetching requests:", err);
       setError("Failed to load requests. Please try again.");
       setAllRequests([]);
+    } finally {
       setLoading(false);
     }
   };
 
-  // Update the handleApproveRequest function
+  // Update handleApproveRequest to use actual API
   const handleApproveRequest = async (requestId) => {
     setProcessingRequestId(requestId);
     setRequestStatus(null);
   
     try {
-      // Simulate API call with mock data
-      await new Promise(resolve => setTimeout(resolve, 1000));
-  
-      setAllRequests(
-        allRequests.map((request) =>
-          request.id === requestId
-            ? { ...request, status: "approved" }
-            : request
-        )
+      const response = await axios.patch(
+        `http://localhost:3001/bulk/approve/${requestId}`
       );
   
       setRequestStatus({
         type: "success",
         message: "Bulk request approved successfully!",
-        details: "Request has been approved"
+        details: response.data.message
       });
+  
+      // Refresh the requests list
+      fetchAllRequests();
     } catch (err) {
       console.error("Error approving request:", err);
       setRequestStatus({
         type: "error",
         message: "Failed to approve request.",
-        details: "An error occurred."
+        details: err.response?.data?.error || "An error occurred."
       });
     } finally {
       setProcessingRequestId(null);
     }
   };
 
-  // Update the handleRejectRequest function
+  // Update handleRejectRequest to use actual API
   const handleRejectRequest = async (requestId) => {
     setProcessingRequestId(requestId);
     setRequestStatus(null);
   
     try {
-      // Simulate API call with mock data
-      await new Promise(resolve => setTimeout(resolve, 1000));
-  
-      setAllRequests(
-        allRequests.map((request) =>
-          request.id === requestId
-            ? { ...request, status: "rejected" }
-            : request
-        )
+      const response = await axios.patch(
+        `http://localhost:3001/bulk/reject/${requestId}`
       );
   
       setRequestStatus({
         type: "success",
         message: "Request rejected successfully.",
-        details: "Request has been rejected"
+        details: response.data.message
       });
+  
+      // Refresh the requests list
+      fetchAllRequests();
     } catch (err) {
       console.error("Error rejecting request:", err);
       setRequestStatus({
         type: "error",
         message: "Failed to reject request.",
-        details: "An error occurred."
+        details: err.response?.data?.error || "An error occurred."
       });
     } finally {
       setProcessingRequestId(null);

@@ -1,7 +1,8 @@
 import ResourceRequest from "../Schema/ResourceRequest.js";
 import Resource from "../Schema/Resource.js";
 import BulkRequest from "../Schema/BulkRequest.js";
-import ResourceAvailability from "../Schema/BulkResourceAvailability.js";
+// Update the import statement
+import BulkResourceAvailability from "../Schema/BulkResourceAvailability.js";
 import Lab from "../Schema/Lab.js";
 
 export const getPendingRequests = async (req, res) => {
@@ -9,12 +10,12 @@ export const getPendingRequests = async (req, res) => {
     const bulkRequests = await BulkRequest.findAll({
       include: [
         { 
-          model: ResourceAvailability,
-          as: 'resourceAvailability',  // Add the association alias
+          model: BulkResourceAvailability,  // Changed from ResourceAvailability
+          as: 'resourceAvailability',
           include: [
             { 
               model: Lab,
-              as: 'lab'  // Add the association alias
+              as: 'lab'
             }
           ]
         }
@@ -44,44 +45,45 @@ export const getPendingRequests = async (req, res) => {
 
 export const approveBulkRequest = async (req, res) => {
   try {
-    const { requestId } = req.params;
-
-    const request = await BulkRequest.findOne({
+    const requestId = req.params.requestId; // Changed from id to requestId
+    
+    const bulkRequest = await BulkRequest.findOne({
       where: { request_id: requestId },
-      include: [{ model: ResourceAvailability }]
+      include: [{
+        model: BulkResourceAvailability,
+        as: 'resourceAvailability',
+        include: [{
+          model: Lab,
+          as: 'lab'
+        }]
+      }]
     });
 
-    if (!request) {
-      return res.status(404).json({ error: "Request not found" });
-    }
-
-    if (request.status !== "pending") {
-      return res.status(400).json({ error: "Request is not pending" });
-    }
-
-    // Check if requested quantity is still available
-    if (request.requested_quantity > request.resourceAvailability.available_quantity) {
-      return res.status(400).json({ error: "Requested quantity no longer available" });
+    if (!bulkRequest) {
+      return res.status(404).json({ error: "Bulk request not found" });
     }
 
     // Update request status
-    request.status = "approved";
-    await request.save();
+    await bulkRequest.update({ status: 'approved' });
 
-    // Update resource availability
-    await ResourceAvailability.update(
-      { 
-        available_quantity: request.resourceAvailability.available_quantity - request.requested_quantity 
-      },
-      { 
-        where: { availability_id: request.availability_id } 
-      }
-    );
+    // Update available quantity in BulkResourceAvailability
+    const availability = bulkRequest.resourceAvailability;
+    if (availability) {
+      const newQuantity = availability.available_quantity - bulkRequest.requested_quantity;
+      await availability.update({ available_quantity: newQuantity });
+    }
 
-    res.status(200).json({ message: "Bulk request approved successfully" });
+    res.json({ 
+      message: "Bulk request approved successfully",
+      request: bulkRequest 
+    });
+
   } catch (error) {
-    console.error("Error approving bulk request:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error('Error in approveBulkRequest:', error);
+    res.status(500).json({ 
+      error: "Failed to approve bulk request",
+      details: error.message 
+    });
   }
 };
 
@@ -90,7 +92,11 @@ export const rejectBulkRequest = async (req, res) => {
     const { requestId } = req.params;
 
     const request = await BulkRequest.findOne({
-      where: { request_id: requestId }
+      where: { request_id: requestId },
+      include: [{
+        model: BulkResourceAvailability,
+        as: 'resourceAvailability'
+      }]
     });
 
     if (!request) {
@@ -101,13 +107,31 @@ export const rejectBulkRequest = async (req, res) => {
       return res.status(400).json({ error: "Request is not pending" });
     }
 
+    // Update the available quantity and pending quantity in BulkResourceAvailability
+    const availability = request.resourceAvailability;
+    if (availability) {
+      const newAvailableQuantity = availability.available_quantity + request.requested_quantity;
+      const newPendingQuantity = availability.pending_quantity - request.requested_quantity;
+      await availability.update({ 
+        available_quantity: newAvailableQuantity,
+        pending_quantity: newPendingQuantity
+      });
+    }
+
+    // Update request status
     request.status = "rejected";
     await request.save();
 
-    res.status(200).json({ message: "Bulk request rejected successfully" });
+    res.status(200).json({ 
+      message: "Bulk request rejected successfully",
+      request: request
+    });
   } catch (error) {
     console.error("Error rejecting bulk request:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ 
+      error: "Failed to reject request",
+      details: error.message 
+    });
   }
 };
 

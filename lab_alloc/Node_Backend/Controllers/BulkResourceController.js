@@ -47,7 +47,7 @@ export const createBulkRequest = async (req, res) => {
         throw new Error(`Resource with ID ${availabilityId} not found`);
       }
       
-      if (availability.available_quantity - availability.pending_quantity < quantity) {
+      if (availability.available_quantity < quantity) {
         throw new Error(`Insufficient quantity available for resource ${availability.resource_type}`);
       }
     }
