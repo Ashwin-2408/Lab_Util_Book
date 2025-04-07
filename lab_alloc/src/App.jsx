@@ -30,7 +30,6 @@ import bellSound from "./assets/bell.mp3";
 import moment from "moment";
 
 function App({ pageState, setPageState }) {
-  // const [pageState, setPageState] = useState("Dashboard");
   const [totalLabs, setTotalLabs] = useState(0);
   const [schedule, setSchedule] = useState([]);
   const currentDate = new Date();

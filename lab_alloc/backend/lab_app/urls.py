@@ -22,5 +22,5 @@ urlpatterns = [
     path('maintenance/<str:custom_date>/<str:custom_lab>',views.instance_api_view, name="instance_api_view"),
     path('schedule_req/<int:page_state>', views.schedule_request_list_view, name="schedule_request_list_view"),
     path('cal_events/<str:req_date>/', views.get_calendar_schedules, name="get_calendar_schedules"),
-    path('alexa/book-lab/', views.book_lab_session, name='book_lab_session')
+    path('book_lab', views.alexa_entry_point, name='alexa_entry_point'),
 ]

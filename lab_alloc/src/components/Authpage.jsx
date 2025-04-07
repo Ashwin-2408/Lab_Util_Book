@@ -55,6 +55,7 @@ const AuthPage = () => {
         role: 'Student'
       });
 
+    
       setMessage({ text: 'Account created successfully!', type: 'success' });
       // Reset form
       setSignupData({ name: '', email: '', password: '', confirmPassword: '' });

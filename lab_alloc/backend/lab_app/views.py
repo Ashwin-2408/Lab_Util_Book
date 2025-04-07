@@ -369,45 +369,148 @@ class ScheduleRequestListAPIView(generics.ListAPIView):
 
 schedule_request_list_view = ScheduleRequestListAPIView.as_view()
 
-def book_lab_session(request):
+@csrf_exempt
+def alexa_entry_point(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        lab = data.get('lab')
-        date = data.get('date')
-        start_time = data.get('startTime')
-        end_time = data.get('endTime')
 
-        event = dict()
-        event['schedule_from'] = start_time
-        event['schedule_to'] = end_time
-        event['schedule_date'] = date
-        event['decision_date'] = datetime.now().date() 
+        if data["request"]["type"] == "LaunchRequest":
+            return JsonResponse({
+                "version": "1.0",
+                "response": {
+                    "outputSpeech": {
+                        "type": "PlainText",
+                        "text": "Welcome to the lab booking assistant. How can I help you?"
+                    },
+                    "shouldEndSession": False
+                }
+            })
 
-        if "Lab".lower() in lab:
-            event['lab_id'] = Laboratory.objects.get(lab_name = lab).lab_id
-        else:
-            event['lab_id'] = Laboratory.objects.get(lab_name = lab + "Lab").lab_id
-        
-        serializer = ScheduleRequestSerializer(data=event)
-        if serializer.is_valid():
-            check_status = check_validity(event['schedule_date'], (event['schedule_from'], event['schedule_to']), event['lab_id'])
-            print("Check Status",check_status)
-            if(check_status):
-                serializer.save()
-                return Response({"Message" : "Successfully Submitted the Form"}, status=201)
-            else:
+        elif data["request"]["type"] == "IntentRequest":
+            intent_name = data["request"]["intent"]["name"]
+
+            if intent_name == "BookLabIntent":
+                slots = data["request"]["intent"]["slots"]
                 try:
-                    response = requests.post("http://127.0.0.1:3001/waitlist", json={
-                        "user_name" : data['username'],
-                        "lab_id" : data['lab_id'],
+                    lab = slots["lab"]["value"]
+                    date = slots["date"]["value"]
+                    start_time = slots["startTime"]["value"]
+                    end_time = slots["endTime"]["value"]
+                except KeyError:
+                    return JsonResponse({
+                        "version": "1.0",
+                        "response": {
+                            "outputSpeech": {
+                                "type": "PlainText",
+                                "text": "Some booking details were missing. Please say the lab, date, and time again."
+                            },
+                            "shouldEndSession": False
+                        }
                     })
-                    print("Response", response)
-                except Exception as e:
-                    print("Error while sending request", e)
-                return Response({"Message" : "Capacity Reached"}, status=400)
-        else:
-            return Response({"Message" : "Error while submitting form"}, status=500)
-    return JsonResponse({"error": "Invalid request"}, status=400)
+
+                print("Received booking:", lab, date, start_time, end_time)
+                lab_name = lab.capitalize() + " Lab"
+
+                try:
+                    lab_obj = Laboratory.objects.get(lab_name=lab_name)
+                except Laboratory.DoesNotExist:
+                    return JsonResponse({
+                        "version": "1.0",
+                        "response": {
+                            "outputSpeech": {
+                                "type": "PlainText",
+                                "text": f"The lab {lab_name} does not exist. Please try again."
+                            },
+                            "shouldEndSession": True
+                        }
+                    })
+
+                event = {
+                   "username" : "George",
+                   "schedule_from": datetime.strptime(start_time, "%H:%M").time().strftime("%H:%M"),
+                   "schedule_to": datetime.strptime(end_time, "%H:%M").time().strftime("%H:%M"),
+                   "schedule_date": datetime.strptime(date, "%Y-%m-%d").date(),
+                   "decision_date": datetime.now().date(),
+                   "lab_id": lab_obj.lab_id
+                }
+
+                serializer = ScheduleRequestSerializer(data=event)
+                print("Event Dictionary", event)
+                if serializer.is_valid():
+                    check_status = check_validity(
+                        event["schedule_date"],
+                        (event["schedule_from"], event["schedule_to"]),
+                        event["lab_id"]
+                    )
+                    print("Check Status", check_status)
+
+                    if check_status:
+                        serializer.save()
+                        return JsonResponse({
+                            "version": "1.0",
+                            "response": {
+                                "outputSpeech": {
+                                    "type": "PlainText",
+                                    "text": f"Your booking for {lab} on {date} from {start_time} to {end_time} is confirmed."
+                                },
+                                "shouldEndSession": True
+                            }
+                        })
+                    else:
+                        try:
+                            response = requests.post("http://127.0.0.1:3001/waitlist", json={
+                                "user_name": "alexa_user",
+                                "lab_id": event['lab_id'],
+                            })
+                            print("Waitlist response:", response.status_code)
+                        except Exception as e:
+                            print("Waitlist error:", e)
+
+                        return JsonResponse({
+                            "version": "1.0",
+                            "response": {
+                                "outputSpeech": {
+                                    "type": "PlainText",
+                                    "text": "Capacity reached. You have been added to the waitlist."
+                                },
+                                "shouldEndSession": True
+                            }
+                        })
+                else:
+                    print("Serializer",serializer)
+                    return JsonResponse({
+                        "version": "1.0",
+                        "response": {
+                            "outputSpeech": {
+                                "type": "PlainText",
+                                "text": "There was an error submitting your request. Please try again."
+                            },
+                            "shouldEndSession": True
+                        }
+                    })
+                
+            return JsonResponse({
+                "version": "1.0",
+                "response": {
+                    "outputSpeech": {
+                        "type": "PlainText",
+                        "text": "Sorry, I didn't understand that request."
+                    },
+                    "shouldEndSession": True
+                }
+            })
+
+    return JsonResponse({
+        "version": "1.0",
+        "response": {
+            "outputSpeech": {
+                "type": "PlainText",
+                "text": "Invalid request method. Alexa only supports POST."
+            },
+            "shouldEndSession": True
+        }
+    })
+
 
 class ScheduleRequestCreateView(APIView):
     def post(self, request):

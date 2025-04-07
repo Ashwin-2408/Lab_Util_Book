@@ -31,7 +31,7 @@ CELERY_BROKER_TRANSPORT_OPTIONS = {"visibility_timeout": 3600}
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['4ee3-103-5-112-80.ngrok-free.app', '127.0.0.1']
 
 # Application definition
 
