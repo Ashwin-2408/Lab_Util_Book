@@ -1,12 +1,12 @@
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";  // Add this import
+import dotenv from "dotenv";
 import Router from "./Routes/Main_route.js";
 import sequelize from "./Schema/db_connection.js";
 import Notification from "./Schema/Notification.js";
-
 import notificationsRouter from "./Routes/notification_route.js";
 import WaitListRouter from "./Routes/WaitList_Route.js";
+import bulkRoutes from './Routes/bulk_routes.js';
 import cron from "node-cron";
 import { Op } from "sequelize";
 import Allocation from "./Schema/Allocation.js";
@@ -15,9 +15,12 @@ import Resource from "./Schema/Resource.js";
 import ResourceRequest from "./Schema/ResourceRequest.js";
 import Lab from "./Schema/Lab.js";
 import Auth from "./Schema/Auth.js";
-import setupAssociations from "./Schema/Associations.js";
+import BulkResourceAvailability from "./Schema/BulkResourceAvailability.js";
+import BulkRequest from "./Schema/BulkRequest.js";
 
-// Configure dotenv - Add this line before any code that uses env variables
+// Import associations
+import './Schema/associations.js';
+
 dotenv.config();
 
 const app = express();
@@ -26,12 +29,13 @@ app.use(express.json());
 app.use(Router);
 app.use("/notifications", notificationsRouter);
 app.use("/waitlist", WaitListRouter);
+app.use('/bulk', bulkRoutes);
 
-setupAssociations();
+// Remove setupAssociations() since we're importing associations directly
 
 // Update the sync process to include force option for development
 sequelize
-  .sync({ alter: true, force: true }) // force: true will drop and recreate tables
+  .sync() // force: true will drop and recreate tables
   .then(() => {
     console.log("Database & tables synced!");
   })

@@ -1,4 +1,7 @@
+import Resource_Request from "../Schema/ResourceRequest.js";
 import Resource from "../Schema/Resource.js";
+import { Op } from "sequelize";
+
 import ResourceRequest from "../Schema/ResourceRequest.js";
 import Lab from "../Schema/Lab.js";
 
@@ -88,5 +91,79 @@ export const getUserRequests = async (req, res) => {
     res
       .status(500)
       .json({ error: "Internal Server Error", details: error.message });
+  }
+};
+
+
+// Bulk resource request handler
+export const createBulkRequests = async (req, res) => {
+  const { userId, resources } = req.body;
+
+  if (!userId || !Array.isArray(resources) || resources.length === 0) {
+    return res.status(400).json({ error: "Invalid request data" });
+  }
+
+  const transaction = await Resource_Request.sequelize.transaction();
+
+  try {
+    // Check if all resources exist and are available
+    const resourceIds = resources.map(r => r.resourceId);
+    const availableResources = await Resource.findAll({
+      where: {
+        resource_id: { [Op.in]: resourceIds },
+        status: 'available'
+      },
+      transaction
+    });
+
+    if (availableResources.length !== new Set(resourceIds).size) {
+      await transaction.rollback();
+      return res.status(400).json({ 
+        error: "One or more resources are not available" 
+      });
+    }
+
+    // Create requests for each resource
+    const requests = await Promise.all(
+      resources.map(async (resource) => {
+        return Resource_Request.create({
+          user_id: userId,
+          resource_id: resource.resourceId,
+          status: 'pending',
+          request_date: new Date()
+        }, { transaction });
+      })
+    );
+
+    // Update resources status to 'pending'
+    await Resource.update(
+      { status: 'pending' },
+      {
+        where: { resource_id: { [Op.in]: resourceIds } },
+        transaction
+      }
+    );
+
+    await transaction.commit();
+
+    // Format response
+    const formattedRequests = requests.map(request => ({
+      requestId: request.request_id,
+      resourceId: request.resource_id,
+      status: request.status
+    }));
+
+    res.status(201).json({
+      success: true,
+      batchId: Date.now(),
+      requests: formattedRequests
+    });
+
+  } catch (error) {
+    await transaction.rollback();
+    console.error('Bulk request error:', error);
+    res.status(500).json({
+      error: "Failed to process bulk resource request"
+    });
   }
 };

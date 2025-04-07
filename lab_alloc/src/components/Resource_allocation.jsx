@@ -17,8 +17,46 @@ const ResourceAllocation = () => {
   const [resources, setResources] = useState([]);
   const [requestingResource, setRequestingResource] = useState(null);
   const [releasingResource, setReleasingResource] = useState(null);
+  
+  // Add the new state variables for bulk functionality
+  const [selectedResources, setSelectedResources] = useState({});
+  const [availableResourceIds, setAvailableResourceIds] = useState([]);
+  const [bulkResources, setBulkResources] = useState([]);
+  const [bulkLoading, setBulkLoading] = useState(false);
 
   // Function to transform ResourceRequest Sequelize objects to match component props
+  const fetchUserBulkRequests = async () => {
+    setRequestsLoading(true);
+    try {
+      const response = await axios.post('http://localhost:3001/bulk/user-requests', {
+        userId: currentUserId
+      });
+      
+      if (response.data && response.data.requests) {
+        const formattedRequests = response.data.requests.map(request => ({
+          id: request.request_id,
+          request_id: request.request_id,
+          title: `Bulk Request - ${request.resource_type}`,
+          dates: new Date(request.createdAt || new Date()).toLocaleDateString(),
+          resource: request.resource_type,
+          quantity: request.quantity,
+          status: request.status || 'pending',
+          lab: request.lab_name,
+          isBulk: true
+        }));
+        
+        setUserRequests(formattedRequests);
+      } else {
+        setUserRequests([]);
+      }
+    } catch (error) {
+      console.error('Error fetching bulk requests:', error);
+      setError('Failed to load your requests');
+      setUserRequests([]); // Set empty array on error
+    } finally {
+      setRequestsLoading(false);
+    }
+  };
   const transformResourceRequests = (requests) => {
     if (!Array.isArray(requests)) {
       console.error("Expected array of requests, got:", requests);
@@ -124,11 +162,6 @@ const ResourceAllocation = () => {
     }
   };
 
-  // Load user requests on component mount
-  useEffect(() => {
-    fetchUserRequests();
-  }, []);
-
   // Fetch resources from API based on search criteria
   const fetchResources = async () => {
     if (!labSearch && !resourceSearch) {
@@ -167,6 +200,28 @@ const ResourceAllocation = () => {
       setResources([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // New function to fetch bulk resources
+  const fetchBulkResources = async () => {
+    if (!labSearch && !resourceSearch) {
+      setBulkResources([]);
+      return;
+    }
+    
+    setBulkLoading(true);
+    try {
+      const response = await axios.post('http://localhost:3001/bulk/availability', {
+        labName: labSearch,
+        resourceType: resourceSearch
+      });
+      setBulkResources(response.data.resources);
+    } catch (error) {
+      setError(error.message);
+      setBulkResources([]);
+    } finally {
+      setBulkLoading(false);
     }
   };
 
@@ -261,11 +316,79 @@ const ResourceAllocation = () => {
     }
   };
 
+  // Handler functions for bulk resource selection
+  const handleResourceSelect = (resourceId) => {
+    setSelectedResources(prev => {
+      if (resourceId in prev) {
+        const updated = { ...prev };
+        delete updated[resourceId];
+        return updated;
+      }
+      return { ...prev, [resourceId]: 1 };
+    });
+  };
+  
+  const handleQuantityChange = (resourceId, quantity) => {
+    const validQuantity = Math.max(1, parseInt(quantity) || 1);
+    setSelectedResources(prev => ({
+      ...prev,
+      [resourceId]: validQuantity
+    }));
+  };
+  
+  const handleBulkRequest = async () => {
+    if (Object.keys(selectedResources).length === 0) return;
+    
+    setRequestingResource('bulk');
+    setRequestStatus(null);
+  
+    try {
+      // Format the requests properly
+      const requests = Object.entries(selectedResources).map(([availabilityId, quantity]) => ({
+        availabilityId: parseInt(availabilityId),
+        quantity: parseInt(quantity)
+      }));
+  
+      const response = await axios.post(
+        "http://localhost:3001/bulk/request",
+        {
+          userId: currentUserId,
+          requests: requests  // Send as an array of objects
+        }
+      );
+  
+      if (response.data.success) {
+        setRequestStatus({
+          type: "success",
+          message: "Bulk request successful",
+          details: "Resources have been requested successfully"
+        });
+        setSelectedResources({});
+        fetchBulkResources(); // Refresh the list
+      }
+    } catch (err) {
+      console.error("Bulk request error:", err);
+      setRequestStatus({
+        type: "error",
+        message: "Failed to request resources",
+        details: err.response?.data?.error || err.message
+      });
+    } finally {
+      setRequestingResource(null);
+    }
+  };
+
+  // Load user requests on component mount
+  // Replace the existing useEffect for loading requests
+  useEffect(() => {
+    fetchUserBulkRequests();
+  }, []);
+
   // Debounce function to prevent too many API calls
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (labSearch || resourceSearch) {
-        fetchResources();
+        fetchBulkResources();
       }
     }, 500);
 
@@ -290,7 +413,7 @@ const ResourceAllocation = () => {
   const handleResourceSearch = (e) => {
     setResourceSearch(e.target.value);
   };
-
+  
   return (
     <div className="resource-allocation">
       <div className="header">
@@ -340,15 +463,16 @@ const ResourceAllocation = () => {
                         {request.status}
                       </span>
                     </div>
+                    {request.isBulk && (
+                      <div className="bulk-badge">Bulk Request</div>
+                    )}
                   </div>
 
-                  {request.status === "approved" && (
+                  {request.status === "approved" && !request.isBulk && (
                     <div className="action-buttons">
                       <button
                         className="release-button"
-                        onClick={() =>
-                          handleReleaseResource(request.id, request.resourceId)
-                        }
+                        onClick={() => handleReleaseResource(request.id)}
                         disabled={releasingResource === request.id}
                       >
                         {releasingResource === request.id
@@ -372,94 +496,141 @@ const ResourceAllocation = () => {
 
         <div className="section">
           <div className="section-header">
-            <h2>Available Resources</h2>
-            <p>View and request available resources from the database.</p>
-            <div className="search-section">
-              <div className="search-label">
-                <span>Find resources:</span>
+            <h2>Available Bulk Resources</h2>
+            <p>Search and request resources in bulk from labs.</p>
+          </div>
+
+          <div className="search-section">
+            <div className="search-label">
+              <span>Find resources:</span>
+            </div>
+            <div className="search-container">
+              <div className="search-group">
+                <label htmlFor="lab-search">Lab</label>
+                <input
+                  id="lab-search"
+                  type="text"
+                  placeholder="Enter lab name"
+                  value={labSearch}
+                  onChange={handleLabSearch}
+                  style={{ width: "220px", padding: "6px", fontSize: "14px" }}
+                />
               </div>
-              <div className="search-container">
-                <div className="search-group">
-                  <label htmlFor="lab-search">Lab</label>
-                  <input
-                    id="lab-search"
-                    type="text"
-                    placeholder="Enter lab name"
-                    value={labSearch}
-                    onChange={handleLabSearch}
-                    style={{ width: "220px", padding: "6px", fontSize: "14px" }}
-                  />
-                </div>
-                <div className="search-group">
-                  <label htmlFor="resource-search">Resource</label>
-                  <input
-                    id="resource-search"
-                    type="text"
-                    placeholder="Enter resource type"
-                    value={resourceSearch}
-                    onChange={handleResourceSearch}
-                    style={{ width: "220px", padding: "6px", fontSize: "14px" }}
-                  />
-                </div>
+              <div className="search-group">
+                <label htmlFor="resource-search">Resource</label>
+                <input
+                  id="resource-search"
+                  type="text"
+                  placeholder="Enter resource type"
+                  value={resourceSearch}
+                  onChange={handleResourceSearch}
+                  style={{ width: "220px", padding: "6px", fontSize: "14px" }}
+                />
               </div>
             </div>
           </div>
 
-          {loading && (
+          {loading || bulkLoading ? (
             <div className="loading-indicator">
               <p>Loading resources...</p>
             </div>
-          )}
-
-          {error && (
-            <div className="error-message">
-              <p>{error}</p>
-            </div>
-          )}
-
-          <div className="resource-cards">
-            {resources.length > 0 ? (
-              resources.map((resource) => (
-                <div className="resource-card" key={resource.id}>
-                  <div className="resource-details">
-                    <h3>{resource.name}</h3>
-                    <p>{resource.description}</p>
-                    <div className="lab-tag">{resource.lab}</div>
-                    <div className="category-tag">Available</div>
-                  </div>
-                  <div className="resource-actions">
-                    <div className="availability">
-                      Resource ID: {resource.id}
-                    </div>
-                    <div className="action-buttons">
-                      <button
-                        className="request-button"
-                        onClick={() => handleRequestResource(resource.id)}
-                        disabled={requestingResource === resource.id}
+          ) : (
+            <>
+              <div className="resource-cards">
+                {/* Bulk Resources Section */}
+                {bulkResources.length > 0 && (
+                  <div className="bulk-resources-section">
+                    <h3>Bulk Resources</h3>
+                    {bulkResources.map(resource => (
+                      <div 
+                        key={resource.availability_id} 
+                        className={`resource-card ${resource.availability_id in selectedResources ? 'selected' : ''}`}
                       >
-                        {requestingResource === resource.id
-                          ? "Requesting..."
-                          : "Request"}
-                      </button>
-                    </div>
+                        <div className="resource-select">
+                          <input
+                            type="checkbox"
+                            checked={resource.availability_id in selectedResources}
+                            onChange={() => handleResourceSelect(resource.availability_id)}
+                          />
+                          {resource.availability_id in selectedResources && (
+                            <input
+                              type="number"
+                              min="1"
+                              max={resource.available_quantity}
+                              value={selectedResources[resource.availability_id] || 1}
+                              onChange={(e) => handleQuantityChange(resource.availability_id, e.target.value)}
+                              className="quantity-input"
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                          )}
+                        </div>
+                        <div className="resource-details">
+                          <h3>{resource.resource_type}</h3>
+                          <p>Lab: {resource.lab.lab_name}</p>
+                          <div className="lab-tag">{resource.lab.lab_name}</div>
+                          <div className="availability-tag">
+                            Available: {resource.available_quantity}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    
+                    {Object.keys(selectedResources).length > 0 && (
+                      <div className="bulk-action-buttons">
+                        <button
+                          className="request-button"
+                          onClick={handleBulkRequest}
+                          disabled={requestingResource === 'bulk'}
+                        >
+                          {requestingResource === 'bulk' ? 'Requesting...' : 'Request Selected Resources'}
+                        </button>
+                      </div>
+                    )}
                   </div>
-                </div>
-              ))
-            ) : (
-              <div className="no-results">
-                <p>
-                  {labSearch || resourceSearch
-                    ? "No resources match your search criteria."
-                    : "Enter search criteria to find resources."}
-                </p>
-                <p className="no-results-subtext">
-                  {labSearch || resourceSearch
-                    ? "Try adjusting your search terms or clear the fields."
-                    : "Enter lab name and/or resource type to search."}
-                </p>
+                )}
+              
+                {/* Individual Resources Section */}
+                {resources.length > 0 && (
+                  <div className="individual-resources-section">
+                    <h3>Individual Resources</h3>
+                    {resources.map((resource) => (
+                      <div className="resource-card" key={resource.id}>
+                        <div className="resource-details">
+                          <h3>{resource.name}</h3>
+                          <p>{resource.description}</p>
+                          <div className="lab-tag">{resource.lab}</div>
+                          <div className="availability-tag">
+                            Available: {resource.available} / {resource.total}
+                          </div>
+                        </div>
+                        <div className="action-buttons">
+                          <button
+                            className="request-button"
+                            onClick={() => handleRequestResource(resource.id)}
+                            disabled={requestingResource === resource.id}
+                          >
+                            {requestingResource === resource.id
+                              ? "Requesting..."
+                              : "Request Resource"}
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {resources.length === 0 && bulkResources.length === 0 && (
+                  <div className="no-results">
+                    <p>
+                      {labSearch || resourceSearch
+                        ? "No resources match your search criteria."
+                        : "Enter search criteria to find resources."}
+                    </p>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            </>
+          )}
         </div>
       </div>
     </div>

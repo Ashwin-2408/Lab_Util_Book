@@ -15,26 +15,127 @@ const AdminResourceAllocation = () => {
   const [resourceLab, setResourceLab] = useState("");
 
   // Fetch all resource requests
+  // Update the fetchAllRequests function
+  // Remove these functions:
+  // - transformResourceRequests
+  // - getNestedProperty
+  // - the duplicate handleApproveRequest and handleRejectRequest functions
+  
+  // Keep only these functions:
+  // Add this mock data near the top of your component, after the state declarations
+  const mockRequests = [
+    {
+      id: 1,
+      request_id: 1,
+      userId: "USER001",
+      title: "Bulk Request - Laptop",
+      dates: "Jan 20, 2024, 10:00 AM",
+      lab: "Computer Lab",
+      resource: "Laptop",
+      quantity: 5,
+      status: "pending",
+      createdAt: "2024-01-20T10:00:00Z"
+    },
+    {
+      id: 2,
+      request_id: 2,
+      userId: "USER002",
+      title: "Bulk Request - Projector",
+      dates: "Jan 21, 2024, 02:00 PM",
+      lab: "Physics Lab",
+      resource: "Projector",
+      quantity: 2,
+      status: "pending",
+      createdAt: "2024-01-21T14:00:00Z"
+    }
+  ];
+  
+  // Modify your fetchAllRequests function to use mock data
   const fetchAllRequests = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        "http://localhost:3001/resource/requests"
-      );
-      console.log("Fetched all requests:", response.data); // Debugging
-
-      // Transform the data to match component structure
-      const formattedRequests = Array.isArray(response.data)
-        ? transformResourceRequests(response.data)
-        : [];
-
-      setAllRequests(formattedRequests);
+      // Comment out the actual API call for now
+      // const response = await axios.get("http://localhost:3001/bulk/requests");
+      
+      // Use mock data instead
+      setTimeout(() => {
+        setAllRequests(mockRequests);
+        setLoading(false);
+      }, 1000); // Simulate network delay
+      
     } catch (err) {
       console.error("Error fetching requests:", err);
       setError("Failed to load requests. Please try again.");
       setAllRequests([]);
-    } finally {
       setLoading(false);
+    }
+  };
+
+  // Update the handleApproveRequest function
+  const handleApproveRequest = async (requestId) => {
+    setProcessingRequestId(requestId);
+    setRequestStatus(null);
+  
+    try {
+      // Simulate API call with mock data
+      await new Promise(resolve => setTimeout(resolve, 1000));
+  
+      setAllRequests(
+        allRequests.map((request) =>
+          request.id === requestId
+            ? { ...request, status: "approved" }
+            : request
+        )
+      );
+  
+      setRequestStatus({
+        type: "success",
+        message: "Bulk request approved successfully!",
+        details: "Request has been approved"
+      });
+    } catch (err) {
+      console.error("Error approving request:", err);
+      setRequestStatus({
+        type: "error",
+        message: "Failed to approve request.",
+        details: "An error occurred."
+      });
+    } finally {
+      setProcessingRequestId(null);
+    }
+  };
+
+  // Update the handleRejectRequest function
+  const handleRejectRequest = async (requestId) => {
+    setProcessingRequestId(requestId);
+    setRequestStatus(null);
+  
+    try {
+      // Simulate API call with mock data
+      await new Promise(resolve => setTimeout(resolve, 1000));
+  
+      setAllRequests(
+        allRequests.map((request) =>
+          request.id === requestId
+            ? { ...request, status: "rejected" }
+            : request
+        )
+      );
+  
+      setRequestStatus({
+        type: "success",
+        message: "Request rejected successfully.",
+        details: "Request has been rejected"
+      });
+    } catch (err) {
+      console.error("Error rejecting request:", err);
+      setRequestStatus({
+        type: "error",
+        message: "Failed to reject request.",
+        details: "An error occurred."
+      });
+    } finally {
+      setProcessingRequestId(null);
     }
   };
 
@@ -141,86 +242,14 @@ const AdminResourceAllocation = () => {
   }, []);
 
   // Handle request approval
-  const handleApproveRequest = async (requestId) => {
-    setProcessingRequestId(requestId);
-    setRequestStatus(null);
-
-    try {
-      const response = await axios.patch(
-        `http://localhost:3001/resource/${requestId}/approve`
-      );
-
-      // Show success notification
-      setRequestStatus({
-        type: "success",
-        message: "Request approved successfully!",
-        details:
-          response.data.message ||
-          "The resource has been allocated to the user.",
-      });
-
-      // Update the request in the list instead of refetching
-      setAllRequests(
-        allRequests.map((request) =>
-          request.id === requestId
-            ? { ...request, status: "approved" }
-            : request
-        )
-      );
-    } catch (err) {
-      console.error("Error approving request:", err);
-      setRequestStatus({
-        type: "error",
-        message: "Failed to approve request.",
-        details: err.response?.data?.message || "An error occurred.",
-      });
-    } finally {
-      setProcessingRequestId(null);
-    }
-  };
+  
 
   // Handle request rejection
-  const handleRejectRequest = async (requestId) => {
-    setProcessingRequestId(requestId);
-    setRequestStatus(null);
-
-    try {
-      const response = await axios.post(
-        `http://localhost:3001/resource/${requestId}/reject`
-      );
-
-      // Show success notification
-      setRequestStatus({
-        type: "success",
-        message: "Request rejected.",
-        details: response.data.message || "The request has been rejected.",
-      });
-
-      // Update the request in the list instead of refetching
-      setAllRequests(
-        allRequests.map((request) =>
-          request.id === requestId
-            ? { ...request, status: "rejected" }
-            : request
-        )
-      );
-    } catch (err) {
-      console.error("Error rejecting request:", err);
-      setRequestStatus({
-        type: "error",
-        message: "Failed to reject request.",
-        details: err.response?.data?.message || "An error occurred.",
-      });
-    } finally {
-      setProcessingRequestId(null);
-    }
-  };
+  
 
   // Handle Adding New Resource
   const handleAddResource = async (e) => {
     e.preventDefault();
-    console.log(resourceLab);
-    console.log(resourceType);
     if (!resourceType || !resourceLab) {
       setRequestStatus({
         type: "error",
@@ -232,34 +261,29 @@ const AdminResourceAllocation = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3001/resource/add_resource",
+        "http://localhost:3001/bulk/add-resource",
         {
-          type: resourceType,
-          lab_id: resourceLab,
-          status: "Available",
+          resource_type: resourceType,
+          lab_name: resourceLab,
+          quantity: 1  // You might want to add a quantity field to your form
         }
       );
 
       setRequestStatus({
         type: "success",
         message: "Resource added successfully!",
-        details:
-          response.data?.message ||
-          "New resource has been added to the system.",
+        details: response.data?.message || "New resource has been added to the system."
       });
       setResourceType("");
       setResourceLab("");
 
-      // Refresh resource requests
       fetchAllRequests();
     } catch (err) {
       console.error("Error adding resource:", err);
       setRequestStatus({
         type: "error",
         message: "Failed to add resource.",
-        details:
-          err.response?.data?.message ||
-          "An error occurred while adding the resource.",
+        details: err.response?.data?.error || "An error occurred."
       });
     }
   };
