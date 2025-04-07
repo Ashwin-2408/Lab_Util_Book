@@ -34,4 +34,10 @@ const BulkResourceAvailability = sequelize.define('BulkResourceAvailability', {
   }
 });
 
+// Establish relationship with Lab
+BulkResourceAvailability.belongsTo(Lab, {
+  foreignKey: 'lab_id',
+  as: 'lab'
+});
+
 export default BulkResourceAvailability;
